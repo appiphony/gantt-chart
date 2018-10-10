@@ -1,0 +1,12 @@
+<template>
+    <div if:true={showHeader}>
+        <a target="_blank" href={link}>{resource.Name}</a>
+    </div>
+    <div>
+        <template for:each={allocationLists} for:item="allocationList">
+            <template for:each={allocationList} for:item="allocation">
+                {allocation.Start_Date__c} - {allocation.End_Date__c}
+            </template>
+        </template>
+    </div>
+</template>
