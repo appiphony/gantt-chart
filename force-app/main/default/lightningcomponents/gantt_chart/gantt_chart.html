@@ -1,22 +1,25 @@
 <template>
-    <lightning-button label="Refresh" onclick={refresh}></lightning-button>
-
     <div class="slds-clearfix">
         <div if:false={isResource} class="slds-float_left" style="width: 100px; overflow-x: hidden;">
             Resource
         </div>
         <div class="slds-float_left">
-            Timeline ({formattedStartDate} - {formattedEndDate})
+            <div style="text-align: center;">Timeline ({formattedStartDate} - {formattedEndDate})</div>
+            <div class="slds-clearfix">
+                <template for:each={dates} for:item="date">
+                    <div key={date} class="slds-float_left" style="text-align: center; width: 50px;">{date}</div>
+                </template>
+            </div>
         </div>
     </div>
     <div class="slds-clearfix">
-        <template if:true={resourceIds.length}>
-            <template for:each={resourceIds} for:item="resourceId">
-                <c-gantt_chart_resource key={resourceId} record-id={resourceId} is-resource={isResource} start-date={startDate} end-date={endDate}></c-gantt_chart_resource>
+        <template if:true={chartResources.length}>
+            <template for:each={chartResources} for:item="resource">
+                <c-gantt_chart_resource key={resourceId} record-id={resource.Id} name={resource.Name} project-id={projectId} start-date={startDate} end-date={endDate}></c-gantt_chart_resource>
             </template>
         </template>
 
-        <div if:false={resourceIds.length}>EMPTY STATE: NO RESOURCES FOUND</div>
+        <div if:false={chartResources.length}>EMPTY STATE: NO RESOURCES FOUND</div>
     </div>
 
     <lightning-button if:false={isResource} variant="brand" label="Add Resource" onclick={openAddResourceModal}></lightning-button>

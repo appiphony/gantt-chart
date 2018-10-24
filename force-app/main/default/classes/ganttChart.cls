@@ -1,13 +1,8 @@
 public with sharing class ganttChart {
     @AuraEnabled(Cacheable=true)
-    public static String getRecordType(Id recordId) {
-        return recordId.getSobjectType().getDescribe().getName();
-    }
-
-    @AuraEnabled(Cacheable=true)
-    public static List<Id> getResourceIds(Id recordId, Date startDate, Integer days) {
-        System.debug(days);
-        Set<Id> resourceIds = new Set<Id>();
+    public static Map<String, Object> getChartData(Id recordId, Date startDate, Integer days) {
+        Map<String, Object> data = new Map<String, Object>();
+        Map<String, Object> resourceById = new Map<String, Object>();
 
         // workaround for bug W-4320896
         days = Integer.valueOf(days);
@@ -21,32 +16,37 @@ public with sharing class ganttChart {
         }
 
         Date endDate = Date.newInstance(startDate.year(), startDate.month(), startDate.day()).addDays(days);
+        List<Allocation__c> allocations;
 
         if (null == recordId) {
-            for (Allocation__c allocation : [SELECT Resource__c
-                                             FROM Allocation__c
-                                             WHERE Start_Date__c <= :endDate
-                                             AND End_Date__c >= :startDate]) {
-                resourceIds.add(allocation.Resource__c);
-            }
+            allocations = [SELECT Resource__c, Resource__r.Name
+                          FROM Allocation__c
+                          WHERE Start_Date__c <= :endDate
+                          AND End_Date__c >= :startDate];
+        } else if ('Project__c' == recordId.getSobjectType().getDescribe().getName()) {
+            data.put('projectId', recordId);
+            allocations = [SELECT Resource__c, Resource__r.Name
+                           FROM Allocation__c
+                           WHERE Project__c = :recordId
+                           AND Start_Date__c <= :endDate
+                           AND End_Date__c >= :startDate];
         } else {
-            for (Allocation__c allocation : [SELECT Resource__c
-                                             FROM Allocation__c
-                                             WHERE Project__c = :recordId
-                                             AND Start_Date__c <= :endDate
-                                             AND End_Date__c >= :startDate]) {
-                resourceIds.add(allocation.Resource__c);
-            }
+            allocations = [SELECT Resource__c, Resource__r.Name
+                           FROM Allocation__c
+                           WHERE Resource__c = :recordId
+                           AND Start_Date__c <= :endDate
+                           AND End_Date__c >= :startDate];
         }
 
-        return new List<Id>(resourceIds);
-    }
-
-    @AuraEnabled(Cacheable=true)
-    public static Resource__c getResource(Id recordId) {
-        return [SELECT Id, Name
-                FROM Resource__c
-                WHERE Id =:recordId];
+        for (Allocation__c allocation : allocations) {
+            resourceById.put(allocation.Resource__c, new Map<String, Object> {
+                'Id' => allocation.Resource__c,
+                'Name' => allocation.Resource__r.Name
+            });
+        }
+        data.put('resources', resourceById.values());
+        
+        return data;
     }
 
     @AuraEnabled(Cacheable=true)
@@ -65,7 +65,7 @@ public with sharing class ganttChart {
 
         for (Allocation__c allocation : [SELECT Id, Name, Start_Date__c, End_Date__c, Project__c
                                          FROM Allocation__c
-                                         WHERE (Project__c = :recordId OR Resource__c = :recordId)
+                                         WHERE Resource__c = :recordId
                                          AND Start_Date__c <= :endDate
                                          AND End_Date__c >= :startDate]) {
             if (!allocationsByProject.containsKey(allocation.Project__c)) {
@@ -86,20 +86,25 @@ public with sharing class ganttChart {
     }
 
     @AuraEnabled
-    public static void saveAllocation(Id allocationId, String startDate, String endDate) {
-        System.debug(startDate);
-        System.debug(endDate);
-        // Allocation__c allocation = new Allocation__c(
-        //     Start_Date__c = startDate,
-        //     End_Date__c = endDate
-        // );
+    public static void saveAllocation(Id allocationId, Id projectId, Id resourceId, String startDate, String endDate) {
+        Allocation__c allocation = new Allocation__c(
+            Start_Date__c = DateTime.newInstance(Long.valueOf(startDate)).date(),
+            End_Date__c = DateTime.newInstance(Long.valueOf(endDate)).date()
+        );
 
-        // if (null != allocationId) {
-        //     allocation.Id = allocationId;
-        // } else {
-        //     allocation.Name = 'New';
-        // }
+        if (null != allocationId) {
+            allocation.Id = allocationId;
+        } else {
+            allocation.Name = 'New';
+            if (null != projectId) {
+                allocation.Project__c = projectId;
+            }
 
-        // upsert allocation;
+            if (null != resourceId) {
+                allocation.Resource__c = resourceId;
+            }
+        }
+
+        upsert allocation;
     }
 }
