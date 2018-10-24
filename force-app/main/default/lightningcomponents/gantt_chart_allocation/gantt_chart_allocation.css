@@ -1,0 +1,71 @@
+/*** Allocations ***/
+
+
+/** Still needs Allocation-container styles on parent level **/
+
+
+.allocation {
+    transform: translateY(6px);
+    padding: .25rem;
+    border-radius: .25rem;
+    background-color: rgba(21, 137, 238);
+    opacity: .85;
+    color: rgb(255, 255, 255);
+    text-align: center;
+    pointer-events: auto;
+    cursor: grab; 
+    text-overflow: ellipsis;
+}
+
+
+.allocation.low-effort {
+    opacity: 0.6;
+}
+
+.allocation.medium-effort {
+    opacity: 0.75;
+}
+
+.allocation.high-effort {
+    opacity: 0.85;
+}
+
+.allocation.project-one {
+    background-color: rgb(75, 202, 129);
+}
+
+.allocation.project-two {
+    background-color: rgb(255, 154, 60);
+}
+
+.allocation.project-three {
+    background-color: rgb(212, 80, 76);
+}
+
+.allocation:hover {
+    opacity: .95;
+}
+
+.allocation.project-one:hover {
+    background-color: rgba(75, 202, 129, 1);
+}
+
+.allocation.project-two:hover {
+    background-color: rgba(255, 154, 60, 1);
+}
+
+.allocation.project-three:hover {
+    background-color: rgba(212, 80, 76, 1);
+}
+
+.allocation.hold {
+    background-image: linear-gradient(45deg, rgba(0, 0, 0, 0.1) 25%, transparent 25%, transparent 50%, rgba(0, 0, 0, 0.1) 50%, rgba(0, 0, 0, 0.1) 75%, transparent 75%, transparent);
+    background-size: 64px 64px;
+}
+
+.allocation.unavailable {
+    background-color: rgb(81, 79, 77);
+    background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.1) 75%, transparent 75%, transparent);
+    background-size: 64px 64px;
+}
+/*** Allocations ***/
