@@ -13,30 +13,47 @@ export default class GanttChart extends Element {
     @track resources = [];
     @track showResourceModal = false;
     // doesn't work due to bug (W-4610385)
-    @track startDate = new Date();
-    
+    get startDate() {
+        if (null == this._startDate) {
+            this._startDate = new Date();
+            this._startDate.setHours(0,0,0,0);
+            this._startDate = new Date(this.startDate.getTime() - this.startDate.getDay() * 24*60*60*1000);
+        }
+
+        return this._startDate;
+    }
+    set startDate(date) {
+        this._startDate = date;
+    }
 
     get isResource() {
         return null == this.projectId;
     }
 
     get endDate() {
-        return new Date(this.startDate.getTime() + (this.days - 1)*24*60*60*1000);
+        return new Date(this.startDate + (this.days - 1)*24*60*60*1000).getTime();
+    }
+
+    get startDateString() {
+        return this.startDate + '';
+    }
+
+    get endDateString() {
+        return this.endDate + '';
     }
 
     get formattedStartDate() {
-        return this.startDate.toLocaleDateString();
+        return new Date(this.startDate).toLocaleDateString();
     }
 
     get formattedEndDate() {
-        return this.endDate.toLocaleDateString();
+        return new Date(this.endDate).toLocaleDateString();
     }
 
     get dates() {
         var _dates = [];
 
-        var endTime = this.endDate.getTime();
-        for (var time = this.startDate.getTime(); time <= endTime; time += 24*60*60*1000) {
+        for (var time = this.startDate; time <= this.endDate; time += 24*60*60*1000) {
             var date = new Date(time);
 
             _dates.push((date.getMonth()+1) + '/' + date.getDate());
@@ -47,13 +64,17 @@ export default class GanttChart extends Element {
 
     connectedCallback() {
         // workaround for bug (W-4610385)
-        this.startDate = new Date();
-        this.startDate.setHours(0,0,0,0);
-        this.startDate = new Date(this.startDate.getTime() - this.startDate.getDay() * 24*60*60*1000);
+        this._startDate = new Date();
+        this._startDate.setHours(0,0,0,0);
+        this._startDate = new Date(this.startDate.getTime() - this.startDate.getDay() * 24*60*60*1000);
+        this.startDate = this._startDate.getTime();
+        this.startDateString = this.startDate + '';
         this.days = 14;
+        this.endDateString = this.endDate + '';
+        
     }
 
-    @wire(getChartData, { recordId: '$recordId', startDate: '$startDate', days: '$days' })
+    @wire(getChartData, { recordId: '$recordId', startDate: '$startDateString', endDate: '$endDateString' })
     wiredGetChartData(value) {
         if (value.error) {
             showToast({

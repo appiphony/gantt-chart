@@ -21,16 +21,28 @@ export default class GanttChartResource extends Element {
     get dates() {
         var _dates = [];
 
-        var endTime = this.endDate.getTime();
-        for (var time = this.startDate.getTime(); time <= endTime; time += 24*60*60*1000) {
+        for (var time = this.startDate; time <= this.endDate; time += 24*60*60*1000) {
             _dates.push(new Date(time));
         }
 
         return _dates;
     }
 
+    get startDateString() {
+        return this.startDate + '';
+    }
+
+    get endDateString() {
+        return this.endDate + '';
+    }
+
+    connectedCallback() {
+        this.startDateString = this.startDate + '';
+        this.endDateString = this.endDate + '';
+    }
+
     wiredAllocationLists;
-    @wire(getAllocationLists, { recordId: '$recordId', startDate: '$startDate', endDate: '$endDate' })
+    @wire(getAllocationLists, { recordId: '$recordId', startDate: '$startDateString', endDate: '$endDateString' })
     wiredGetAllocationLists(value) {
         this.wiredAllocationLists = value;
         if (value.error) {

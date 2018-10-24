@@ -9,15 +9,15 @@ export default class GanttChartAllocation extends Element {
     @api endDate;
 
     get _startDate() {
-        return new Date(this._allocation.Start_Date__c) < this.startDate ? this.startDate : new Date(this._allocation.Start_Date__c);
+        return new Date(this._allocation.Start_Date__c).getTime() < this.startDate ? this.startDate : new Date(this._allocation.Start_Date__c).getTime();
     }
 
     get _endDate() {
-        return new Date(this._allocation.End_Date__c) > this.endDate ? this.endDate : new Date(this._allocation.End_Date__c);
+        return new Date(this._allocation.End_Date__c).getTime() > this.endDate ? this.endDate : new Date(this._allocation.End_Date__c).getTime();
     }
 
     get left() {
-        return Math.ceil((this._startDate.getTime() - this.startDate.getTime()) / 24 / 60 / 60 / 1000) * this._size + 'px;';
+        return Math.ceil((this._startDate - this.startDate) / 24 / 60 / 60 / 1000) * this._size + 'px;';
     }
 
     get top() {
@@ -29,7 +29,7 @@ export default class GanttChartAllocation extends Element {
     }
 
     get width() {
-        return Math.ceil((this._endDate.getTime() - this._startDate.getTime()) / 24 / 60 / 60 / 1000 + 1) * this._size + 'px;';
+        return Math.ceil((this._endDate - this._startDate) / 24 / 60 / 60 / 1000 + 1) * this._size + 'px;';
     }
 
     get style() {

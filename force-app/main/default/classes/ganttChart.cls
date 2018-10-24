@@ -1,41 +1,29 @@
 public with sharing class ganttChart {
     @AuraEnabled(Cacheable=true)
-    public static Map<String, Object> getChartData(Id recordId, Date startDate, Integer days) {
+    public static Map<String, Object> getChartData(Id recordId, String startDate, String endDate) {
         Map<String, Object> data = new Map<String, Object>();
         Map<String, Object> resourceById = new Map<String, Object>();
 
-        // workaround for bug W-4320896
-        days = Integer.valueOf(days);
-        
-        if (null == days) {
-            days = 14;
-        }
-
-        if (null == startDate) {
-           startDate = Date.today();
-        }
-
-        Date endDate = Date.newInstance(startDate.year(), startDate.month(), startDate.day()).addDays(days);
         List<Allocation__c> allocations;
 
         if (null == recordId) {
             allocations = [SELECT Resource__c, Resource__r.Name
                           FROM Allocation__c
-                          WHERE Start_Date__c <= :endDate
-                          AND End_Date__c >= :startDate];
+                          WHERE Start_Date__c <= :DateTime.newInstance(Long.valueOf(endDate)).date()
+                          AND End_Date__c >= :DateTime.newInstance(Long.valueOf(startDate)).date()];
         } else if ('Project__c' == recordId.getSobjectType().getDescribe().getName()) {
             data.put('projectId', recordId);
             allocations = [SELECT Resource__c, Resource__r.Name
                            FROM Allocation__c
                            WHERE Project__c = :recordId
-                           AND Start_Date__c <= :endDate
-                           AND End_Date__c >= :startDate];
+                           AND Start_Date__c <= :DateTime.newInstance(Long.valueOf(endDate)).date()
+                           AND End_Date__c >= :DateTime.newInstance(Long.valueOf(startDate)).date()];
         } else {
             allocations = [SELECT Resource__c, Resource__r.Name
                            FROM Allocation__c
                            WHERE Resource__c = :recordId
-                           AND Start_Date__c <= :endDate
-                           AND End_Date__c >= :startDate];
+                           AND Start_Date__c <= :DateTime.newInstance(Long.valueOf(endDate)).date()
+                           AND End_Date__c >= :DateTime.newInstance(Long.valueOf(startDate)).date()];
         }
 
         for (Allocation__c allocation : allocations) {
@@ -50,24 +38,14 @@ public with sharing class ganttChart {
     }
 
     @AuraEnabled(Cacheable=true)
-    public static List<Object> getAllocationLists(Id recordId, Date startDate, Integer days) {
-        if (null == days) {
-            days = 14;
-        }
-        
-        if (null == startDate) {
-            startDate = Date.today();
-        }
-
-        Date endDate = Date.newInstance(startDate.year(), startDate.month(), startDate.day()).addDays(days);
-
+    public static List<Object> getAllocationLists(Id recordId, String startDate, String endDate) {
         Map<String, Object> allocationsByProject = new Map<String, Object>();
 
         for (Allocation__c allocation : [SELECT Id, Name, Start_Date__c, End_Date__c, Project__c
                                          FROM Allocation__c
                                          WHERE Resource__c = :recordId
-                                         AND Start_Date__c <= :endDate
-                                         AND End_Date__c >= :startDate]) {
+                                         AND Start_Date__c <= :DateTime.newInstance(Long.valueOf(endDate)).date()
+                                         AND End_Date__c >= :DateTime.newInstance(Long.valueOf(startDate)).date()]) {
             if (!allocationsByProject.containsKey(allocation.Project__c)) {
                 allocationsByProject.put(allocation.Project__c, new List<Allocation__c>());
             }
