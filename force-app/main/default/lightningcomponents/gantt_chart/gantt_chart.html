@@ -39,13 +39,13 @@
             </template>
 
             <!-- Empty State -->
-            <div if:false={chartResources.length}>
-                <span class="slds-text-color_weak">EMPTY STATE: NO RESOURCES FOUND</span>
+            <div if:false={chartResources.length} class="slds-text-align_center slds-p-around_medium">
+                <span class="slds-text-color_weak">No Resources to Show</span>
             </div>
             <!-- /Empty State -->
         </div>
 
-        <lightning-button if:false={isResource} variant="brand" label="Add Resource" onclick={openAddResourceModal}></lightning-button>
+        <lightning-button if:false={isResource} variant="neutral" label="Add Resource" icon-name="utility:add" onclick={openAddResourceModal}></lightning-button>
     </div>
 
     <div if:true={showResourceModal}>
