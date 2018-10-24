@@ -6,8 +6,14 @@
             "c-gantt_chart": [
                 "gantt_chart/gantt_chart.js"
             ],
+            "c-gantt_chart_allocation": [
+                "gantt_chart_allocation/gantt_chart_allocation.js"
+            ],
             "c-gantt_chart_resource": [
                 "gantt_chart_resource/gantt_chart_resource.js"
+            ],
+            "c-gantt_chart_timeslot": [
+                "gantt_chart_timeslot/gantt_chart_timeslot.js"
             ]
         }
     },

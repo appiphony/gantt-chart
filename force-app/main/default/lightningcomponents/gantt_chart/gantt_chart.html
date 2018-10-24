@@ -1,20 +1,31 @@
 <template>
-    <div class="slds-grid slds-wrap">
-        <div if:true={showHeader} class="slds-size_1-of-2">
+    <lightning-button label="Refresh" onclick={refresh}></lightning-button>
+
+    <div class="slds-clearfix">
+        <div if:false={isResource} class="slds-float_left" style="width: 100px; overflow-x: hidden;">
             Resource
         </div>
-        <div class="slds-size_1-of-2">
-            Timeline
+        <div class="slds-float_left">
+            Timeline ({formattedStartDate} - {formattedEndDate})
         </div>
-
+    </div>
+    <div class="slds-clearfix">
         <template if:true={resourceIds.length}>
             <template for:each={resourceIds} for:item="resourceId">
-                <div key={resourceId} class="slds-size_2-of-2">
-                    <c-gantt_chart_resource record-id={resourceId} show-header={showHeader}></c-gantt_chart_resource>
-                </div>
+                <c-gantt_chart_resource key={resourceId} record-id={resourceId} is-resource={isResource} start-date={startDate} end-date={endDate}></c-gantt_chart_resource>
             </template>
         </template>
 
-        <div if:false={resourceIds.length} class="slds-size_2-of-2">EMPTY STATE: NO RESOURCES FOUND</div>
+        <div if:false={resourceIds.length}>EMPTY STATE: NO RESOURCES FOUND</div>
+    </div>
+
+    <lightning-button if:false={isResource} variant="brand" label="Add Resource" onclick={openAddResourceModal}></lightning-button>
+
+    <div if:true={showResourceModal}>
+        <select>
+            <template for:each={resources} for:item="resource">
+                <option key={resource.Id} value={resource.Id}>{resource.Name}</option>
+            </template>
+        </select>
     </div>
 </template>

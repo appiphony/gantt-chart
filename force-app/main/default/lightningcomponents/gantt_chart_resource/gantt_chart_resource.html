@@ -1,12 +1,20 @@
 <template>
-    <div if:true={showHeader}>
-        <a target="_blank" href={link}>{resource.Name}</a>
-    </div>
-    <div>
-        <template for:each={allocationLists} for:item="allocationList">
-            <template for:each={allocationList} for:item="allocation">
-                {allocation.Start_Date__c} - {allocation.End_Date__c}
+    <div class="slds-clearfix">
+        <div if:false={isResource} class="slds-float_left" style="width: 100px; overflow-x: hidden;">
+            <a target="_blank" href={link}>{resource.Name}</a>
+        </div>
+        <div class="slds-float_left slds-is-relative" style="overflow-x: hidden;">
+            <template for:each={allocationLists} for:item="allocationList" for:index="index">
+                <template for:each={allocationList} for:item="allocation">
+                    <c-gantt_chart_allocation key={allocation.Id} allocation={allocation} index={index} start-date={startDate} end-date={endDate}></c-gantt_chart_allocation>
+                </template>
             </template>
-        </template>
+
+            <div class="slds-clearfix">
+                <template for:each={dates} for:item="date">
+                    <c-gantt_chart_timeslot key={date} resource={resource} date={date}></c-gantt_chart_timeslot>
+                </template>
+            </div>
+        </div>
     </div>
 </template>

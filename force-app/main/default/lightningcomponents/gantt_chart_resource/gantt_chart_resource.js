@@ -5,10 +5,23 @@ import getResource from '@salesforce/apex/ganttChart.getResource';
 
 export default class GanttChartResource extends Element {
     @api recordId;
-    @api showHeader;
+    @api startDate;
+    @api endDate;
+    @api isResource;
 
     @track resource = {};
     @track allocationLists = [];
+
+    get dates() {
+        var _dates = [];
+
+        var endTime = this.endDate.getTime();
+        for (var time = this.startDate.getTime(); time < endTime; time += 24*60*60*1000) {
+            _dates.push(new Date(time));
+        }
+
+        return _dates;
+    }
 
     @wire(getResource, { recordId: '$recordId' })
     wiredResource({ error, data }) {
@@ -18,7 +31,8 @@ export default class GanttChartResource extends Element {
             this.resource = data;
         }
     }
-    @wire(getAllocationLists, { recordId: '$recordId', startDate: null, endDate: null })
+
+    @wire(getAllocationLists, { recordId: '$recordId', startDate: '$startDate', endDate: '$endDate' })
     wiredAllocationLists({ error, data }) {
         if (error) {
             this.error = error;
