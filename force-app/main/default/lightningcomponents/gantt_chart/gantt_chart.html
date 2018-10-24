@@ -1,25 +1,47 @@
 <template>
-    <lightning-button label="Refresh" onclick={refresh}></lightning-button>
 
-    <div class="slds-clearfix">
-        <div if:false={isResource} class="slds-float_left" style="width: 100px; overflow-x: hidden;">
-            Resource
+    <div class="slds-card slds-theme_default">
+        <!-- Header Bar -->
+        <div class="slds-grid slds-grid_vertical-align-center slds-border_bottom slds-m-bottom_medium slds-p-around_medium">
+            <div class="slds-col slds-grow-none">
+                <!-- <lightning:button label="Filter" iconName="utility:filterList"></lightning:button> -->
+            </div>
+            <div class="slds-col slds-text-align_center">
+                 <h1 class="slds-text-heading_medium">
+                    Timeline ({formattedStartDate} - {formattedEndDate})
+                </h1> 
+            </div>
+            <div class="slds-col slds-grow-none">
+                <!-- <lightning-buttonGroup>
+                    <lightning-buttonIcon iconName="utility:left" variant="border-filled"></lightning-buttonIcon>
+                    <lightning-button label="Today"></lightning-button>
+                    <lightning-buttonIcon iconName="utility:right" variant="border-filled"></lightning-buttonIcon>
+                </lightning-buttonGroup>
+                <lightning-buttonIcon iconName="utility:dayview" variant="border-filled" class="slds-m-left_medium"/> -->
+            </div>
         </div>
-        <div class="slds-float_left">
-            Timeline ({formattedStartDate} - {formattedEndDate})
+        <!-- /Header Bar -->
+        <lightning-button label="Refresh" onclick={refresh}></lightning-button>
+        <div class="slds-clearfix">
+            <div if:false={isResource} class="slds-float_left" style="width: 100px; overflow-x: hidden;">
+                Resource
+            </div>
+            <div class="slds-float_left">
+                Timeline ({formattedStartDate} - {formattedEndDate})
+            </div>
         </div>
-    </div>
-    <div class="slds-clearfix">
-        <template if:true={resourceIds.length}>
-            <template for:each={resourceIds} for:item="resourceId">
-                <c-gantt_chart_resource key={resourceId} record-id={resourceId} is-resource={isResource} start-date={startDate} end-date={endDate}></c-gantt_chart_resource>
+        <div class="slds-clearfix">
+            <template if:true={resourceIds.length}>
+                <template for:each={resourceIds} for:item="resourceId">
+                    <c-gantt_chart_resource key={resourceId} record-id={resourceId} is-resource={isResource} start-date={startDate} end-date={endDate}></c-gantt_chart_resource>
+                </template>
             </template>
-        </template>
 
-        <div if:false={resourceIds.length}>EMPTY STATE: NO RESOURCES FOUND</div>
+            <div if:false={resourceIds.length}>EMPTY STATE: NO RESOURCES FOUND</div>
+        </div>
+
+        <lightning-button if:false={isResource} variant="brand" label="Add Resource" onclick={openAddResourceModal}></lightning-button>
     </div>
-
-    <lightning-button if:false={isResource} variant="brand" label="Add Resource" onclick={openAddResourceModal}></lightning-button>
 
     <div if:true={showResourceModal}>
         <select>
