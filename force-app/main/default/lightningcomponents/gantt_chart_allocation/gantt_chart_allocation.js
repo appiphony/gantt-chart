@@ -2,6 +2,7 @@ import { Element, api } from 'engine';
 
 export default class GanttChartAllocation extends Element {
     _allocation;
+    _size = 50;
 
     @api index;
     @api startDate;
@@ -16,15 +17,23 @@ export default class GanttChartAllocation extends Element {
     }
 
     get left() {
-        return Math.ceil((this._startDate.getTime() - this.startDate.getTime()) / 24 / 60 / 60 / 1000) * 50 + 'px;';
+        return Math.ceil((this._startDate.getTime() - this.startDate.getTime()) / 24 / 60 / 60 / 1000) * this._size + 'px;';
+    }
+
+    get top() {
+        return this.index * this._size + 'px;';
+    }
+
+    get height() {
+        return this._size / 2 + 'px;';
     }
 
     get width() {
-        return Math.ceil((this._endDate.getTime() - this._startDate.getTime()) / 24 / 60 / 60 / 1000) * 50 + 'px;';
+        return Math.ceil((this._endDate.getTime() - this._startDate.getTime()) / 24 / 60 / 60 / 1000 + 1) * this._size + 'px;';
     }
 
     get style() {
-        return 'border:1px solid black; text-align: center; background: green; color: white; top: ' + this.index * 50 + 'px; left: ' + this._startDate + 'px; height: 25px; width: ' + this.width;
+        return 'border:1px solid black; text-align: center; background: green; color: white; overflow-x: hidden; left: ' + this.left + ' height: ' + this.height + ' top: ' + this.top + ' width: ' + this.width;
     }
 
     @api
