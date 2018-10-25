@@ -33,7 +33,7 @@ export default class GanttChartAllocation extends Element {
     }
 
     get style() {
-        return 'border:1px solid black; text-align: center; background: green; color: white; overflow-x: hidden; left: ' + this.left + ' height: ' + this.height + ' top: ' + this.top + ' width: ' + this.width;
+        return 'left: ' + this.left + ' top: ' + this.top + ' width: ' + this.width;
     }
 
     @api
