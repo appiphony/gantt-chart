@@ -1,3 +1,9 @@
-.THIS .resource-table {
-    width: 100%;
+.timeline_month {
+    border-radius: .25rem;
+}
+
+.timeline_date {
+    height: 50px;
+    min-width: 50px;
+    text-align: center;
 }
