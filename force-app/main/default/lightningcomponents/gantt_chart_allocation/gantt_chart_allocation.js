@@ -9,34 +9,34 @@ export default class GanttChartAllocation extends Element {
     @api endDate;
 
     get _startDate() {
-        return new Date(this._allocation.Start_Date__c + 'T00:00:00').getTime() < this.startDate.getTime() ? this.startDate.getTime() : new Date(this._allocation.Start_Date__c + 'T00:00:00').getTime();
+        return new Date(this._allocation.Start_Date__c + 'T00:00:00') < this.startDate ? this.startDate : new Date(this._allocation.Start_Date__c + 'T00:00:00');
     }
 
     get _endDate() {
-        return new Date(this._allocation.End_Date__c + 'T00:00:00').getTime() > this.endDate.getTime() ? this.endDate.getTime() : new Date(this._allocation.End_Date__c + 'T00:00:00').getTime();
-    }
-
-    get left() {
-        return Math.ceil((this._startDate - this.startDate) / 24 / 60 / 60 / 1000) * this._size + 'px;';
-    }
-
-    get top() {
-        return this.index * this._size + 'px;';
+        return new Date(this._allocation.End_Date__c + 'T00:00:00') > this.endDate ? this.endDate : new Date(this._allocation.End_Date__c + 'T00:00:00');
     }
 
     get height() {
         return this._size / 2 + 'px;';
     }
 
-    get width() {
-        return Math.ceil((this._endDate - this._startDate) / 24 / 60 / 60 / 1000 + 1) * this._size + 'px;';
+    get left() {
+        return (this._startDate - this.startDate) / (this.endDate - this.startDate + 24*60*60*1000) * 100 + '%;';
+    }
+
+    get right() {
+        return (this.endDate - this._endDate) / (this.endDate - this.startDate + 24*60*60*1000) * 100 + '%;';
+    }
+
+    get top() {
+        return this.index * this._size + 'px;';
     }
 
     get style() {
         return [
             'left: ' + this.left,
-            'top: ' + this.top,
-            'width: ' + this.width
+            'right: ' + this.right,
+            'top: ' + this.top
         ].join(' ');
     }
 
