@@ -1,11 +1,17 @@
 <template>
     <div title={allocation.Name} draggable="true" ondragstart={handleDragStart} class="slds-is-absolute allocation" style={style}>
-        <div class="handle handle_left" draggable="true" ondragstart={handleLeftDragStart}>
-            &nbsp;
+        <div class="slds-grid slds-grid_vertical-align-center">
+            <div class="slds-col slds-grow-none handle handle_left" draggable="true" ondragstart={handleLeftDragStart}>
+                <!-- &nbsp; -->
+                <lightning-icon icon-name="utility:threedots_vertical" variant="inverse" size="x-small"></lightning-icon>
+            </div>
+            <div class="slds-col slds-truncate">
+                {allocation.Name}
+            </div>
+            <div class="slds-col slds-grow-none handle handle_right" draggable="true" ondragstart={handleRightDragStart}>
+                <!-- &nbsp; -->
+                <lightning-icon icon-name="utility:threedots_vertical" variant="inverse" size="x-small"></lightning-icon>
+            </div>
         </div>
-        <div class="handle handle_right" draggable="true" ondragstart={handleRightDragStart}>
-            &nbsp;
-        </div>
-        {allocation.Name}
     </div>
 </template>
