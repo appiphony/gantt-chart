@@ -18,34 +18,29 @@
             </div>
         </div>
         <!-- /Header Bar -->
-        <div class="slds-clearfix">
-            <div class="slds-grid">
-                <div class="slds-col slds-size_1-of-6">
-                    <div if:false={isResource}>
-                        <span class="slds-text-heading_medium">
-                            Resources
-                        </span>
+
+        <!-- Gantt Chart -->
+        <div class="slds-p-around_medium">
+            <!-- Timeline -->
+            <div class="slds-clearfix">
+                <div class="slds-grid">
+                    <div class="slds-col slds-size_1-of-6">
+                        <div if:false={isResource}>
+                            <span class="slds-text-heading_medium">
+                                Resources
+                            </span>
+                        </div>
+                    </div>
+                    <div class="slds-col">
+                        <template for:each={dates} for:item="date">
+                            <div key={date} class="slds-float_left" style="text-align: center; width: 50px;">{date}</div>
+                        </template>
                     </div>
                 </div>
-                <div class="slds-col">
-                    <template for:each={dates} for:item="date">
-                        <div key={date} class="slds-float_left" style="text-align: center; width: 50px;">{date}</div>
-                    </template>
-                </div>
             </div>
-            <!-- <div if:false={isResource} class="slds-float_left" style="width: 100px; overflow-x: hidden;">
-                Resource
-            </div> -->
-            <div class="slds-float_left">
-                <!-- <div style="text-align: center;">Timeline ({formattedStartDate} - {formattedEndDate})</div> -->
-                <!-- <div class="slds-clearfix">
-                    <template for:each={dates} for:item="date">
-                        <div key={date} class="slds-float_left" style="text-align: center; width: 50px;">{date}</div>
-                    </template>
-                </div> -->
-            </div>
-        </div>
-        <div class="slds-clearfix">
+            <!-- /Timeline -->
+
+            <!-- Allocation Table -->
             <template if:true={chartResources.length}>
                 <template for:each={chartResources} for:item="resource">
                     <c-gantt_chart_resource key={resourceId} record-id={resource.Id} name={resource.Name} project-id={projectId} start-date={startDate} end-date={endDate}></c-gantt_chart_resource>
@@ -57,9 +52,13 @@
                 <span class="slds-text-color_weak">No Resources to Show</span>
             </div>
             <!-- /Empty State -->
+        
+            <!-- /Allocation Table -->
+            <div class="slds-m-top_medium">
+                <lightning-button if:false={isResource} variant="neutral" label="Add Resource" icon-name="utility:add" onclick={openAddResourceModal}></lightning-button>
+            </div>
         </div>
-
-        <lightning-button if:false={isResource} variant="neutral" label="Add Resource" icon-name="utility:add" onclick={openAddResourceModal}></lightning-button>
+        <!-- /Gantt Chart -->
     </div>
 
     <div if:true={showResourceModal}>
