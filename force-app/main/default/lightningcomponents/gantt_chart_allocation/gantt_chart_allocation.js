@@ -34,15 +34,7 @@ export default class GanttChartAllocation extends Element {
 
     get style() {
         return [
-            'background: green;',
-            'border: 1px solid black;',
-            'color: white;',
-            'cursor: grab',
-            'height: ' + this.height,
             'left: ' + this.left,
-            'overflow-x: hidden;',
-            'text-align: center;',
-            'text-overflow: ellipsis;',
             'top: ' + this.top,
             'width: ' + this.width
         ].join(' ');

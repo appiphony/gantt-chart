@@ -1,0 +1,8 @@
+.allocation-container {
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.allocation-container * {
+    pointer-events: auto;
+}

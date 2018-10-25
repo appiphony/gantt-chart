@@ -1,10 +1,10 @@
 <template>
-    <div title={allocation.Name} class="slds-is-absolute slds-clearfix" draggable="true" ondragstart={handleDragStart} style={style}>
+    <div title={allocation.Name} draggable="true" ondragstart={handleDragStart} class="slds-is-absolute allocation" style={style}>
         <div class="handle handle_left" draggable="true" ondragstart={handleLeftDragStart}>
-
+            &nbsp;
         </div>
         <div class="handle handle_right" draggable="true" ondragstart={handleRightDragStart}>
-            
+            &nbsp;
         </div>
         {allocation.Name}
     </div>
