@@ -61,7 +61,6 @@ export default class GanttChartResource extends Element {
     }
 
     handleAllocation(event) {
-        debugger;
         var allocation = event.detail;
 
         if (null == allocation.projectId && null != this.projectId) {
