@@ -10,3 +10,7 @@
 .allocation-container * {
     pointer-events: auto;
 }
+
+c-gantt_chart_timeslot {
+    width: 100%;
+}

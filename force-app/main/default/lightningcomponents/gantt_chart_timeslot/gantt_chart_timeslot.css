@@ -3,7 +3,7 @@
     border-bottom: 1px solid #dddbda;
     border-left: 1px solid #dddbda;
     height: 100%;
-    width: 50px;
+    min-width: 50px;
     cursor: pointer;
     transition: background-color 200ms ease 0s;
 }
