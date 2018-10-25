@@ -42,8 +42,8 @@ export default class GanttChartTimeslot extends Element {
                 }
                 break;
             default:
+                endDate = new Date(endDate.getTime() - startDate.getTime() + this.date.getTime());
                 startDate = this.date;
-                endDate = this.date;
         }
 
         var startDateUTC = startDate.getTime() + startDate.getTimezoneOffset() * 60 * 1000;
