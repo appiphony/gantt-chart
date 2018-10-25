@@ -21,32 +21,36 @@ export default class GanttChartResource extends Element {
     get dates() {
         var _dates = [];
 
-        for (var time = this.startDate; time <= this.endDate; time += 24*60*60*1000) {
+        for (var time = this.startDate.getTime(); time <= this.endDate.getTime(); time += 24*60*60*1000) {
             _dates.push(new Date(time));
         }
 
         return _dates;
     }
 
-    get startDateString() {
-        return this.startDate + '';
+    get startDateUTC() {
+        return this.startDate.getTime() + this.startDate.getTimezoneOffset() * 60 * 1000 + '';
     }
 
-    get endDateString() {
-        return this.endDate + '';
+    get endDateUTC() {
+        return this.endDate.getTime() + this.endDate.getTimezoneOffset() * 60 * 1000 + '';
     }
 
     connectedCallback() {
-        this.startDateString = this.startDate + '';
-        this.endDateString = this.endDate + '';
+        this.startDateUTC = this.startDate.getTime() + this.startDate.getTimezoneOffset() * 60 * 1000 + ''
+        this.endDateUTC = this.endDate.getTime() + this.endDate.getTimezoneOffset() * 60 * 1000 + '';
     }
 
     wiredAllocationLists;
-    @wire(getAllocationLists, { recordId: '$recordId', startDate: '$startDateString', endDate: '$endDateString' })
+    @wire(getAllocationLists, { recordId: '$recordId', startDate: '$startDateUTC', endDate: '$endDateUTC' })
     wiredGetAllocationLists(value) {
         this.wiredAllocationLists = value;
+
         if (value.error) {
-            this.error = value.error;
+            showToast({
+                error: value.error,
+                variant: 'error'
+            });
         } else if (value.data) {
             this.allocationLists = value.data;
         }
@@ -56,7 +60,8 @@ export default class GanttChartResource extends Element {
         return '/' + this.recordId;
     }
 
-    handleAllocationEvent(event) {
+    handleAllocation(event) {
+        debugger;
         var allocation = event.detail;
 
         if (null == allocation.projectId && null != this.projectId) {
@@ -69,7 +74,7 @@ export default class GanttChartResource extends Element {
 
         saveAllocation(allocation)
         .then(() => {
-            refreshApex(this.wiredAllocationLists);
+            return refreshApex(this.wiredAllocationLists);
         }).catch(error => {
             showToast({
                 message: error.message,

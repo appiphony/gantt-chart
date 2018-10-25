@@ -1,25 +1,18 @@
 import { Element, api } from 'engine';
 
 export default class GanttChartTimeslot extends Element {
-    _date;
-
-    @api
-    get date() {
-        return this._date;
-    }
-    set date(date) {
-        // convert to GMT
-        this._date = new Date(date.getTime() + date.getTimezoneOffset() * 60 * 1000);
-    }
+    @api date;
 
     handleClick() {
+        var dateUTC = this.date.getTime() + this.date.getTimezoneOffset() * 60 * 1000;
+
         this.dispatchEvent(new CustomEvent('allocation', {
             bubbles: true,
             cancelable: true,
             composed: true,
             detail: {
-                startDate: this.date.getTime() + '',
-                endDate: this.date.getTime() + ''
+                startDate: dateUTC + '',
+                endDate: dateUTC + ''
             }
         }));
     }
@@ -30,17 +23,39 @@ export default class GanttChartTimeslot extends Element {
 
     handleDrop(event) {
         event.preventDefault();
-
+        
         const allocation = JSON.parse(event.dataTransfer.getData('allocation'));
+        const direction = event.dataTransfer.getData('direction');
+
+        var startDate = new Date(allocation.Start_Date__c + 'T00:00:00');
+        var endDate = new Date(allocation.End_Date__c + 'T00:00:00');
+
+        switch(direction) {
+            case 'left':
+                if (this.date.getTime() <= endDate.getTime()) {
+                    startDate = this.date;
+                }
+                break;
+            case 'right':
+                if (this.date.getTime() >= startDate.getTime()) {
+                    endDate = this.date;
+                }
+                break;
+            default:
+                startDate = this.date;
+                endDate = this.date;
+        }
+
+        var startDateUTC = startDate.getTime() + startDate.getTimezoneOffset() * 60 * 1000;
+        var endDateUTC = endDate.getTime() + endDate.getTimezoneOffset() * 60 * 1000;
 
         this.dispatchEvent(new CustomEvent('allocation', {
             bubbles: true,
-            cancelable: true,
             composed: true,
             detail: {
                 allocationId: allocation.Id,
-                startDate: this.date.getTime() + '',
-                endDate: this.date.getTime() + ''
+                startDate: startDateUTC + '',
+                endDate: endDateUTC + ''
             }
         }));
     }

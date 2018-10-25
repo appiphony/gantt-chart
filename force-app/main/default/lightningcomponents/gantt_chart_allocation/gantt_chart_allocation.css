@@ -1,0 +1,12 @@
+.handle {
+    height: 25px;
+    width: 5px;
+}
+.handle.handle_left {
+    cursor: w-resize;
+    float: left;
+}
+.handle.handle_right {
+    cursor: e-resize;
+    float: right;
+}

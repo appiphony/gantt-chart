@@ -9,11 +9,11 @@ export default class GanttChartAllocation extends Element {
     @api endDate;
 
     get _startDate() {
-        return new Date(this._allocation.Start_Date__c).getTime() < this.startDate ? this.startDate : new Date(this._allocation.Start_Date__c).getTime();
+        return new Date(this._allocation.Start_Date__c + 'T00:00:00').getTime() < this.startDate.getTime() ? this.startDate.getTime() : new Date(this._allocation.Start_Date__c + 'T00:00:00').getTime();
     }
 
     get _endDate() {
-        return new Date(this._allocation.End_Date__c).getTime() > this.endDate ? this.endDate : new Date(this._allocation.End_Date__c).getTime();
+        return new Date(this._allocation.End_Date__c + 'T00:00:00').getTime() > this.endDate.getTime() ? this.endDate.getTime() : new Date(this._allocation.End_Date__c + 'T00:00:00').getTime();
     }
 
     get left() {
@@ -33,7 +33,19 @@ export default class GanttChartAllocation extends Element {
     }
 
     get style() {
-        return 'border:1px solid black; text-align: center; background: green; color: white; overflow-x: hidden; left: ' + this.left + ' height: ' + this.height + ' top: ' + this.top + ' width: ' + this.width;
+        return [
+            'background: green;',
+            'border: 1px solid black;',
+            'color: white;',
+            'cursor: grab',
+            'height: ' + this.height,
+            'left: ' + this.left,
+            'overflow-x: hidden;',
+            'text-align: center;',
+            'text-overflow: ellipsis;',
+            'top: ' + this.top,
+            'width: ' + this.width
+        ].join(' ');
     }
 
     @api
@@ -46,5 +58,20 @@ export default class GanttChartAllocation extends Element {
 
     handleDragStart(event) {
         event.dataTransfer.setData('allocation', JSON.stringify(this.allocation));
+
+        // currently not working
+        var img = document.createElement('img');
+        img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+        event.dataTransfer.setDragImage(img, 0, 0);
+    }
+
+    handleLeftDragStart(event) {
+        event.dataTransfer.setData('direction', 'left');
+        this.handleDragStart(event);
+    }
+
+    handleRightDragStart(event) {
+        event.dataTransfer.setData('direction', 'right');
+        this.handleDragStart(event);
     }
 }
