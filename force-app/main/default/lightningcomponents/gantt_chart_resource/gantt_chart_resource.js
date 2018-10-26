@@ -17,10 +17,6 @@ export default class GanttChartResource extends Element {
         return this.resource.Id;
     }
 
-    get isResource() {
-        return null == this.projectId;
-    }
-
     get dates() {
         var _dates = [];
 

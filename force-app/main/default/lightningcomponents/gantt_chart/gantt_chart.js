@@ -61,6 +61,14 @@ export default class GanttChart extends Element {
         return _dates;
     }
 
+    get recordIdOrEmpty() {
+        if (this.recordId) {
+            return this.recordId;
+        }
+
+        return '';
+    }
+
     // modal
     @track modalResourceId;
     @track modalResources = [];
@@ -76,9 +84,11 @@ export default class GanttChart extends Element {
         this.startDateUTC = this.startDate.getTime() + this.startDate.getTimezoneOffset() * 60 * 1000 + '';
         this.days = 14;
         this.endDateUTC = this.endDate.getTime() + this.endDate.getTimezoneOffset() * 60 * 1000 + '';
+
+        this.recordIdOrEmpty = this.recordId ? this.recordId : '';
     }
 
-    @wire(getChartData, { recordId: '$recordId', startDate: '$startDateUTC', endDate: '$endDateUTC' })
+    @wire(getChartData, { recordId: '$recordIdOrEmpty', startDate: '$startDateUTC', endDate: '$endDateUTC' })
     wiredGetChartData(value) {
         if (value.error) {
             showToast({

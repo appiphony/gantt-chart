@@ -1,17 +1,17 @@
 public with sharing class ganttChart {
     @AuraEnabled(Cacheable=true)
-    public static Map<String, Object> getChartData(Id recordId, String startDate, String endDate) {
+    public static Map<String, Object> getChartData(String recordId, String startDate, String endDate) {
         Map<String, Object> data = new Map<String, Object>();
         Map<String, Object> resourceById = new Map<String, Object>();
 
         List<Allocation__c> allocations;
 
-        if (null == recordId) {
+        if (String.isEmpty(recordId)) {
             allocations = [SELECT Resource__c, Resource__r.Name, Resource__r.Default_Role__c
                           FROM Allocation__c
                           WHERE Start_Date__c <= :DateTime.newInstance(Long.valueOf(endDate)).date()
                           AND End_Date__c >= :DateTime.newInstance(Long.valueOf(startDate)).date()];
-        } else if ('Project__c' == recordId.getSobjectType().getDescribe().getName()) {
+        } else if ('Project__c' == Id.valueOf(recordId).getSobjectType().getDescribe().getName()) {
             data.put('projectId', recordId);
             allocations = [SELECT Resource__c, Resource__r.Name, Resource__r.Default_Role__c
                            FROM Allocation__c

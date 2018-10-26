@@ -24,7 +24,7 @@
             <!-- Timeline -->
             <div class="slds-grid">
                 <div class="slds-col slds-size_1-of-6 slds-align-bottom">
-                    <div if:false={isResource}>
+                    <div if:false={isResourceView}>
                         <span class="slds-text-heading_medium">
                             Resources
                         </span>
@@ -73,7 +73,7 @@
             <!-- /Allocation Table -->
 
             <div class="slds-m-top_medium">
-                <lightning-button if:false={isResource} variant="neutral" label="Add Resource" icon-name="utility:add" onclick={openAddResourceModal}></lightning-button>
+                <lightning-button if:false={isResourceView} variant="neutral" label="Add Resource" icon-name="utility:add" onclick={openAddResourceModal}></lightning-button>
             </div>
         </div>
         <!-- /Gantt Chart -->
