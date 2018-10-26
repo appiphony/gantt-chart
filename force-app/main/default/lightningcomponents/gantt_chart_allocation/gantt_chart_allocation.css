@@ -1,10 +1,5 @@
-.allocation .handle.handle_left {
-    float: left;
-    cursor: w-resize;
-}
-.allocation .handle.handle_right {
-    float: right;
-    cursor: e-resize;
+.allocation .allocation_handle {
+    cursor: ew-resize;
 }
 
 /*** Allocations ***/
@@ -21,11 +16,12 @@
     text-overflow: ellipsis;
 }
 
-.allocation .handle {
+.allocation .allocation_handle,
+.allocation .allocation_actions {
     opacity: 0;
 }
 
-.allocation .handle .slds-icon_container {
+.allocation .slds-icon_container {
     margin-bottom: 1px;
 }
 
@@ -58,8 +54,14 @@
     opacity: .95;
 }
 
-.allocation:hover .handle {
+.allocation:hover .allocation_handle,
+.allocation:hover .allocation_actions {
     opacity: .7;
+}
+
+.allocation .allocation_handle:hover,
+.allocation .allocation_actions:hover {
+    opacity: 1;
 }
 
 .allocation.project-one:hover {
