@@ -25,6 +25,11 @@
         <field>Resource__c.Active__c</field>
         <readable>true</readable>
     </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Resource__c.Default_Role__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
     <layoutAssignments>
         <layout>Allocation__c-Allocation Layout</layout>
     </layoutAssignments>
@@ -61,6 +66,10 @@
         <object>Resource__c</object>
         <viewAllRecords>true</viewAllRecords>
     </objectPermissions>
+    <tabVisibilities>
+        <tab>Overview</tab>
+        <visibility>DefaultOn</visibility>
+    </tabVisibilities>
     <tabVisibilities>
         <tab>Project__c</tab>
         <visibility>DefaultOn</visibility>

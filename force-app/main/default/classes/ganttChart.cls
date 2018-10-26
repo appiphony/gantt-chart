@@ -7,19 +7,19 @@ public with sharing class ganttChart {
         List<Allocation__c> allocations;
 
         if (null == recordId) {
-            allocations = [SELECT Resource__c, Resource__r.Name
+            allocations = [SELECT Resource__c, Resource__r.Name, Resource__r.Default_Role__c
                           FROM Allocation__c
                           WHERE Start_Date__c <= :DateTime.newInstance(Long.valueOf(endDate)).date()
                           AND End_Date__c >= :DateTime.newInstance(Long.valueOf(startDate)).date()];
         } else if ('Project__c' == recordId.getSobjectType().getDescribe().getName()) {
             data.put('projectId', recordId);
-            allocations = [SELECT Resource__c, Resource__r.Name
+            allocations = [SELECT Resource__c, Resource__r.Name, Resource__r.Default_Role__c
                            FROM Allocation__c
                            WHERE Project__c = :recordId
                            AND Start_Date__c <= :DateTime.newInstance(Long.valueOf(endDate)).date()
                            AND End_Date__c >= :DateTime.newInstance(Long.valueOf(startDate)).date()];
         } else {
-            allocations = [SELECT Resource__c, Resource__r.Name
+            allocations = [SELECT Resource__c, Resource__r.Name, Resource__r.Default_Role__c
                            FROM Allocation__c
                            WHERE Resource__c = :recordId
                            AND Start_Date__c <= :DateTime.newInstance(Long.valueOf(endDate)).date()
@@ -29,7 +29,8 @@ public with sharing class ganttChart {
         for (Allocation__c allocation : allocations) {
             resourceById.put(allocation.Resource__c, new Map<String, Object> {
                 'Id' => allocation.Resource__c,
-                'Name' => allocation.Resource__r.Name
+                'Name' => allocation.Resource__r.Name,
+                'Default_Role__c' => allocation.Resource__r.Default_Role__c
             });
         }
         data.put('resources', resourceById.values());
@@ -41,7 +42,7 @@ public with sharing class ganttChart {
     public static List<Object> getAllocationLists(Id recordId, String startDate, String endDate) {
         Map<String, Object> allocationsByProject = new Map<String, Object>();
 
-        for (Allocation__c allocation : [SELECT Id, Name, Start_Date__c, End_Date__c, Project__c
+        for (Allocation__c allocation : [SELECT Id, Start_Date__c, End_Date__c, Project__c, Project__r.Name
                                          FROM Allocation__c
                                          WHERE Resource__c = :recordId
                                          AND Start_Date__c <= :DateTime.newInstance(Long.valueOf(endDate)).date()
@@ -58,7 +59,7 @@ public with sharing class ganttChart {
 
     @AuraEnabled(Cacheable=true)
     public static List<Resource__c> getResources() {
-        return [SELECT Id, Name
+        return [SELECT Id, Name, Default_Role__c
                 FROM Resource__c
                 WHERE Active__c = true];
     }
@@ -73,7 +74,6 @@ public with sharing class ganttChart {
         if (null != allocationId) {
             allocation.Id = allocationId;
         } else {
-            allocation.Name = 'New';
             if (null != projectId) {
                 allocation.Project__c = projectId;
             }

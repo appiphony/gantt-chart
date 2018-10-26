@@ -53,8 +53,9 @@
     <enableStreamingApi>true</enableStreamingApi>
     <label>Allocation</label>
     <nameField>
+        <displayFormat>A-{0}</displayFormat>
         <label>Allocation Name</label>
-        <type>Text</type>
+        <type>AutoNumber</type>
     </nameField>
     <pluralLabel>Allocations</pluralLabel>
     <searchLayouts/>

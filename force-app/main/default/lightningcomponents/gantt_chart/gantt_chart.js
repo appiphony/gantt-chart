@@ -8,10 +8,9 @@ export default class GanttChart extends Element {
     @api recordId;
     @api days = 14;
     
-    @track chartResources = [];
+    // chart
     @track projectId;
     @track resources = [];
-    @track showResourceModal = false;
     // doesn't work due to bug (W-4610385)
     get startDate() {
         if (null == this._startDate) {
@@ -62,6 +61,11 @@ export default class GanttChart extends Element {
         return _dates;
     }
 
+    // modal
+    @track modalResourceId;
+    @track modalResources = [];
+    @track showResourceModal = false;
+
     connectedCallback() {
         // workaround for bug (W-4610385)
         this._startDate = new Date();
@@ -72,7 +76,6 @@ export default class GanttChart extends Element {
         this.startDateUTC = this.startDate.getTime() + this.startDate.getTimezoneOffset() * 60 * 1000 + '';
         this.days = 14;
         this.endDateUTC = this.endDate.getTime() + this.endDate.getTimezoneOffset() * 60 * 1000 + '';
-        
     }
 
     @wire(getChartData, { recordId: '$recordId', startDate: '$startDateUTC', endDate: '$endDateUTC' })
@@ -85,14 +88,13 @@ export default class GanttChart extends Element {
         }
         if (value.data) {
             this.projectId = value.data.projectId;
-            this.chartResources = value.data.resources;
+            this.resources = value.data.resources;
         }
     }
 
     openAddResourceModal() {
-        getResources()
-        .then(resources => {
-            this.resources = resources;
+        getResources().then(resources => {
+            this.modalResources = resources.filter(resource => !this.resources.includes(resource));
             this.showResourceModal = true;
         }).catch(error => {
             showToast({
@@ -100,5 +102,24 @@ export default class GanttChart extends Element {
                 variant: 'error'
             });
         });
+    }
+
+    selectResource(event) {
+        this.modalResourceId = event.target.value;
+    }
+
+    addResourceById() {
+        debugger;
+        this.modalResources.forEach(resource => {
+            if (resource.Id === this.modalResourceId) {
+                var newResource = Object.assign({}, resource);
+                // unable to directly push to this array
+                this.resources = this.resources.concat([newResource]);
+            }
+        });
+        
+        this.modalResourceId = null;
+        this.showResourceModal = false;
+        this.modalResources = [];
     }
 }

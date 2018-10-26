@@ -6,13 +6,16 @@ import getAllocationLists from '@salesforce/apex/ganttChart.getAllocationLists';
 import saveAllocation from '@salesforce/apex/ganttChart.saveAllocation';
 
 export default class GanttChartResource extends Element {
-    @api recordId;
-    @api name;
+    @api resource
     @api projectId;
     @api startDate;
     @api endDate;
 
     @track allocationLists = [];
+
+    get recordId() {
+        return this.resource.Id;
+    }
 
     get isResource() {
         return null == this.projectId;
@@ -37,6 +40,7 @@ export default class GanttChartResource extends Element {
     }
 
     connectedCallback() {
+        this.recordId = this.resource.Id;
         this.startDateUTC = this.startDate.getTime() + this.startDate.getTimezoneOffset() * 60 * 1000 + ''
         this.endDateUTC = this.endDate.getTime() + this.endDate.getTimezoneOffset() * 60 * 1000 + '';
     }

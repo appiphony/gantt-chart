@@ -47,23 +47,22 @@
                     </div>
                 </div>
             </div>
-        
             <!-- /Timeline -->
 
             <!-- Allocation Table -->
-            <template if:true={chartResources.length}>
-                <template for:each={chartResources} for:item="resource">
-                    <c-gantt_chart_resource key={resourceId} record-id={resource.Id} name={resource.Name} project-id={projectId} start-date={startDate} end-date={endDate}></c-gantt_chart_resource>
+            <template if:true={resources.length}>
+                <template for:each={resources} for:item="resource">
+                    <c-gantt_chart_resource key={resourceId} resource={resource} project-id={projectId} start-date={startDate} end-date={endDate}></c-gantt_chart_resource>
                 </template>
             </template>
 
             <!-- Empty State -->
-            <div if:false={chartResources.length} class="slds-text-align_center slds-p-around_medium">
+            <div if:false={resources.length} class="slds-text-align_center slds-p-around_medium">
                 <span class="slds-text-color_weak">No Resources to Show</span>
             </div>
             <!-- /Empty State -->
-        
             <!-- /Allocation Table -->
+
             <div class="slds-m-top_medium">
                 <lightning-button if:false={isResource} variant="neutral" label="Add Resource" icon-name="utility:add" onclick={openAddResourceModal}></lightning-button>
             </div>
@@ -72,10 +71,13 @@
     </div>
 
     <div if:true={showResourceModal}>
-        <select>
-            <template for:each={resources} for:item="resource">
+        <select onchange={selectResource}>
+            <option hidden>Select a Resource</option>
+            <template for:each={modalResources} for:item="resource">
                 <option key={resource.Id} value={resource.Id}>{resource.Name}</option>
             </template>
         </select>
+
+        <lightning-button variant="neutral" label="Add Resource" icon-name="utility:add" onclick={addResourceById}></lightning-button>
     </div>
 </template>
