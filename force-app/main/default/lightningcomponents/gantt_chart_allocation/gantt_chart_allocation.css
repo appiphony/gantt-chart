@@ -1,10 +1,5 @@
-.allocation .handle.handle_left {
-    float: left;
-    cursor: w-resize;
-}
-.allocation .handle.handle_right {
-    float: right;
-    cursor: e-resize;
+.allocation .handle {
+    cursor: ew-resize;
 }
 
 /*** Allocations ***/
