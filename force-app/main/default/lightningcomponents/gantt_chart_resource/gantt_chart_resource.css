@@ -1,3 +1,8 @@
+.resource {
+    border: 1px solid #dddbda;
+    min-width: 190px;
+}
+
 .allocation-container {
     top: 0;
     right: 0;
