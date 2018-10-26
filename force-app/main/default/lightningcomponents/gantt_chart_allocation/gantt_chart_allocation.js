@@ -2,7 +2,7 @@ import { Element, api } from 'engine';
 
 export default class GanttChartAllocation extends Element {
     _allocation;
-    _size = 50;
+    _size = 25;
 
     @api index;
     @api startDate;

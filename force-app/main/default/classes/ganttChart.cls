@@ -39,14 +39,26 @@ public with sharing class ganttChart {
     }
 
     @AuraEnabled(Cacheable=true)
-    public static List<Object> getAllocationLists(Id recordId, String startDate, String endDate) {
+    public static List<Object> getAllocationLists(Id recordId, String projectId, String startDate, String endDate) {
         Map<String, Object> allocationsByProject = new Map<String, Object>();
+        List<Allocation__c> allocations = new List<Allocation__c>();
 
-        for (Allocation__c allocation : [SELECT Id, Start_Date__c, End_Date__c, Project__c, Project__r.Name
-                                         FROM Allocation__c
-                                         WHERE Resource__c = :recordId
-                                         AND Start_Date__c <= :DateTime.newInstance(Long.valueOf(endDate)).date()
-                                         AND End_Date__c >= :DateTime.newInstance(Long.valueOf(startDate)).date()]) {
+        if (String.isEmpty(projectId)) {
+            allocations = [SELECT Id, Start_Date__c, End_Date__c, Project__c, Project__r.Name
+                           FROM Allocation__c
+                           WHERE Resource__c = :recordId
+                           AND Start_Date__c <= :DateTime.newInstance(Long.valueOf(endDate)).date()
+                           AND End_Date__c >= :DateTime.newInstance(Long.valueOf(startDate)).date()];
+        } else {
+            allocations = [SELECT Id, Start_Date__c, End_Date__c, Project__c, Project__r.Name
+                           FROM Allocation__c
+                           WHERE Resource__c = :recordId
+                           AND Project__c = :Id.valueOf(projectId)
+                           AND Start_Date__c <= :DateTime.newInstance(Long.valueOf(endDate)).date()
+                           AND End_Date__c >= :DateTime.newInstance(Long.valueOf(startDate)).date()];
+        }
+        
+        for (Allocation__c allocation : allocations) {
             if (!allocationsByProject.containsKey(allocation.Project__c)) {
                 allocationsByProject.put(allocation.Project__c, new List<Allocation__c>());
             }

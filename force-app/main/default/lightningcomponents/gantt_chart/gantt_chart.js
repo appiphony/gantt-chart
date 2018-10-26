@@ -62,11 +62,7 @@ export default class GanttChart extends Element {
     }
 
     get recordIdOrEmpty() {
-        if (this.recordId) {
-            return this.recordId;
-        }
-
-        return '';
+        return this.recordId ? this.recordId : '';
     }
 
     // modal

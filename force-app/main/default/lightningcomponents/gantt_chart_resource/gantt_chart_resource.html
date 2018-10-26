@@ -20,7 +20,7 @@
             <div class="slds-is-relative" style="height: 100%">
                 <div class="slds-grid" style="height: 100%;">
                     <template for:each={dates} for:item="date">
-                        <c-gantt_chart_timeslot key={date} resource={resource} date={date} onallocation={handleAllocation}></c-gantt_chart_timeslot>
+                        <c-gantt_chart_timeslot key={date} resource={resource} date={date} onallocation={handleAllocation} project-size={projectSize}></c-gantt_chart_timeslot>
                     </template>
                 </div>
                 <div class="slds-is-absolute allocation-container">

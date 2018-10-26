@@ -27,6 +27,14 @@ export default class GanttChartResource extends Element {
         return _dates;
     }
 
+    get projectSize() {
+        return this.allocationLists.length;
+    }
+    
+    get projectIdOrEmpty() {
+        return this.projectId ? this.projectId : '';
+    }
+
     get startDateUTC() {
         return this.startDate.getTime() + this.startDate.getTimezoneOffset() * 60 * 1000 + '';
     }
@@ -39,10 +47,11 @@ export default class GanttChartResource extends Element {
         this.recordId = this.resource.Id;
         this.startDateUTC = this.startDate.getTime() + this.startDate.getTimezoneOffset() * 60 * 1000 + ''
         this.endDateUTC = this.endDate.getTime() + this.endDate.getTimezoneOffset() * 60 * 1000 + '';
+        this.projectIdOrEmpty = this.projectId ? this.projectId : '';
     }
 
     wiredAllocationLists;
-    @wire(getAllocationLists, { recordId: '$recordId', startDate: '$startDateUTC', endDate: '$endDateUTC' })
+    @wire(getAllocationLists, { recordId: '$recordId', projectId: '$projectIdOrEmpty', startDate: '$startDateUTC', endDate: '$endDateUTC' })
     wiredGetAllocationLists(value) {
         this.wiredAllocationLists = value;
 
