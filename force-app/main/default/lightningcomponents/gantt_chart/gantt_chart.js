@@ -10,7 +10,8 @@ export default class GanttChart extends Element {
     
     // chart
     @track projectId;
-    @track resources = [];
+    @track resources;
+
     // doesn't work due to bug (W-4610385)
     get startDate() {
         if (null == this._startDate) {
@@ -66,9 +67,10 @@ export default class GanttChart extends Element {
     }
 
     // modal
-    @track modalResourceId;
+    @track modalResource;
     @track modalResources = [];
     @track showResourceModal = false;
+    @track showResourceRole = false;
 
     connectedCallback() {
         // workaround for bug (W-4610385)
@@ -87,6 +89,7 @@ export default class GanttChart extends Element {
     @wire(getChartData, { recordId: '$recordIdOrEmpty', startDate: '$startDateUTC', endDate: '$endDateUTC' })
     wiredGetChartData(value) {
         if (value.error) {
+            this.resources = [];
             showToast({
                 message: value.error,
                 variant: 'error'
@@ -95,12 +98,20 @@ export default class GanttChart extends Element {
         if (value.data) {
             this.projectId = value.data.projectId;
             this.resources = value.data.resources;
+        } else {
+            this.resources =  [];
         }
     }
 
     openAddResourceModal() {
         getResources().then(resources => {
-            this.modalResources = resources.filter(resource => !this.resources.includes(resource));
+            debugger
+            var excludeResources = this.resources;
+            this.modalResources = resources.filter(resource => {
+                return excludeResources.filter(excludeResource => {
+                    return excludeResource.Id === resource.Id
+                }).length === 0;
+            });
             this.showResourceModal = true;
         }).catch(error => {
             showToast({
@@ -111,21 +122,28 @@ export default class GanttChart extends Element {
     }
 
     selectResource(event) {
-        this.modalResourceId = event.target.value;
+        this.modalResources.forEach(resource => {
+            if (resource.Id === event.target.value) {
+                this.modalResource = Object.assign({}, resource);
+                this.showResourceRole = true;
+            }
+        });
+    }
+
+    handleRoleChange(event) {
+        this.modalResource.Default_Role__c = event.detail.value.trim();
     }
 
     addResourceById() {
-        debugger;
-        this.modalResources.forEach(resource => {
-            if (resource.Id === this.modalResourceId) {
-                var newResource = Object.assign({}, resource);
-                // unable to directly push to this array
-                this.resources = this.resources.concat([newResource]);
-            }
-        });
+        this.resources = this.resources.concat([this.modalResource]);
         
-        this.modalResourceId = null;
+        this.modalResource = null;
         this.showResourceModal = false;
+        this.showResourceRole = false;
         this.modalResources = [];
+    }
+
+    hideResourceModal() {
+        this.showResourceModal = false;
     }
 }

@@ -33,6 +33,7 @@ public with sharing class ganttChart {
                 'Default_Role__c' => allocation.Resource__r.Default_Role__c
             });
         }
+        
         data.put('resources', resourceById.values());
         
         return data;
