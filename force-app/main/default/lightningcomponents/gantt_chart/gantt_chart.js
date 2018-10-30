@@ -105,7 +105,6 @@ export default class GanttChart extends Element {
 
     openAddResourceModal() {
         getResources().then(resources => {
-            debugger
             var excludeResources = this.resources;
             this.modalResources = resources.filter(resource => {
                 return excludeResources.filter(excludeResource => {
