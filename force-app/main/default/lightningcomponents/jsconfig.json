@@ -11,9 +11,6 @@
             ],
             "c-gantt_chart_resource": [
                 "gantt_chart_resource/gantt_chart_resource.js"
-            ],
-            "c-gantt_chart_timeslot": [
-                "gantt_chart_timeslot/gantt_chart_timeslot.js"
             ]
         }
     },
