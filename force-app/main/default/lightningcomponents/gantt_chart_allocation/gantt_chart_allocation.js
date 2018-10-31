@@ -111,7 +111,7 @@ export default class GanttChartAllocation extends Element {
             this.dragInfo.startTime = myDate;
         }
 
-        var deltaDate = Math.floor((myDate - this.dragInfo.startTime) / 1000 / 60 / 60 / 24);
+        var deltaDate = Math.trunc((myDate - this.dragInfo.startTime) / 1000 / 60 / 60 / 24);
         var newStartDate = new Date(this.allocation.Start_Date__c + 'T00:00:00');
         newStartDate.setDate(newStartDate.getDate() + deltaDate);
         var newEndDate = new Date(this.allocation.End_Date__c + 'T00:00:00');
