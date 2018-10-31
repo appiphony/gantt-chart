@@ -11,6 +11,9 @@
             ],
             "c-gantt_chart_resource": [
                 "gantt_chart_resource/gantt_chart_resource.js"
+            ],
+            "c-gantt_chart_modal": [
+                "gantt_chart_modal/gantt_chart_modal.js"
             ]
         }
     },

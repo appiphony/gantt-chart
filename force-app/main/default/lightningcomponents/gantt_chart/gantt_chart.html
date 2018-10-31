@@ -57,7 +57,7 @@
             <template if:true={resources.length}>
                 <template for:each={resources} for:item="resource">
                     <c-gantt_chart_resource key={resourceId} resource={resource} project-id={projectId} start-date={startDate}
-                        end-date={endDate}></c-gantt_chart_resource>
+                        end-date={endDate} onrefresh={handleRefresh}></c-gantt_chart_resource>
                 </template>
             </template>
 

@@ -1,17 +1,11 @@
 import {
     Element,
-    api,
-    track,
-    wire
+    api
 } from 'engine';
 import {
     showToast
 } from 'lightning-notifications-library';
-import {
-    refreshApex
-} from '@salesforce/apex';
 
-import getAllocationLists from '@salesforce/apex/ganttChart.getAllocationLists';
 import saveAllocation from '@salesforce/apex/ganttChart.saveAllocation';
 
 export default class GanttChartResource extends Element {
@@ -19,12 +13,6 @@ export default class GanttChartResource extends Element {
     @api projectId;
     @api startDate;
     @api endDate;
-
-    @track allocationLists = [];
-
-    get recordId() {
-        return this.resource.Id;
-    }
 
     get times() {
         var _times = [];
@@ -36,51 +24,12 @@ export default class GanttChartResource extends Element {
         return _times;
     }
 
-    get projectSize() {
-        return this.allocationLists.length;
-    }
-
-    get projectIdOrEmpty() {
-        return this.projectId ? this.projectId : '';
-    }
-
-    get startDateUTC() {
-        return this.startDate.getTime() + this.startDate.getTimezoneOffset() * 60 * 1000 + '';
-    }
-
-    get endDateUTC() {
-        return this.endDate.getTime() + this.endDate.getTimezoneOffset() * 60 * 1000 + '';
-    }
-
-    connectedCallback() {
-        this.recordId = this.resource.Id;
-        this.startDateUTC = this.startDate.getTime() + this.startDate.getTimezoneOffset() * 60 * 1000 + ''
-        this.endDateUTC = this.endDate.getTime() + this.endDate.getTimezoneOffset() * 60 * 1000 + '';
-        this.projectIdOrEmpty = this.projectId ? this.projectId : '';
-    }
-
-    wiredAllocationLists;
-    @wire(getAllocationLists, {
-        recordId: '$recordId',
-        projectId: '$projectIdOrEmpty',
-        startDate: '$startDateUTC',
-        endDate: '$endDateUTC'
-    })
-    wiredGetAllocationLists(value) {
-        this.wiredAllocationLists = value;
-
-        if (value.error) {
-            showToast({
-                error: value.error,
-                variant: 'error'
-            });
-        } else if (value.data) {
-            this.allocationLists = value.data;
-        }
+    get projects() {
+        return Object.values(this.resource.allocationsByProject);
     }
 
     get link() {
-        return '/' + this.recordId;
+        return '/' + this.resource.id;
     }
 
     handleClick(event) {
@@ -103,12 +52,16 @@ export default class GanttChartResource extends Element {
         }
 
         if (null == allocation.resourceId) {
-            allocation.resourceId = this.recordId;
+            allocation.resourceId = this.resource.id;
         }
 
         saveAllocation(allocation)
             .then(() => {
-                return refreshApex(this.wiredAllocationLists);
+                // send refresh to top
+                this.dispatchEvent(new CustomEvent('refresh', {
+                    bubbles: true,
+                    composed: true
+                }));
             }).catch(error => {
                 showToast({
                     message: error.message,

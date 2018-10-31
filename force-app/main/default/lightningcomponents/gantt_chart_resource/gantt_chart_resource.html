@@ -7,10 +7,10 @@
                 </div>
                 <div class="slds-media__body">
                     <h3 class="slds-text-body_default">
-                        <a target="_blank" href={link}>{resource.Name}</a>
+                        <a target="_blank" href={link}>{resource.name}</a>
                     </h3>
                     <h3 class="slds-text-body_small slds-text-color_weak">
-                        {resource.Default_Role__c}
+                        {resource.primaryAllocation.Role__c}
                     </h3>
                 </div>
             </div>
@@ -26,8 +26,8 @@
                     </template>
                 </div>
                 <div class="slds-is-absolute allocation-container">
-                    <template for:each={allocationLists} for:item="allocationList" for:index="index">
-                        <template for:each={allocationList} for:item="allocation">
+                    <template for:each={projects} for:item="allocations" for:index="index">
+                        <template for:each={allocations} for:item="allocation">
                             <c-gantt_chart_allocation key={allocation.Id} allocation={allocation} index={index} start-date={startDate} end-date={endDate} onupdate={handleAllocationUpdate}></c-gantt_chart_allocation>
                         </template>
                     </template>
