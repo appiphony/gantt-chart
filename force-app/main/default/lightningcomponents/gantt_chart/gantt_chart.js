@@ -63,6 +63,7 @@ export default class GanttChart extends Element {
     @track modalResources = [];
     @track showResourceModal = false;
     @track showResourceRole = false;
+    @track modalAddDisabled = true;
 
     connectedCallback() {
         // workaround for bug (W-4610385)
@@ -122,6 +123,7 @@ export default class GanttChart extends Element {
                     return excludeResource.Id === resource.Id
                 }).length === 0;
             });
+            this.modalAddDisabled = true;
             this.showResourceModal = true;
         }).catch(error => {
             showToast({
@@ -138,22 +140,38 @@ export default class GanttChart extends Element {
                 this.showResourceRole = true;
             }
         });
+        debugger;
+        if(this.modalResource && this.modalResource.Default_Role__c) {
+            this.modalAddDisabled = false;
+        }
+        else {
+            this.modalAddDisabled = true;
+        }
     }
 
     handleRoleChange(event) {
         this.modalResource.Default_Role__c = event.detail.value.trim();
+        if(this.modalResource && this.modalResource.Default_Role__c) {
+            this.modalAddDisabled = false;
+        }
+        else {
+            this.modalAddDisabled = true;
+        }
     }
 
     addResourceById() {
         this.resources = this.resources.concat([this.modalResource]);
         
         this.modalResource = null;
+        this.modalResources = [];
         this.showResourceModal = false;
         this.showResourceRole = false;
-        this.modalResources = [];
     }
 
     hideResourceModal() {
+        this.modalResource = null;
+        this.modalResources = [];
         this.showResourceModal = false;
+        this.showResourceRole = false;
     }
 }
