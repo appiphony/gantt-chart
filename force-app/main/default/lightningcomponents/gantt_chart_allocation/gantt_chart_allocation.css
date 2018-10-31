@@ -64,6 +64,11 @@
     opacity: 1;
 }
 
+.allocation.is-selected {
+    opacity: 1;
+    box-shadow: 0 2px 6px 0px rgba(0, 0, 0, .4);
+}
+
 .allocation.project-one:hover {
     background-color: rgba(75, 202, 129, 1);
 }
