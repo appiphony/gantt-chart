@@ -119,10 +119,14 @@ export default class GanttChartAllocation extends Element {
 
         switch(direction) {
             case 'left':
-                this._startDate = newStartDate;
+                if (newStartDate <= this._endDate) {
+                    this._startDate = newStartDate;
+                }
                 break;
             case 'right':
-                this._endDate = newEndDate;
+                if (newStartDate >= this._startDate) {
+                    this._endDate = newEndDate;
+                }
                 break;
             default:
                 this._endDate = newEndDate;
