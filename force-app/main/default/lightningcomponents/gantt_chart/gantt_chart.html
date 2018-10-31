@@ -68,7 +68,7 @@
             <!-- /Empty State -->
             <!-- /Allocation Table -->
 
-            <div if:false={showResourceModal} class="slds-m-top_medium">
+            <div class="slds-m-top_medium">
                 <lightning-button if:false={isResource} variant="neutral" label="Add Resource" icon-name="utility:add"
                     onclick={openAddResourceModal}></lightning-button>
             </div>
@@ -76,17 +76,56 @@
         <!-- /Gantt Chart -->
     </div>
 
+    <!-- Resource Modal -->
     <div if:true={showResourceModal}>
-        <select onchange={selectResource}>
-            <option hidden>Select a Resource</option>
-            <template for:each={modalResources} for:item="resource">
-                <option key={resource.Id} value={resource.Id}>{resource.Name}</option>
-            </template>
-        </select>
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1"
+        class="slds-modal slds-fade-in-open">
+        <div class="slds-modal__container" style="overscroll-behavior: none;">
 
-        <lightning-input if:true={showResourceRole} value={modalResource.Default_Role__c} label="Role" onchange={handleRoleChange}></lightning-input>
+            <!-- Modal Header -->
+            <header class="slds-modal__header">
+                <lightning-button-icon icon-name="utility:close" size="large" variant="bare-inverse" class="slds-modal__close" onclick={hideResourceModal}></lightning-button-icon>
+                <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Add Resource</h2>
+            </header>
+            <!-- /Modal Header -->
 
-        <lightning-button variant="neutral" label="Add Resource" icon-name="utility:add" onclick={addResourceById}></lightning-button>
-        <lightning-button variant="neutral" label="Cancel" onclick={hideResourceModal}></lightning-button>
+            <!-- Modal Body -->
+            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+
+                    <div class="slds-form slds-form_stacked">
+                        <!-- Select Resource -->
+                        <div class="slds-form-element" onchange={selectResource}>
+                            <label class="slds-form-element__label" for="select-01">Who is working on this?</label>
+                            <div class="slds-form-element__control">
+                                <div class="slds-select_container">
+                                    <select class="slds-select" id="select-01">
+                                        <option value="">-- Select Resource --</option>
+                                        <template for:each={modalResources} for:item="resource">
+                                            <option key={resource.Id} value={resource.Id}>{resource.Name}</option>
+                                        </template>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /Select Resource -->
+
+                        <!-- Determine Role -->
+                        <lightning-input if:true={showResourceRole} value={modalResource.Default_Role__c} label="Role" onchange={handleRoleChange}></lightning-input> 
+                        <!-- /Determine Role -->
+                    </div>
+                </div>
+                <!-- /Modal Body -->
+                
+                <!-- Modal Footer -->
+                <footer class="slds-modal__footer">
+                    <lightning-button variant="neutral" label="Cancel" onclick={hideResourceModal}></lightning-button>
+                    <lightning-button variant="brand" label="Add Resource" onclick={addResourceById} class="slds-m-left_xx-small"></lightning-button>
+                </footer>
+                <!-- /Modal Footer -->
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+
+        <!-- <c-gantt_chart_resource_modal></c-gantt_chart_resource_modal> -->
     </div>
 </template>
