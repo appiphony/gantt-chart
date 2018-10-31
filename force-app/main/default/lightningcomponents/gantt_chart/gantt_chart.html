@@ -11,10 +11,10 @@
                 </h1>
             </div>
             <div class="slds-col slds-grow-none">
-                    <lightning-button-icon icon-name="utility:left" variant="border-filled"></lightning-button-icon>
-                    <lightning-button label="Today"></lightning-button>
-                    <lightning-button-icon icon-name="utility:right" variant="border-filled"></lightning-button-icon>
-                <lightning-button-icon icon-name="utility:dayview" variant="border-filled" class="slds-m-left_medium"></lightning-button-icon> 
+                <lightning-button-icon icon-name="utility:left" variant="border-filled"></lightning-button-icon>
+                <lightning-button label="Today"></lightning-button>
+                <lightning-button-icon icon-name="utility:right" variant="border-filled"></lightning-button-icon>
+                <lightning-button-icon icon-name="utility:dayview" variant="border-filled" class="slds-m-left_medium"></lightning-button-icon>
             </div>
         </div>
         <!-- /Header Bar -->
@@ -31,28 +31,23 @@
                     </div>
                 </div>
                 <div class="slds-col">
-                    <div class="slds-grid slds-grid_vertical">
-                        <div class="slds-col">
-                            <div class="slds-grid">
-                                <div class="slds-col" style="width: 78%;">
-                                    <div class="timeline_month slds-p-around_xx-small slds-theme_shade slds-text-align_center slds-text-color_weak slds-text-body_small slds-m-horizontal_x-small">
-                                        October
+                    <div class="slds-grid">
+                        <template for:each={dates} for:item="date">
+                            <div key={date} class="slds-col">
+                                <div class="slds-grid">
+                                    <div class="slds-col">
+                                        <div class="timeline_month slds-p-around_xx-small slds-theme_shade slds-text-align_center slds-text-color_weak slds-text-body_small slds-m-horizontal_x-small">
+                                            {date.name}
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="slds-col" style="width: 22%;">
-                                    <div class="timeline_month slds-p-around_xx-small slds-theme_shade slds-text-align_center slds-text-color_weak slds-text-body_small slds-m-horizontal_x-small">
-                                        November
-                                    </div>
+                                <div class="slds-grid">
+                                    <template for:each={date.days} for:item="day">
+                                        <div key={day} class="slds-col slds-p-vertical_small timeline_date">{day}</div>
+                                    </template>
                                 </div>
                             </div>
-                        </div>
-                        <div class="slds-col">
-                            <div class="slds-grid">
-                                <template for:each={dates} for:item="date">
-                                    <div key={date} class="slds-col slds-p-vertical_small timeline_date">{date}</div>
-                                </template>
-                            </div>
-                        </div>
+                        </template>
                     </div>
                 </div>
             </div>
@@ -61,7 +56,8 @@
             <!-- Allocation Table -->
             <template if:true={resources.length}>
                 <template for:each={resources} for:item="resource">
-                    <c-gantt_chart_resource key={resourceId} resource={resource} project-id={projectId} start-date={startDate} end-date={endDate}></c-gantt_chart_resource>
+                    <c-gantt_chart_resource key={resourceId} resource={resource} project-id={projectId} start-date={startDate}
+                        end-date={endDate}></c-gantt_chart_resource>
                 </template>
             </template>
 
@@ -73,7 +69,8 @@
             <!-- /Allocation Table -->
 
             <div if:false={showResourceModal} class="slds-m-top_medium">
-                <lightning-button if:false={isResource} variant="neutral" label="Add Resource" icon-name="utility:add" onclick={openAddResourceModal}></lightning-button>
+                <lightning-button if:false={isResource} variant="neutral" label="Add Resource" icon-name="utility:add"
+                    onclick={openAddResourceModal}></lightning-button>
             </div>
         </div>
         <!-- /Gantt Chart -->

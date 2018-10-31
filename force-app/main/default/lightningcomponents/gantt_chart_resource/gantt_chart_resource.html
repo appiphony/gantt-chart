@@ -17,16 +17,18 @@
         </div>
         <!-- Days -->
         <div class="slds-col">
-            <div class="slds-is-relative" style="height: 100%">
-                <div class="slds-grid" style="height: 100%;">
-                    <template for:each={dates} for:item="date">
-                        <c-gantt_chart_timeslot key={date} resource={resource} date={date} onallocation={handleAllocation} project-size={projectSize}></c-gantt_chart_timeslot>
+            <div class="slds-is-relative">
+                <div class="slds-grid">
+                    <template for:each={times} for:item="time">
+                        <div key={time} class="slds-col timeslot" data-time={time} onclick={handleClick}>
+                            <!-- nothing -->
+                        </div>
                     </template>
                 </div>
                 <div class="slds-is-absolute allocation-container">
                     <template for:each={allocationLists} for:item="allocationList" for:index="index">
                         <template for:each={allocationList} for:item="allocation">
-                            <c-gantt_chart_allocation key={allocation.Id} allocation={allocation} index={index} start-date={startDate} end-date={endDate}></c-gantt_chart_allocation>
+                            <c-gantt_chart_allocation key={allocation.Id} allocation={allocation} index={index} start-date={startDate} end-date={endDate} onupdate={handleAllocationUpdate}></c-gantt_chart_allocation>
                         </template>
                     </template>
                 </div>
@@ -34,20 +36,4 @@
         </div>
         <!-- /Days -->
     </div>
-
-
-    <!-- <div class="slds-float_left slds-is-relative" style="overflow-x: hidden;">
-        <template for:each={allocationLists} for:item="allocationList" for:index="index">
-            <template for:each={allocationList} for:item="allocation">
-                <c-gantt_chart_allocation key={allocation.Id} allocation={allocation} index={index} start-date={startDate} end-date={endDate}></c-gantt_chart_allocation>
-            </template>
-        </template>
-
-        <div class="slds-clearfix">
-            <template for:each={dates} for:item="date">
-                <c-gantt_chart_timeslot key={date} resource={resource} date={date} onallocation={handleAllocationEvent}></c-gantt_chart_timeslot>
-            </template>
-        </div>
-    </div> -->
-
 </template>

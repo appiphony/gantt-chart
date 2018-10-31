@@ -9,15 +9,17 @@ export default class GanttChart extends Element {
     @api days = 14;
     
     // chart
+    @track dates;
+    @track months;
     @track projectId;
     @track resources;
-
+    
     // doesn't work due to bug (W-4610385)
     get startDate() {
         if (null == this._startDate) {
             this._startDate = new Date();
             this._startDate.setHours(0,0,0,0);
-            this._startDate = new Date(this.startDate.getTime() - this.startDate.getDay() * 24*60*60*1000);
+            this._startDate.setDate(this._startDate.getDate() - this._startDate.getDay());
         }
 
         return this._startDate;
@@ -31,7 +33,9 @@ export default class GanttChart extends Element {
     }
 
     get endDate() {
-        return new Date(this.startDate.getTime() + (this.days - 1)*24*60*60*1000);
+        var _endDate = new Date(this.startDate);
+        _endDate.setDate(_endDate.getDate() + this.days - 1);
+        return _endDate;
     }
 
     get startDateUTC() {
@@ -50,18 +54,6 @@ export default class GanttChart extends Element {
         return this.endDate.toLocaleDateString();
     }
 
-    get dates() {
-        var _dates = [];
-
-        for (var time = this.startDate.getTime(); time <= this.endDate.getTime(); time += 24*60*60*1000) {
-            var date = new Date(time);
-
-            _dates.push((date.getMonth()+1) + '/' + date.getDate());
-        }
-
-        return _dates;
-    }
-
     get recordIdOrEmpty() {
         return this.recordId ? this.recordId : '';
     }
@@ -76,7 +68,7 @@ export default class GanttChart extends Element {
         // workaround for bug (W-4610385)
         this._startDate = new Date();
         this._startDate.setHours(0,0,0,0);
-        this._startDate = new Date(this.startDate.getTime() - this.startDate.getDay() * 24*60*60*1000);
+        this._startDate.setDate(this._startDate.getDate() - this._startDate.getDay());
 
         this.startDate = this._startDate;
         this.startDateUTC = this.startDate.getTime() + this.startDate.getTimezoneOffset() * 60 * 1000 + '';
@@ -84,6 +76,25 @@ export default class GanttChart extends Element {
         this.endDateUTC = this.endDate.getTime() + this.endDate.getTimezoneOffset() * 60 * 1000 + '';
 
         this.recordIdOrEmpty = this.recordId ? this.recordId : '';
+
+        this.dates = this.getDates();
+    }
+
+    getDates() {
+        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        var dates = [];
+        for (var date = new Date(this.startDate); date <= this.endDate; date.setDate(date.getDate() + 1)) {
+            if (!dates[date.getMonth()]) {
+                dates[date.getMonth()] = {
+                    name: monthNames[date.getMonth()],
+                    days: []
+                };
+            }
+
+            dates[date.getMonth()].days.push((date.getMonth()+1) + '/' + date.getDate());
+        }
+
+        return dates.filter(d => d);
     }
 
     @wire(getChartData, { recordId: '$recordIdOrEmpty', startDate: '$startDateUTC', endDate: '$endDateUTC' })

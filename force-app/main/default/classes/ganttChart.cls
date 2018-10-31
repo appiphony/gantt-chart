@@ -77,8 +77,8 @@ public with sharing class ganttChart {
                 WHERE Active__c = true];
     }
 
-    @AuraEnabled
-    public static void saveAllocation(Id allocationId, Id projectId, Id resourceId, String startDate, String endDate) {
+    @AuraEnabled(Cacheable=true)
+    public static Object saveAllocation(Id allocationId, Id projectId, Id resourceId, String startDate, String endDate) {
         Allocation__c allocation = new Allocation__c(
             Start_Date__c = DateTime.newInstance(Long.valueOf(startDate)).date(),
             End_Date__c = DateTime.newInstance(Long.valueOf(endDate)).date()
@@ -97,5 +97,7 @@ public with sharing class ganttChart {
         }
 
         upsert allocation;
+
+        return allocation;
     }
 }

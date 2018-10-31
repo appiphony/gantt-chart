@@ -1,69 +1,134 @@
-import { Element, api } from 'engine';
+import { Element, api, track } from 'engine';
 
 export default class GanttChartAllocation extends Element {
-    _allocation;
     _size = 25;
 
+    @api allocation;
     @api index;
     @api startDate;
     @api endDate;
 
-    get _startDate() {
-        return new Date(this._allocation.Start_Date__c + 'T00:00:00') < this.startDate ? this.startDate : new Date(this._allocation.Start_Date__c + 'T00:00:00');
+    @track isDragging = false;
+    @track style;
+    
+    get times() {
+        var _times = [];
+
+        for (var date = new Date(this.startDate); date <= this.endDate; date.setDate(date.getDate() + 1)) {
+            _times.push(date.getTime());
+        }
+
+        return _times;
+    }
+    
+    connectedCallback() {
+        this._startDate = new Date(this.allocation.Start_Date__c + 'T00:00:00');
+        this._endDate = new Date(this.allocation.End_Date__c + 'T00:00:00');
+        this.style = this.getStyle();
     }
 
-    get _endDate() {
-        return new Date(this._allocation.End_Date__c + 'T00:00:00') > this.endDate ? this.endDate : new Date(this._allocation.End_Date__c + 'T00:00:00');
-    }
-
-    get height() {
-        return this._size / 2 + 'px;';
-    }
-
-    get left() {
+    getLeft() {
         return (this._startDate - this.startDate) / (this.endDate - this.startDate + 24*60*60*1000) * 100 + '%;';
     }
 
-    get right() {
+    getRight() {
         return (this.endDate - this._endDate) / (this.endDate - this.startDate + 24*60*60*1000) * 100 + '%;';
     }
 
-    get top() {
+    getTop() {
         return this.index * this._size + 'px;';
     }
 
-    get style() {
-        return [
-            'left: ' + this.left,
-            'right: ' + this.right,
-            'top: ' + this.top
-        ].join(' ');
+    getStyle() {
+        var _style = [
+            'left: ' + this.getLeft(),
+            'right: ' + this.getRight()
+        ];
+
+        if (this.isDragging) {
+            _style.push('pointer-events: none;');
+        } else {
+            _style.push('pointer-events: auto;');
+        }
+
+        return _style.join(' ');
     }
 
-    @api
-    get allocation() {
-        return this._allocation;
-    }
-    set allocation(allocation) {
-        this._allocation = allocation;
-    }
-
+    dragInfo = {};
     handleDragStart(event) {
-        event.dataTransfer.setData('allocation', JSON.stringify(this.allocation));
+        this.dragInfo.allocation = Object.assign({}, this.allocation);
+        this.isDragging = true;
+        this.template.querySelector('.timeslots').classList.remove('slds-hide');
 
-        // currently not working
-        var img = document.createElement('img');
-        img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
-        event.dataTransfer.setDragImage(img, 0, 0);
+        // hide drag image
+        var el = this.template.querySelector('.allocation');
+        el.style.opacity = 0;
+        setTimeout(function() {
+            el.style.opacity = 1;
+            el.style.pointerEvents = 'none';
+        }, 0);
     }
 
     handleLeftDragStart(event) {
-        event.dataTransfer.setData('direction', 'left');
+        this.dragInfo.direction = 'left';
         this.handleDragStart(event);
     }
 
     handleRightDragStart(event) {
-        event.dataTransfer.setData('direction', 'right');
+        this.dragInfo.direction = 'right';
         this.handleDragStart(event);
+    }
+
+    handleDragEnd(event) {
+        event.preventDefault();
+
+        const allocation = this.dragInfo.allocation;
+        
+        var startDateUTC = this._startDate.getTime() + this._startDate.getTimezoneOffset() * 60 * 1000;
+        var endDateUTC = this._endDate.getTime() + this._endDate.getTimezoneOffset() * 60 * 1000;
+
+        this.dispatchEvent(new CustomEvent('update', {
+            bubbles: true,
+            composed: true,
+            detail: {
+                allocationId: allocation.Id,
+                startDate: startDateUTC + '',
+                endDate: endDateUTC + ''
+            }
+        }));
+
+        this.dragInfo = {};
+        this.isDragging = false;
+        this.template.querySelector('.timeslots').classList.add('slds-hide');
+        this.template.querySelector('.allocation').style = this.getStyle();
+    }
+
+    handleDragOver(event) {
+        const direction = this.dragInfo.direction;
+        const myDate = new Date(parseInt(event.currentTarget.dataset.time, 10));
+
+        if (!this.dragInfo.startTime) {
+            this.dragInfo.startTime = myDate;
+        }
+
+        var deltaDate = Math.floor((myDate - this.dragInfo.startTime) / 1000 / 60 / 60 / 24);
+        var newStartDate = new Date(this.allocation.Start_Date__c + 'T00:00:00');
+        newStartDate.setDate(newStartDate.getDate() + deltaDate);
+        var newEndDate = new Date(this.allocation.End_Date__c + 'T00:00:00');
+        newEndDate.setDate(newEndDate.getDate() + deltaDate);
+
+        switch(direction) {
+            case 'left':
+                this._startDate = newStartDate;
+                break;
+            case 'right':
+                this._endDate = newEndDate;
+                break;
+            default:
+                this._endDate = newEndDate;
+                this._startDate = newStartDate;
+        }
+
+        this.template.querySelector('.allocation').style = this.getStyle();
     }
 }

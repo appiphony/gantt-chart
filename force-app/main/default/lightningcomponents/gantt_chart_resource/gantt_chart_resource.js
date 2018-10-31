@@ -1,6 +1,15 @@
-import { Element, api, track, wire } from 'engine';
-import { showToast } from 'lightning-notifications-library';
-import { refreshApex } from '@salesforce/apex';
+import {
+    Element,
+    api,
+    track,
+    wire
+} from 'engine';
+import {
+    showToast
+} from 'lightning-notifications-library';
+import {
+    refreshApex
+} from '@salesforce/apex';
 
 import getAllocationLists from '@salesforce/apex/ganttChart.getAllocationLists';
 import saveAllocation from '@salesforce/apex/ganttChart.saveAllocation';
@@ -17,20 +26,20 @@ export default class GanttChartResource extends Element {
         return this.resource.Id;
     }
 
-    get dates() {
-        var _dates = [];
+    get times() {
+        var _times = [];
 
-        for (var time = this.startDate.getTime(); time <= this.endDate.getTime(); time += 24*60*60*1000) {
-            _dates.push(new Date(time));
+        for (var date = new Date(this.startDate); date <= this.endDate; date.setDate(date.getDate() + 1)) {
+            _times.push(date.getTime());
         }
 
-        return _dates;
+        return _times;
     }
 
     get projectSize() {
         return this.allocationLists.length;
     }
-    
+
     get projectIdOrEmpty() {
         return this.projectId ? this.projectId : '';
     }
@@ -51,7 +60,12 @@ export default class GanttChartResource extends Element {
     }
 
     wiredAllocationLists;
-    @wire(getAllocationLists, { recordId: '$recordId', projectId: '$projectIdOrEmpty', startDate: '$startDateUTC', endDate: '$endDateUTC' })
+    @wire(getAllocationLists, {
+        recordId: '$recordId',
+        projectId: '$projectIdOrEmpty',
+        startDate: '$startDateUTC',
+        endDate: '$endDateUTC'
+    })
     wiredGetAllocationLists(value) {
         this.wiredAllocationLists = value;
 
@@ -69,7 +83,19 @@ export default class GanttChartResource extends Element {
         return '/' + this.recordId;
     }
 
-    handleAllocation(event) {
+    handleClick(event) {
+        const myDate = new Date(parseInt(event.currentTarget.dataset.time, 10));
+        var dateUTC = myDate.getTime() + myDate.getTimezoneOffset() * 60 * 1000;
+
+        this.handleAllocationUpdate({
+            detail: {
+                startDate: dateUTC + '',
+                endDate: dateUTC + ''
+            }
+        });
+    }
+
+    handleAllocationUpdate(event) {
         var allocation = event.detail;
 
         if (null == allocation.projectId && null != this.projectId) {
@@ -81,13 +107,13 @@ export default class GanttChartResource extends Element {
         }
 
         saveAllocation(allocation)
-        .then(() => {
-            return refreshApex(this.wiredAllocationLists);
-        }).catch(error => {
-            showToast({
-                message: error.message,
-                variant: 'error'
+            .then(() => {
+                return refreshApex(this.wiredAllocationLists);
+            }).catch(error => {
+                showToast({
+                    message: error.message,
+                    variant: 'error'
+                });
             });
-        });
     }
 }

@@ -1,5 +1,6 @@
 <template>
-    <div title={allocation.Name} draggable="true" ondragstart={handleDragStart} class="slds-is-absolute allocation" style={style}>
+    <div title={allocation.Name} draggable="true" ondragstart={handleDragStart} ondragend={handleDragEnd} class="slds-is-absolute allocation"
+        style={style}>
         <div class="slds-grid slds-grid_vertical-align-center">
             <div class="slds-col slds-grow-none allocation_handle handle_left" draggable="true" ondragstart={handleLeftDragStart}>
                 <lightning-icon icon-name="utility:drag_and_drop" variant="inverse" size="x-small"></lightning-icon>
@@ -14,5 +15,14 @@
                 <lightning-icon icon-name="utility:drag_and_drop" variant="inverse" size="x-small"></lightning-icon>
             </div>
         </div>
+    </div>
+
+    <div class="slds-grid slds-hide timeslots">
+        <template for:each={times} for:item="time">
+            <div key={time} class="slds-col timeslot" ondragover={handleDragOver}
+                data-time={time}>
+                <!-- nothing -->
+            </div>
+        </template>
     </div>
 </template>
