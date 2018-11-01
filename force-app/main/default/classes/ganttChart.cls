@@ -81,8 +81,6 @@ public with sharing class ganttChart {
             }
         }
 
-System.debug(allocation);
-
         upsert allocation;
 
         return allocation;
