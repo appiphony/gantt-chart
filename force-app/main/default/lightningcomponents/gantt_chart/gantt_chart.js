@@ -158,7 +158,7 @@ export default class GanttChart extends Element {
                 this.showResourceRole = true;
             }
         });
-        debugger;
+        
         if (this.modalResource && this.modalResource.Default_Role__c) {
             this.modalAddDisabled = false;
         } else {
