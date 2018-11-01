@@ -1,8 +1,12 @@
+.timeline > .slds-col:first-child {
+    min-width: 190px;
+}
+
 .timeline_month {
     border-radius: .25rem;
 }
 
-.timeline_date {
+.timeline_day {
     min-width: 50px;
     text-align: center;
 }
