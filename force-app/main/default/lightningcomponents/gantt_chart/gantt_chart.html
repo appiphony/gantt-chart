@@ -33,7 +33,7 @@
                 <div class="slds-col">
                     <div class="slds-grid">
                         <template for:each={dates} for:item="date">
-                            <div key={date} class="slds-col">
+                            <div key={date} class="slds-col" style={date.style}>
                                 <div class="slds-grid">
                                     <div class="slds-col">
                                         <div class="timeline_month slds-p-around_xx-small slds-theme_shade slds-text-align_center slds-text-color_weak slds-text-body_small slds-m-horizontal_x-small">
@@ -43,7 +43,7 @@
                                 </div>
                                 <div class="slds-grid">
                                     <template for:each={date.days} for:item="day">
-                                        <div key={day} class="slds-col slds-p-vertical_small timeline_date">{day}</div>
+                                        <div key={day} class="slds-col slds-p-vertical_small timeline_day">{day}</div>
                                     </template>
                                 </div>
                             </div>

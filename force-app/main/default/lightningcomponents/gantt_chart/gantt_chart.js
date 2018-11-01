@@ -7,18 +7,18 @@ import getResources from '@salesforce/apex/ganttChart.getResources';
 export default class GanttChart extends Element {
     @api recordId;
     @api days = 14;
-    
+
     // chart
     @track dates;
     @track months;
     @track projectId;
     @track resources;
-    
+
     // doesn't work due to bug (W-4610385)
     get startDate() {
         if (null == this._startDate) {
             this._startDate = new Date();
-            this._startDate.setHours(0,0,0,0);
+            this._startDate.setHours(0, 0, 0, 0);
             this._startDate.setDate(this._startDate.getDate() - this._startDate.getDay());
         }
 
@@ -68,7 +68,7 @@ export default class GanttChart extends Element {
     connectedCallback() {
         // workaround for bug (W-4610385)
         this._startDate = new Date();
-        this._startDate.setHours(0,0,0,0);
+        this._startDate.setHours(0, 0, 0, 0);
         this._startDate.setDate(this._startDate.getDate() - this._startDate.getDay());
 
         this.startDate = this._startDate;
@@ -92,7 +92,8 @@ export default class GanttChart extends Element {
                 };
             }
 
-            dates[date.getMonth()].days.push((date.getMonth()+1) + '/' + date.getDate());
+            dates[date.getMonth()].days.push((date.getMonth() + 1) + '/' + date.getDate());
+            dates[date.getMonth()].style = 'width: calc(' + dates[date.getMonth()].days.length + '/' + this.days + '*100%)';
         }
 
         return dates.filter(d => d);
@@ -111,7 +112,7 @@ export default class GanttChart extends Element {
             this.projectId = value.data.projectId;
             this.resources = value.data.resources;
         } else {
-            this.resources =  [];
+            this.resources = [];
         }
     }
 
@@ -141,7 +142,7 @@ export default class GanttChart extends Element {
             }
         });
         debugger;
-        if(this.modalResource && this.modalResource.Default_Role__c) {
+        if (this.modalResource && this.modalResource.Default_Role__c) {
             this.modalAddDisabled = false;
         }
         else {
@@ -151,7 +152,7 @@ export default class GanttChart extends Element {
 
     handleRoleChange(event) {
         this.modalResource.Default_Role__c = event.detail.value.trim();
-        if(this.modalResource && this.modalResource.Default_Role__c) {
+        if (this.modalResource && this.modalResource.Default_Role__c) {
             this.modalAddDisabled = false;
         }
         else {
@@ -161,7 +162,7 @@ export default class GanttChart extends Element {
 
     addResourceById() {
         this.resources = this.resources.concat([this.modalResource]);
-        
+
         this.modalResource = null;
         this.modalResources = [];
         this.showResourceModal = false;
