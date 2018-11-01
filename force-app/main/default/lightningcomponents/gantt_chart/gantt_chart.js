@@ -64,6 +64,7 @@ export default class GanttChart extends Element {
     @track showResourceModal = false;
     @track showResourceRole = false;
     @track modalAddDisabled = true;
+    @track showDeleteModal = false;
 
     connectedCallback() {
         // workaround for bug (W-4610385)
