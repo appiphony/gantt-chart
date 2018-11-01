@@ -75,6 +75,7 @@ export default class GanttChart extends Element {
     @track showResourceModal = false;
     @track showResourceRole = false;
     @track modalAddDisabled = true;
+    @track showDeleteModal = false;
 
     connectedCallback() {
         // workaround for bug (W-4610385)
@@ -104,6 +105,7 @@ export default class GanttChart extends Element {
             }
 
             dates[date.getMonth()].days.push((date.getMonth() + 1) + '/' + date.getDate());
+            dates[date.getMonth()].style = 'width: calc(' + dates[date.getMonth()].days.length + '/' + this.days + '*100%)';
         }
 
         return dates.filter(d => d);

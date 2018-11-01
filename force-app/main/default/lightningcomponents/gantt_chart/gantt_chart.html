@@ -22,8 +22,8 @@
         <!-- Gantt Chart -->
         <div class="slds-p-around_medium">
             <!-- Timeline -->
-            <div class="slds-grid">
-                <div class="slds-col slds-size_1-of-6 slds-align-bottom">
+            <div class="slds-grid timeline">
+                <div class="slds-col slds-size_1-of-6 slds-align-bottom ">
                     <div if:false={isResourceView}>
                         <div class="slds-text-heading_medium slds-p-around_small">
                             Resources
@@ -33,7 +33,7 @@
                 <div class="slds-col">
                     <div class="slds-grid">
                         <template for:each={dates} for:item="date">
-                            <div key={date} class="slds-col">
+                            <div key={date} class="slds-col" style={date.style}>
                                 <div class="slds-grid">
                                     <div class="slds-col">
                                         <div class="timeline_month slds-p-around_xx-small slds-theme_shade slds-text-align_center slds-text-color_weak slds-text-body_small slds-m-horizontal_x-small">
@@ -43,7 +43,7 @@
                                 </div>
                                 <div class="slds-grid">
                                     <template for:each={date.days} for:item="day">
-                                        <div key={day} class="slds-col slds-p-vertical_small timeline_date">{day}</div>
+                                        <div key={day} class="slds-col slds-p-vertical_small timeline_day">{day}</div>
                                     </template>
                                 </div>
                             </div>
@@ -80,17 +80,17 @@
     <div if:true={showResourceModal}>
         <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1"
         class="slds-modal slds-fade-in-open">
-        <div class="slds-modal__container" style="overscroll-behavior: none;">
+            <div class="slds-modal__container" style="overscroll-behavior: none;">
 
-            <!-- Modal Header -->
-            <header class="slds-modal__header">
-                <lightning-button-icon icon-name="utility:close" size="large" variant="bare-inverse" class="slds-modal__close" onclick={hideResourceModal}></lightning-button-icon>
-                <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Add Resource</h2>
-            </header>
-            <!-- /Modal Header -->
+                <!-- Modal Header -->
+                <header class="slds-modal__header">
+                    <lightning-button-icon icon-name="utility:close" size="large" variant="bare-inverse" class="slds-modal__close" onclick={hideResourceModal}></lightning-button-icon>
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Add Resource</h2>
+                </header>
+                <!-- /Modal Header -->
 
-            <!-- Modal Body -->
-            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                <!-- Modal Body -->
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
 
                     <div class="slds-form slds-form_stacked">
                         <!-- Select Resource -->
@@ -128,4 +128,40 @@
 
         <!-- <c-gantt_chart_resource_modal></c-gantt_chart_resource_modal> -->
     </div>
-</template>
+    <!-- /Resource Modal -->
+
+    <!-- Confirm Delete Modal -->
+    <div if:true={showDeleteModal}>
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1"
+            class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container" style="overscroll-behavior: none;">
+    
+                <!-- Modal Header -->
+                <header class="slds-modal__header">
+                    <lightning-button-icon icon-name="utility:close" size="large" variant="bare-inverse" class="slds-modal__close"
+                        onclick={hideResourceModal}></lightning-button-icon>
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Confirm Delete</h2>
+                </header>
+                <!-- /Modal Header -->
+    
+                <!-- Modal Body -->
+                <div class="slds-modal__content slds-p-around_medium slds-text-align_center" id="modal-content-id-2">
+                    <p>
+                        Are you sure you want to remove this allocation?
+                    </p>
+    
+                </div>
+                <!-- /Modal Body -->
+    
+                <!-- Modal Footer -->
+                <footer class="slds-modal__footer">
+                    <lightning-button variant="neutral" label="Cancel"></lightning-button>
+                    <lightning-button variant="brand" label="Remove" class="slds-m-left_xx-small"></lightning-button>
+                </footer>
+                <!-- /Modal Footer -->
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </div>
+    <!-- /Confirm Delete Modal -->
+    </template>
