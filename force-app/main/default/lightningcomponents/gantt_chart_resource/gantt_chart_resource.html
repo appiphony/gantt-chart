@@ -32,6 +32,22 @@
                         </template>
                     </template>
                 </div>
+                <div if:true={actionMenuOpen}>
+                    <div class="slds-dropdown slds-dropdown_left slds-is-absolute" style={actionMenuPosition}>
+                        <ul class="slds-dropdown__list" role="menu" aria-label="Show More">
+                            <li class="slds-dropdown__item" role="presentation" onclick={handleEditClick}>
+                                <a href="javascript:void(0);" role="menuitem" tabindex="0">
+                                    <span class="slds-truncate" title="Edit">Edit</span>
+                                </a>
+                            </li>
+                            <li class="slds-dropdown__item" role="presentation" onclick={handleDeleteClick}>
+                                <a href="javascript:void(0);" role="menuitem" tabindex="-1">
+                                    <span class="slds-truncate" title="Delete">Delete</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
         <!-- /Days -->

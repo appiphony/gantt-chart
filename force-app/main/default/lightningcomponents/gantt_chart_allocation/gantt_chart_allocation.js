@@ -131,4 +131,15 @@ export default class GanttChartAllocation extends Element {
 
         this.template.querySelector('.allocation').style = this.getStyle();
     }
+
+    handleActionsClick() {
+        var boundingRect = this.template.querySelector('.allocation').getBoundingClientRect();
+        var actionsClicked = new CustomEvent('showMenu', { 
+            bubbles: true, 
+            composed: true,
+            detail : {boundingRect: boundingRect}
+        });
+
+        this.dispatchEvent(actionsClicked);
+    } 
 }

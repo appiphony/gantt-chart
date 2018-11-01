@@ -21,6 +21,13 @@ export default class GanttChartResource extends Element {
     @api endDate;
 
     @track allocationLists = [];
+    @track actionMenuOpen = false;
+    @track actionMenuPosition;
+
+    constructor() {
+        super();
+        this.addEventListener('showMenu', this.handleActionsClick.bind(this));
+    }
 
     get recordId() {
         return this.resource.Id;
@@ -115,5 +122,11 @@ export default class GanttChartResource extends Element {
                     variant: 'error'
                 });
             });
+    }
+
+    handleActionsClick(event) {
+        var allocation = event.detail.boundingRect;
+        this.actionMenuPosition = 'top: ' + (allocation.y - allocation.height) + '; right: ' + (allocation.x - allocation.width) + ';';
+        this.actionMenuOpen = true;
     }
 }
