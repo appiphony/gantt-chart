@@ -15,6 +15,7 @@ public with sharing class ganttChart {
                           AND End_Date__c >= :DateTime.newInstance(Long.valueOf(startDate)).date()];
         } else if ('Project__c' == Id.valueOf(recordId).getSobjectType().getDescribe().getName()) {
             data.put('projectId', recordId);
+            
             allocations = [SELECT Resource__c, Resource__r.Name, Resource__r.Active__c,
                                   Project__c, Project__r.Name, Project__r.Active__c, Project__r.Color__c,
                                   Start_Date__c, End_Date__c, Role__c

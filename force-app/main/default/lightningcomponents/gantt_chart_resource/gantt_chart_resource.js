@@ -12,35 +12,17 @@ import saveAllocation from '@salesforce/apex/ganttChart.saveAllocation';
 import deleteAllocation from '@salesforce/apex/ganttChart.deleteAllocation';
 
 export default class GanttChartResource extends Element {
-    @api resource
-    @api projectId;
-    @api startDate;
-    @api endDate;
-
-    @track projects;
-    @track modalData = {
-        show: false
-    };
-    @track menuData = {
-        show: false,
-        style: ''
-    };
-
-    get times() {
-        var _times = [];
-
-        for (var date = new Date(this.startDate); date <= this.endDate; date.setDate(date.getDate() + 1)) {
-            _times.push(date.getTime());
-        }
-
-        return _times;
+    @api
+    get resource() {
+        return this._resource;
+    }
+    set resource(_resource) {
+        this._resource = _resource;
+        this.setProjects();
+        this.link = '/' + _resource.Id
     }
 
-    get link() {
-        return '/' + this.resource.id;
-    }
-
-    connectedCallback() {
+    setProjects() {
         var self = this;
         this.projects = Object.values(self.resource.allocationsByProject);
 
@@ -49,6 +31,50 @@ export default class GanttChartResource extends Element {
                 allocation.style = self.calcStyle(allocation);
             });
         });
+    }
+
+    @api projectId;
+    @api
+    get startDate() {
+        return this._startDate;
+    }
+    set startDate(_startDate) {
+        this._startDate = _startDate;
+        this.setTimes();
+    }
+    @api
+    get endDate() {
+        return this._endDate;
+    }
+    set endDate(_endDate) {
+        this._endDate = _endDate;
+        this.setTimes();
+    }
+
+    @track projects;
+    @track link;
+    @track modalData = {
+        show: false
+    };
+    @track menuData = {
+        show: false,
+        style: ''
+    };
+
+    setTimes() {
+        if (this._startDate && this._endDate) {
+            var _times = [];
+
+            for (var date = new Date(this.startDate); date <= this.endDate; date.setDate(date.getDate() + 1)) {
+                _times.push(date.getTime());
+            }
+
+            this.times = _times;
+        }
+    }
+
+    connectedCallback() {
+        this.setProjects();
     }
 
     calcStyle(allocation) {
