@@ -31,24 +31,30 @@
                 <!-- Allocations -->
                 <div class="slds-is-absolute allocations-container">
                     <template for:each={projects} for:item="allocations" for:index="projectIndex">
-                        <div key={allocations} class="project-container">
+                        <div key={allocations} class="slds-is-relative project-container">
+                            &nbsp;
                             <template for:each={allocations} for:item="allocation" for:index="allocationIndex">
-                                <div key={allocation} title={allocation.Name} id={allocation.Id} class="slds-is-absolute allocation" style={allocation.style} data-project={projectIndex} data-allocation={allocationIndex}>
-                                    <div draggable="true" ondragstart={handleDragStart} ondragend={handleDragEnd} data-id={allocation.Id}>
+                                <div key={allocation} title={allocation.Name} id={allocation.Id} class="slds-is-absolute allocation"
+                                    style={allocation.style} data-project={projectIndex} data-allocation={allocationIndex}>
+                                    <div draggable="true" ondragstart={handleDragStart} ondragend={handleDragEnd}
+                                        data-id={allocation.Id}>
                                         <div class="slds-grid slds-grid_vertical-align-center">
-                                            <div class="slds-col slds-grow-none allocation_handle handle_left" draggable="true"
-                                                ondragstart={handleLeftDragStart} data-id={allocation.Id}>
-                                                <lightning-icon icon-name="utility:drag_and_drop" variant="inverse" size="x-small"></lightning-icon>
+                                            <div class="slds-col slds-grow-none allocation_handle handle_left"
+                                                draggable="true" ondragstart={handleLeftDragStart} data-id={allocation.Id}>
+                                                <lightning-icon icon-name="utility:drag_and_drop" variant="inverse"
+                                                    size="x-small"></lightning-icon>
                                             </div>
                                             <div class="slds-col slds-truncate">
                                                 {allocation.Project__r.Name}
                                             </div>
                                             <div class="slds-col slds-grow-none allocation_actions">
-                                                <lightning-button-icon icon-name="utility:down" variant="bare-inverse" size="small"></lightning-button-icon>
+                                                <lightning-button-icon icon-name="utility:down" variant="bare-inverse"
+                                                    size="small"></lightning-button-icon>
                                             </div>
-                                            <div class="slds-col slds-grow-none allocation_handle handle_right" draggable="true"
-                                                ondragstart={handleRightDragStart} data-id={allocation.Id}>
-                                                <lightning-icon icon-name="utility:drag_and_drop" variant="inverse" size="x-small"></lightning-icon>
+                                            <div class="slds-col slds-grow-none allocation_handle handle_right"
+                                                draggable="true" ondragstart={handleRightDragStart} data-id={allocation.Id}>
+                                                <lightning-icon icon-name="utility:drag_and_drop" variant="inverse"
+                                                    size="x-small"></lightning-icon>
                                             </div>
                                         </div>
                                     </div>
@@ -62,4 +68,59 @@
         </div>
         <!-- /Days -->
     </div>
+
+    <!-- Modal -->
+    <div if:true={modalData.show}>
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1"
+            class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container" style="overscroll-behavior: none;">
+
+                <!-- Modal Header -->
+                <header class="slds-modal__header">
+                    <lightning-button-icon icon-name="utility:close" size="large" variant="bare-inverse" class="slds-modal__close"
+                        onclick={hideResourceModal}></lightning-button-icon>
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Add Allocation</h2>
+                </header>
+                <!-- /Modal Header -->
+
+                <!-- Modal Body -->
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+
+                    <div class="slds-form slds-form_stacked">
+                        <!-- Select Resource -->
+                        <div class="slds-form-element" onchange={selectProject}>
+                            <label class="slds-form-element__label" for="select-01">What Project?</label>
+                            <div class="slds-form-element__control">
+                                <div class="slds-select_container">
+                                    <select class="slds-select" id="select-01">
+                                        <option value="">-- Select Project --</option>
+                                        <template for:each={modalData.projects} for:item="project">
+                                            <option key={project.Id} value={project.Id}>{project.Name}</option>
+                                        </template>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /Select Resource -->
+
+                        <!-- Determine Role -->
+                        <lightning-input if:true={showResourceRole} value={modalResource.Default_Role__c} label="Role"
+                            onchange={handleRoleChange}></lightning-input>
+                        <!-- /Determine Role -->
+                    </div>
+                </div>
+                <!-- /Modal Body -->
+
+                <!-- Modal Footer -->
+                <footer class="slds-modal__footer">
+                    <lightning-button variant="neutral" label="Cancel" onclick={hideModal}></lightning-button>
+                    <lightning-button variant="brand" label="Add Allocation" onclick={addAllocation} class="slds-m-left_xx-small"
+                        disabled={modalData.disabled}></lightning-button>
+                </footer>
+                <!-- /Modal Footer -->
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </div>
+    <!-- /Modal -->
 </template>
