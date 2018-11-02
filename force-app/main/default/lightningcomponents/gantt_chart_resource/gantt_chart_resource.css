@@ -13,9 +13,14 @@
 }
 
 .project-container {
-    margin: 3px 0;
     padding: .25rem;
 }
+
+/*** Allocation Actions Menu ***/
+.allocations-container ~ .allocation-actions-container .slds-dropdown {
+    margin-top: 0;
+}
+/*** Allocation Actions Menu ***/
 
 /*** Allocations ***/
 .allocation {
