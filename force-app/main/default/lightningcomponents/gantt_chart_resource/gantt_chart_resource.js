@@ -51,8 +51,13 @@ export default class GanttChartResource extends Element {
         var left = (new Date(allocation.Start_Date__c + 'T00:00:00') - this.startDate) / (this.endDate - this.startDate + 24 * 60 * 60 * 1000) * 100 + '%';
         var right = (this.endDate - new Date(allocation.End_Date__c + 'T00:00:00')) / (this.endDate - this.startDate + 24 * 60 * 60 * 1000) * 100 + '%';
 
+        const colorMap = {
+            Red: 'red',
+            Blue: 'blue'
+        };
+
         var style = [
-            'background-color: ' + backgroundColor,
+            'background-color: ' + colorMap[backgroundColor],
             'left: ' + left,
             'right: ' + right
         ];
