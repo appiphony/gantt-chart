@@ -1,17 +1,12 @@
 import {
     Element,
     api,
-    track,
-    wire
+    track
 } from 'engine';
 import {
     showToast
 } from 'lightning-notifications-library';
-import {
-    refreshApex
-} from '@salesforce/apex';
 
-import getAllocationLists from '@salesforce/apex/ganttChart.getAllocationLists';
 import saveAllocation from '@salesforce/apex/ganttChart.saveAllocation';
 
 export default class GanttChartResource extends Element {
@@ -20,18 +15,15 @@ export default class GanttChartResource extends Element {
     @api startDate;
     @api endDate;
 
-    @track allocationLists = [];
+    @track projects;
     @track actionMenuOpen = false;
     @track actionMenuPosition;
 
-    constructor() {
-        super();
-        this.addEventListener('showMenu', this.handleActionsClick.bind(this));
-    }
+    // constructor() {
+    //     super();
+    //     this.addEventListener('showMenu', this.handleActionsClick.bind(this));
+    // }
 
-    get recordId() {
-        return this.resource.Id;
-    }
 
     get times() {
         var _times = [];
@@ -43,85 +35,162 @@ export default class GanttChartResource extends Element {
         return _times;
     }
 
-    get projectSize() {
-        return this.allocationLists.length;
-    }
-
-    get projectIdOrEmpty() {
-        return this.projectId ? this.projectId : '';
-    }
-
-    get startDateUTC() {
-        return this.startDate.getTime() + this.startDate.getTimezoneOffset() * 60 * 1000 + '';
-    }
-
-    get endDateUTC() {
-        return this.endDate.getTime() + this.endDate.getTimezoneOffset() * 60 * 1000 + '';
+    get link() {
+        return '/' + this.resource.id;
     }
 
     connectedCallback() {
-        this.recordId = this.resource.Id;
-        this.startDateUTC = this.startDate.getTime() + this.startDate.getTimezoneOffset() * 60 * 1000 + ''
-        this.endDateUTC = this.endDate.getTime() + this.endDate.getTimezoneOffset() * 60 * 1000 + '';
-        this.projectIdOrEmpty = this.projectId ? this.projectId : '';
-    }
+        var self = this;
+        this.projects = Object.values(self.resource.allocationsByProject);
 
-    wiredAllocationLists;
-    @wire(getAllocationLists, {
-        recordId: '$recordId',
-        projectId: '$projectIdOrEmpty',
-        startDate: '$startDateUTC',
-        endDate: '$endDateUTC'
-    })
-    wiredGetAllocationLists(value) {
-        this.wiredAllocationLists = value;
-
-        if (value.error) {
-            showToast({
-                error: value.error,
-                variant: 'error'
+        this.projects.forEach(function (allocations) {
+            allocations.forEach(function (allocation) {
+                allocation.style = self.calcStyle(allocation);
             });
-        } else if (value.data) {
-            this.allocationLists = value.data;
-        }
+        });
     }
 
-    get link() {
-        return '/' + this.recordId;
+    calcStyle(_allocation) {
+        var left = (new Date(_allocation.Start_Date__c + 'T00:00:00') - this.startDate) / (this.endDate - this.startDate + 24 * 60 * 60 * 1000) * 100 + '%;';
+        var right = (this.endDate - new Date(_allocation.End_Date__c + 'T00:00:00')) / (this.endDate - this.startDate + 24 * 60 * 60 * 1000) * 100 + '%;';
+        var _style = [
+            'left: ' + left,
+            'right: ' + right
+        ];
+
+        if (this.isDragging) {
+            _style.push('pointer-events: none;');
+        } else {
+            _style.push('pointer-events: auto;');
+        }
+
+        return _style.join(' ');
     }
 
     handleClick(event) {
         const myDate = new Date(parseInt(event.currentTarget.dataset.time, 10));
         var dateUTC = myDate.getTime() + myDate.getTimezoneOffset() * 60 * 1000;
 
-        this.handleAllocationUpdate({
-            detail: {
-                startDate: dateUTC + '',
-                endDate: dateUTC + ''
-            }
+        this._saveAllocation({
+            startDate: dateUTC + '',
+            endDate: dateUTC + ''
         });
     }
 
-    handleAllocationUpdate(event) {
-        var allocation = event.detail;
-
+    _saveAllocation(allocation) {
         if (null == allocation.projectId && null != this.projectId) {
             allocation.projectId = this.projectId;
         }
 
         if (null == allocation.resourceId) {
-            allocation.resourceId = this.recordId;
+            allocation.resourceId = this.resource.id;
         }
 
         saveAllocation(allocation)
             .then(() => {
-                return refreshApex(this.wiredAllocationLists);
+                // send refresh to top
+                this.dispatchEvent(new CustomEvent('refresh', {
+                    bubbles: true,
+                    composed: true
+                }));
             }).catch(error => {
                 showToast({
                     message: error.message,
                     variant: 'error'
                 });
             });
+    }
+
+    dragInfo = {};
+    isDragging = false;
+    handleDragStart(event) {
+        var container = this.template.querySelector('#' + event.currentTarget.dataset.id);
+        this.dragInfo.projectIndex = container.dataset.project;
+        this.dragInfo.allocationIndex = container.dataset.allocation;
+        this.dragInfo.newAllocation = this.projects[container.dataset.project][container.dataset.allocation];
+
+        this.isDragging = true;
+
+        // hide drag image
+        container.style.opacity = 0;
+        setTimeout(function () {
+            container.style.opacity = 1;
+            container.style.pointerEvents = 'none';
+        }, 0);
+    }
+
+    handleLeftDragStart(event) {
+        this.dragInfo.direction = 'left';
+        this.handleDragStart(event);
+    }
+
+    handleRightDragStart(event) {
+        this.dragInfo.direction = 'right';
+        this.handleDragStart(event);
+    }
+
+    handleDragEnd(event) {
+        event.preventDefault();
+
+        const projectIndex = this.dragInfo.projectIndex;
+        const allocationIndex = this.dragInfo.allocationIndex;
+        const allocation = this.dragInfo.newAllocation;
+
+        this.projects = JSON.parse(JSON.stringify(this.projects));
+        this.projects[projectIndex][allocationIndex] = allocation;
+
+        var startDate = new Date(allocation.Start_Date__c + 'T00:00:00');
+        var endDate = new Date(allocation.End_Date__c + 'T00:00:00');
+
+        this._saveAllocation({
+            allocationId: allocation.Id,
+            startDate: startDate.getTime() + startDate.getTimezoneOffset() * 60 * 1000 + '',
+            endDate: endDate.getTime() + endDate.getTimezoneOffset() * 60 * 1000 + ''
+        });
+
+        this.dragInfo = {};
+        this.isDragging = false;
+        this.template.querySelector('#' + allocation.Id).style.pointerEvents = 'auto';
+    }
+
+    handleDragEnter(event) {
+        const projectIndex = this.dragInfo.projectIndex;
+        const allocationIndex = this.dragInfo.allocationIndex;
+        const direction = this.dragInfo.direction;
+        const myDate = new Date(parseInt(event.currentTarget.dataset.time, 10));
+
+        if (!this.dragInfo.startTime) {
+            this.dragInfo.startTime = myDate;
+        }
+
+        var allocation = JSON.parse(JSON.stringify(this.projects[projectIndex][allocationIndex]));
+        var deltaDate = Math.trunc((myDate - this.dragInfo.startTime) / 1000 / 60 / 60 / 24);
+        var startDate = new Date(allocation.Start_Date__c + 'T00:00:00')
+        var newStartDate = new Date(startDate);
+        newStartDate.setDate(startDate.getDate() + deltaDate);
+        var endDate = new Date(allocation.End_Date__c + 'T00:00:00');
+        var newEndDate = new Date(endDate);
+        newEndDate.setDate(endDate.getDate() + deltaDate);
+
+        switch (direction) {
+            case 'left':
+                if (newStartDate <= endDate) {
+                    allocation.Start_Date__c = newStartDate.toJSON().substr(0, 10);
+                }
+                break;
+            case 'right':
+                if (newEndDate >= startDate) {
+                    allocation.End_Date__c = newEndDate.toJSON().substr(0, 10);
+                }
+                break;
+            default:
+                allocation.Start_Date__c = newStartDate.toJSON().substr(0, 10);
+                allocation.End_Date__c = newEndDate.toJSON().substr(0, 10);
+
+        }
+
+        this.dragInfo.newAllocation = allocation;
+        this.template.querySelector('#' + allocation.Id).style = this.calcStyle(allocation);
     }
 
     handleActionsClick(event) {

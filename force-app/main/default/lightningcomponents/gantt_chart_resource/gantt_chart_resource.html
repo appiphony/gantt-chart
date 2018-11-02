@@ -1,5 +1,6 @@
 <template>
     <div class="slds-grid">
+        <!-- Resource Info -->
         <div class="slds-col slds-size_1-of-6 slds-p-around_small slds-truncate resource">
             <div class="slds-media slds-media_center">
                 <div class="slds-media__figure">
@@ -7,31 +8,62 @@
                 </div>
                 <div class="slds-media__body">
                     <h3 class="slds-text-body_default">
-                        <a target="_blank" href={link}>{resource.Name}</a>
+                        <a target="_blank" href={link}>{resource.name}</a>
                     </h3>
                     <h3 class="slds-text-body_small slds-text-color_weak">
-                        {resource.Default_Role__c}
+                        {resource.primaryAllocation.Role__c}
                     </h3>
                 </div>
             </div>
         </div>
+        <!-- Resource Info -->
+
         <!-- Days -->
         <div class="slds-col">
             <div class="slds-is-relative">
+
+                <!-- Time Slots-->
                 <div class="slds-grid">
                     <template for:each={times} for:item="time">
-                        <div key={time} class="slds-col timeslot" data-time={time} onclick={handleClick}>
+                        <div key={time} class="slds-col timeslot" data-time={time} onclick={handleClick} ondragenter={handleDragEnter}>
                             <!-- nothing -->
                         </div>
                     </template>
                 </div>
-                <div class="slds-is-absolute allocation-container">
-                    <template for:each={allocationLists} for:item="allocationList" for:index="index">
-                        <template for:each={allocationList} for:item="allocation">
-                            <c-gantt_chart_allocation key={allocation.Id} allocation={allocation} index={index} start-date={startDate} end-date={endDate} onupdate={handleAllocationUpdate}></c-gantt_chart_allocation>
-                        </template>
+                <!-- /Time Slots-->
+
+                <!-- Allocations -->
+                <div class="slds-is-absolute allocations-container">
+                    <template for:each={projects} for:item="allocations" for:index="projectIndex">
+                        <div key={allocations} class="project-container">
+                            <template for:each={allocations} for:item="allocation" for:index="allocationIndex">
+                                <div key={allocation} title={allocation.Name} id={allocation.Id} class="slds-is-absolute allocation" style={allocation.style} data-project={projectIndex} data-allocation={allocationIndex}>
+                                    <div draggable="true" ondragstart={handleDragStart} ondragend={handleDragEnd} data-id={allocation.Id}>
+                                        <div class="slds-grid slds-grid_vertical-align-center">
+                                            <div class="slds-col slds-grow-none allocation_handle handle_left" draggable="true"
+                                                ondragstart={handleLeftDragStart} data-id={allocation.Id}>
+                                                <lightning-icon icon-name="utility:drag_and_drop" variant="inverse" size="x-small"></lightning-icon>
+                                            </div>
+                                            <div class="slds-col slds-truncate">
+                                                {allocation.Project__r.Name}
+                                            </div>
+                                            <div class="slds-col slds-grow-none allocation_actions">
+                                                <lightning-button-icon icon-name="utility:down" variant="bare-inverse" size="small" onclick={handleActionsClick}></lightning-button-icon>
+                                            </div>
+                                            <div class="slds-col slds-grow-none allocation_handle handle_right" draggable="true"
+                                                ondragstart={handleRightDragStart} data-id={allocation.Id}>
+                                                <lightning-icon icon-name="utility:drag_and_drop" variant="inverse" size="x-small"></lightning-icon>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
                     </template>
                 </div>
+                <!-- /Allocations -->
+
+                <!-- Allocation Actions-->
                 <div if:true={actionMenuOpen}>
                     <div class="slds-dropdown slds-dropdown_left slds-is-absolute" style={actionMenuPosition}>
                         <ul class="slds-dropdown__list" role="menu" aria-label="Show More">
@@ -48,6 +80,7 @@
                         </ul>
                     </div>
                 </div>
+                <!-- /Allocation Actions-->
             </div>
         </div>
         <!-- /Days -->

@@ -7,19 +7,19 @@ public with sharing class ganttChart {
         List<Allocation__c> allocations;
 
         if (String.isEmpty(recordId)) {
-            allocations = [SELECT Resource__c, Resource__r.Name, Resource__r.Default_Role__c
+            allocations = [SELECT Resource__c, Resource__r.Name, Project__c, Project__r.Name, Start_Date__c, End_Date__c, Role__c
                           FROM Allocation__c
                           WHERE Start_Date__c <= :DateTime.newInstance(Long.valueOf(endDate)).date()
                           AND End_Date__c >= :DateTime.newInstance(Long.valueOf(startDate)).date()];
         } else if ('Project__c' == Id.valueOf(recordId).getSobjectType().getDescribe().getName()) {
             data.put('projectId', recordId);
-            allocations = [SELECT Resource__c, Resource__r.Name, Resource__r.Default_Role__c
+            allocations = [SELECT Resource__c, Resource__r.Name, Project__c, Project__r.Name, Start_Date__c, End_Date__c, Role__c
                            FROM Allocation__c
                            WHERE Project__c = :recordId
                            AND Start_Date__c <= :DateTime.newInstance(Long.valueOf(endDate)).date()
                            AND End_Date__c >= :DateTime.newInstance(Long.valueOf(startDate)).date()];
         } else {
-            allocations = [SELECT Resource__c, Resource__r.Name, Resource__r.Default_Role__c
+            allocations = [SELECT Resource__c, Resource__r.Name,Project__c, Project__r.Name, Start_Date__c, End_Date__c, Role__c
                            FROM Allocation__c
                            WHERE Resource__c = :recordId
                            AND Start_Date__c <= :DateTime.newInstance(Long.valueOf(endDate)).date()
@@ -27,47 +27,32 @@ public with sharing class ganttChart {
         }
 
         for (Allocation__c allocation : allocations) {
-            resourceById.put(allocation.Resource__c, new Map<String, Object> {
-                'Id' => allocation.Resource__c,
-                'Name' => allocation.Resource__r.Name,
-                'Default_Role__c' => allocation.Resource__r.Default_Role__c
-            });
+            if (!resourceById.containsKey(allocation.Resource__c)) {
+                resourceById.put(allocation.Resource__c, new Map<String, Object> {
+                    'id' => allocation.Resource__c,
+                    'name' => allocation.Resource__r.Name,
+                    'primaryAllocation' => allocation,
+                    'allocationsByProject' => new Map<String, Object>()
+                });
+            }
+
+            Map<String, Object> resource = (Map<String, Object>)resourceById.get(allocation.Resource__c);
+            Allocation__c primaryAllocation = (Allocation__c)resource.get('primaryAllocation');
+            Map<String, Object> allocationsByProject = (Map<String, Object>)resource.get('allocationsByProject');
+            
+            resource.put('primaryAllocation', getPrimaryAllocation(primaryAllocation, allocation));
+
+            if (!allocationsByProject.containsKey(allocation.Project__c)) {
+                allocationsByProject.put(allocation.Project__c, new List<Object>());
+            }
+
+            List<Object> projectAllocation = (List<Object>)allocationsByProject.get(allocation.Project__c);
+            projectAllocation.add(allocation);
         }
         
         data.put('resources', resourceById.values());
         
         return data;
-    }
-
-    @AuraEnabled(Cacheable=true)
-    public static List<Object> getAllocationLists(Id recordId, String projectId, String startDate, String endDate) {
-        Map<String, Object> allocationsByProject = new Map<String, Object>();
-        List<Allocation__c> allocations = new List<Allocation__c>();
-
-        if (String.isEmpty(projectId)) {
-            allocations = [SELECT Id, Start_Date__c, End_Date__c, Project__c, Project__r.Name
-                           FROM Allocation__c
-                           WHERE Resource__c = :recordId
-                           AND Start_Date__c <= :DateTime.newInstance(Long.valueOf(endDate)).date()
-                           AND End_Date__c >= :DateTime.newInstance(Long.valueOf(startDate)).date()];
-        } else {
-            allocations = [SELECT Id, Start_Date__c, End_Date__c, Project__c, Project__r.Name
-                           FROM Allocation__c
-                           WHERE Resource__c = :recordId
-                           AND Project__c = :Id.valueOf(projectId)
-                           AND Start_Date__c <= :DateTime.newInstance(Long.valueOf(endDate)).date()
-                           AND End_Date__c >= :DateTime.newInstance(Long.valueOf(startDate)).date()];
-        }
-        
-        for (Allocation__c allocation : allocations) {
-            if (!allocationsByProject.containsKey(allocation.Project__c)) {
-                allocationsByProject.put(allocation.Project__c, new List<Allocation__c>());
-            }
-
-            ((List<Object>)allocationsByProject.get(allocation.Project__c)).add(allocation);
-        }
-
-        return allocationsByProject.values();
     }
 
     @AuraEnabled(Cacheable=true)
@@ -99,5 +84,51 @@ public with sharing class ganttChart {
         upsert allocation;
 
         return allocation;
+    }
+
+    private static Allocation__c getPrimaryAllocation(Allocation__c a, Allocation__c b) {
+        // if a is active today
+        if (Date.today() >= a.Start_Date__c && Date.today() <= a.End_Date__c) {
+            // if b is NOT active today
+            if (Date.today() < b.Start_Date__c || Date.today() > b.End_Date__c) {
+                return a;
+            }
+            else {
+                // if b ends before a
+                if (b.End_Date__c < a.End_Date__c) {
+                    return b;
+                } else {
+                    return a;
+                }
+            }
+        }
+        // if a is active in the future
+        else if (Date.today() < a.Start_Date__c) {
+            // if b is active in the past
+            if (Date.today() > b.Start_Date__c) {
+                return a;
+            } else {
+                // if b starts before a
+                if (b.Start_Date__c < a.Start_Date__c) {
+                    return b;
+                } else {
+                    return a;
+                }
+            }
+        }
+        // if a is active in the past
+        else {
+            // if b is active in the future
+            if (Date.today() < b.Start_Date__c) {
+                return b;
+            } else {
+                // if b ends before a
+                if (b.End_Date__c > a.End_Date__c) {
+                    return b;
+                } else {
+                    return a;
+                }
+            }
+        }
     }
 }

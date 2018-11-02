@@ -1,5 +1,16 @@
-import { Element, api, track, wire } from 'engine';
-import { showToast } from 'lightning-notifications-library';
+import {
+    Element,
+    api,
+    track,
+    wire
+} from 'engine';
+import {
+    showToast
+} from 'lightning-notifications-library';
+import {
+    refreshApex
+} from '@salesforce/apex';
+
 
 import getChartData from '@salesforce/apex/ganttChart.getChartData';
 import getResources from '@salesforce/apex/ganttChart.getResources';
@@ -100,8 +111,15 @@ export default class GanttChart extends Element {
         return dates.filter(d => d);
     }
 
-    @wire(getChartData, { recordId: '$recordIdOrEmpty', startDate: '$startDateUTC', endDate: '$endDateUTC' })
+    wiredChartData;
+    @wire(getChartData, {
+        recordId: '$recordIdOrEmpty',
+        startDate: '$startDateUTC',
+        endDate: '$endDateUTC'
+    })
     wiredGetChartData(value) {
+        this.wiredChartData = value;
+
         if (value.error) {
             this.resources = [];
             showToast({
@@ -142,11 +160,10 @@ export default class GanttChart extends Element {
                 this.showResourceRole = true;
             }
         });
-        debugger;
+        
         if (this.modalResource && this.modalResource.Default_Role__c) {
             this.modalAddDisabled = false;
-        }
-        else {
+        } else {
             this.modalAddDisabled = true;
         }
     }
@@ -155,8 +172,7 @@ export default class GanttChart extends Element {
         this.modalResource.Default_Role__c = event.detail.value.trim();
         if (this.modalResource && this.modalResource.Default_Role__c) {
             this.modalAddDisabled = false;
-        }
-        else {
+        } else {
             this.modalAddDisabled = true;
         }
     }
@@ -175,5 +191,9 @@ export default class GanttChart extends Element {
         this.modalResources = [];
         this.showResourceModal = false;
         this.showResourceRole = false;
+    }
+
+    handleRefresh() {
+        refreshApex(this.wiredChartData);
     }
 }
