@@ -212,6 +212,10 @@ export default class GanttChart extends Element {
     }
 
     handleRefresh() {
+        // currently not returning correct data
+        //refreshApex(this.wiredChartData);
+
+        // workaround
         getChartData({
             recordId: this.recordIdOrEmpty,
             startDate: this.startDateUTC,
@@ -225,5 +229,6 @@ export default class GanttChart extends Element {
                 variant: 'error'
             });
         });
+        // /workaround
     }
 }
