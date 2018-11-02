@@ -129,3 +129,11 @@
 .timeslot:hover {
     background-color: rgb(232, 232, 232);
 }
+
+.timeslot.today {
+    background: rgba(21, 137, 238, 0.1);
+}
+
+.timeslot.today:hover {
+    background: rgba(21, 137, 238, 0.2);
+}
