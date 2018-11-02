@@ -52,7 +52,7 @@
                                                 {allocation.Project__r.Name}
                                             </div>
                                             <div class="slds-col slds-grow-none allocation_actions">
-                                                <lightning-button-icon icon-name="utility:down" variant="bare-inverse" size="small" onclick={handleActionsClick}></lightning-button-icon>
+                                                <lightning-button-icon icon-name="utility:down" variant="bare-inverse" size="small" onclick={handleActionsClick} data-id={allocation.Id}></lightning-button-icon>
                                             </div>
                                             <div class="slds-col slds-grow-none allocation_handle handle_right"
                                                 draggable="true" ondragstart={handleRightDragStart} data-id={allocation.Id}>

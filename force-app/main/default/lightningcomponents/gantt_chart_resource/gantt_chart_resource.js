@@ -22,12 +22,7 @@ export default class GanttChartResource extends Element {
     };
     @track actionMenuOpen = false;
     @track actionMenuPosition;
-
-    // constructor() {
-    //     super();
-    //     this.addEventListener('showMenu', this.handleActionsClick.bind(this));
-    // }
-
+    
     get times() {
         var _times = [];
 
@@ -250,10 +245,12 @@ export default class GanttChartResource extends Element {
     }
 
     handleActionsClick(event) {
-        var allocation = event.detail.boundingRect;
-        var rightEdge = event.detail.right;
-        
-        this.actionMenuPosition = 'top: ' + allocation.height + 'px; right: ' + rightEdge + '; left: unset';
+        var container = this.template.querySelector('#' + event.currentTarget.dataset.id);
+        var allocation = this.projects[container.dataset.project][container.dataset.allocation];
+        var allocationHeight = this.template.querySelector('.allocation').getBoundingClientRect().height;
+        var rightEdge = (this.endDate - new Date(allocation.End_Date__c + 'T00:00:00')) / (this.endDate - this.startDate + 24 * 60 * 60 * 1000) * 100 + '%';
+
+        this.actionMenuPosition = 'top: ' + allocationHeight + 'px; right: ' + rightEdge + '; left: unset';
         this.actionMenuOpen = true;
     }
 }
