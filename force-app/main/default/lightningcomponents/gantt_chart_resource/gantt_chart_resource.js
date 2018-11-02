@@ -57,8 +57,8 @@ export default class GanttChartResource extends Element {
         var right = (this.endDate - new Date(allocation.End_Date__c + 'T00:00:00')) / (this.endDate - this.startDate + 24 * 60 * 60 * 1000) * 100 + '%';
 
         const colorMap = {
-            Red: 'red',
-            Blue: 'blue'
+            Red: '#FF0000',
+            Blue: '#0000FF'
         };
 
         var style = [
@@ -68,9 +68,9 @@ export default class GanttChartResource extends Element {
         ];
 
         if (this.isDragging) {
-            style.push('pointer-events: none;');
+            style.push('pointer-events: none');
         } else {
-            style.push('pointer-events: auto;');
+            style.push('pointer-events: auto');
         }
 
         return style.join('; ');
@@ -140,7 +140,7 @@ export default class GanttChartResource extends Element {
         }
 
         if (null == allocation.resourceId) {
-            allocation.resourceId = this.resource.id;
+            allocation.resourceId = this.resource.Id;
         }
 
         if (null == allocation.role) {
