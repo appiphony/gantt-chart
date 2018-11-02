@@ -12,13 +12,13 @@
     overflow: hidden;
 }
 
-.allocation .allocation_handle {
-    cursor: ew-resize;
+.project-container {
+    margin: 3px 0;
+    padding: .25rem;
 }
 
 /*** Allocations ***/
 .allocation {
-    transform: translateY(6px);
     padding: .25rem;
     border-radius: .25rem;
     background-color: rgba(21, 137, 238);
@@ -28,6 +28,11 @@
     pointer-events: auto;
     cursor: grab; 
     text-overflow: ellipsis;
+    top: 0px;
+}
+
+.allocation .allocation_handle {
+    cursor: ew-resize;
 }
 
 .allocation .allocation_handle,
@@ -38,7 +43,6 @@
 .allocation .slds-icon_container {
     margin-bottom: 1px;
 }
-
 
 .allocation.low-effort {
     opacity: 0.6;

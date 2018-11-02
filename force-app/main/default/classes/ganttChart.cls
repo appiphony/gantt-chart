@@ -7,19 +7,25 @@ public with sharing class ganttChart {
         List<Allocation__c> allocations;
 
         if (String.isEmpty(recordId)) {
-            allocations = [SELECT Resource__c, Resource__r.Name, Project__c, Project__r.Name, Start_Date__c, End_Date__c, Role__c
+            allocations = [SELECT Resource__c, Resource__r.Name, Resource__r.Active__c,
+                                  Project__c, Project__r.Name, Project__r.Active__c, Project__r.Color__c,
+                                  Start_Date__c, End_Date__c, Role__c
                           FROM Allocation__c
                           WHERE Start_Date__c <= :DateTime.newInstance(Long.valueOf(endDate)).date()
                           AND End_Date__c >= :DateTime.newInstance(Long.valueOf(startDate)).date()];
         } else if ('Project__c' == Id.valueOf(recordId).getSobjectType().getDescribe().getName()) {
             data.put('projectId', recordId);
-            allocations = [SELECT Resource__c, Resource__r.Name, Project__c, Project__r.Name, Start_Date__c, End_Date__c, Role__c
+            allocations = [SELECT Resource__c, Resource__r.Name, Resource__r.Active__c,
+                                  Project__c, Project__r.Name, Project__r.Active__c, Project__r.Color__c,
+                                  Start_Date__c, End_Date__c, Role__c
                            FROM Allocation__c
                            WHERE Project__c = :recordId
                            AND Start_Date__c <= :DateTime.newInstance(Long.valueOf(endDate)).date()
                            AND End_Date__c >= :DateTime.newInstance(Long.valueOf(startDate)).date()];
         } else {
-            allocations = [SELECT Resource__c, Resource__r.Name,Project__c, Project__r.Name, Start_Date__c, End_Date__c, Role__c
+            allocations = [SELECT Resource__c, Resource__r.Name, Resource__r.Active__c,
+                                  Project__c, Project__r.Name, Project__r.Active__c, Project__r.Color__c,
+                                  Start_Date__c, End_Date__c, Role__c
                            FROM Allocation__c
                            WHERE Resource__c = :recordId
                            AND Start_Date__c <= :DateTime.newInstance(Long.valueOf(endDate)).date()
@@ -63,8 +69,16 @@ public with sharing class ganttChart {
     }
 
     @AuraEnabled(Cacheable=true)
-    public static Object saveAllocation(Id allocationId, Id projectId, Id resourceId, String startDate, String endDate) {
+    public static List<Project__c> getProjects() {
+        return [SELECT Id, Name, Color__c
+                FROM Project__c
+                WHERE Active__c = true];
+    }
+
+    @AuraEnabled(Cacheable=true)
+    public static Object saveAllocation(Id allocationId, Id projectId, Id resourceId, String role, String startDate, String endDate) {
         Allocation__c allocation = new Allocation__c(
+            Role__c = role,
             Start_Date__c = DateTime.newInstance(Long.valueOf(startDate)).date(),
             End_Date__c = DateTime.newInstance(Long.valueOf(endDate)).date()
         );

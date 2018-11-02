@@ -7,6 +7,7 @@ import {
     showToast
 } from 'lightning-notifications-library';
 
+import getProjects from '@salesforce/apex/ganttChart.getProjects';
 import saveAllocation from '@salesforce/apex/ganttChart.saveAllocation';
 
 export default class GanttChartResource extends Element {
@@ -16,6 +17,9 @@ export default class GanttChartResource extends Element {
     @api endDate;
 
     @track projects;
+    @track modalData = {
+        show: false
+    };
     @track actionMenuOpen = false;
     @track actionMenuPosition;
 
@@ -23,7 +27,6 @@ export default class GanttChartResource extends Element {
     //     super();
     //     this.addEventListener('showMenu', this.handleActionsClick.bind(this));
     // }
-
 
     get times() {
         var _times = [];
@@ -50,31 +53,80 @@ export default class GanttChartResource extends Element {
         });
     }
 
-    calcStyle(_allocation) {
-        var left = (new Date(_allocation.Start_Date__c + 'T00:00:00') - this.startDate) / (this.endDate - this.startDate + 24 * 60 * 60 * 1000) * 100 + '%;';
-        var right = (this.endDate - new Date(_allocation.End_Date__c + 'T00:00:00')) / (this.endDate - this.startDate + 24 * 60 * 60 * 1000) * 100 + '%;';
-        var _style = [
+    calcStyle(allocation) {
+        var backgroundColor = allocation.Project__r.Color__c
+        var left = (new Date(allocation.Start_Date__c + 'T00:00:00') - this.startDate) / (this.endDate - this.startDate + 24 * 60 * 60 * 1000) * 100 + '%';
+        var right = (this.endDate - new Date(allocation.End_Date__c + 'T00:00:00')) / (this.endDate - this.startDate + 24 * 60 * 60 * 1000) * 100 + '%';
+
+        var style = [
+            'background-color: ' + backgroundColor,
             'left: ' + left,
             'right: ' + right
         ];
 
         if (this.isDragging) {
-            _style.push('pointer-events: none;');
+            style.push('pointer-events: none;');
         } else {
-            _style.push('pointer-events: auto;');
+            style.push('pointer-events: auto;');
         }
 
-        return _style.join(' ');
+        return style.join('; ');
     }
 
     handleClick(event) {
         const myDate = new Date(parseInt(event.currentTarget.dataset.time, 10));
         var dateUTC = myDate.getTime() + myDate.getTimezoneOffset() * 60 * 1000;
 
+        if (this.projectId) {
+            this._saveAllocation({
+                startDate: dateUTC + '',
+                endDate: dateUTC + ''
+            });
+        } else {
+            var self = this;
+            getProjects()
+                .then((projects) => {
+                    self.modalData = {
+                        projects: projects,
+                        show: true,
+                        disabled: true,
+                        startDate: dateUTC + '',
+                        endDate: dateUTC + ''
+                    };
+                }).catch((error) => {
+                    showToast({
+                        message: error.message,
+                        variant: 'error'
+                    });
+                });
+            
+        }
+    }
+
+    selectProject(event) {
+        this.modalData.projectId = event.target.value;
+
+        if (this.modalData.projectId) {
+            this.modalData.disabled = false;
+        }
+    }
+
+    addAllocation() {
         this._saveAllocation({
-            startDate: dateUTC + '',
-            endDate: dateUTC + ''
+            projectId: this.modalData.projectId,
+            startDate: this.modalData.startDate,
+            endDate: this.modalData.endDate
+        }).then(() => {
+            this.hideModal();
         });
+    }
+
+    hideModal() {
+        this.modalData = { show: false };
+    }
+
+    handleSaveAllocation(event) {
+
     }
 
     _saveAllocation(allocation) {
@@ -86,7 +138,11 @@ export default class GanttChartResource extends Element {
             allocation.resourceId = this.resource.id;
         }
 
-        saveAllocation(allocation)
+        if (null == allocation.role) {
+            allocation.role = this.resource.primaryAllocation.Role__c;
+        }
+
+       return saveAllocation(allocation)
             .then(() => {
                 // send refresh to top
                 this.dispatchEvent(new CustomEvent('refresh', {

@@ -11,6 +11,14 @@
                 <behavior>Required</behavior>
                 <field>Name</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Active__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Color__c</field>
+            </layoutItems>
         </layoutColumns>
         <layoutColumns>
             <layoutItems>
@@ -51,9 +59,8 @@
     </layoutSections>
     <relatedLists>
         <excludeButtons>MassChangeOwner</excludeButtons>
-        <excludeButtons>New</excludeButtons>
-        <fields>NAME</fields>
         <fields>Resource__c.NAME</fields>
+        <fields>Role__c</fields>
         <fields>Start_Date__c</fields>
         <fields>End_Date__c</fields>
         <relatedList>Allocation__c.Project__c</relatedList>
@@ -64,7 +71,7 @@
     <showRunAssignmentRulesCheckbox>false</showRunAssignmentRulesCheckbox>
     <showSubmitAndAttachButton>false</showSubmitAndAttachButton>
     <summaryLayout>
-        <masterLabel>00h56000000QfVg</masterLabel>
+        <masterLabel>00hL0000000uDcQ</masterLabel>
         <sizeX>4</sizeX>
         <sizeY>0</sizeY>
         <summaryLayoutStyle>Default</summaryLayoutStyle>
