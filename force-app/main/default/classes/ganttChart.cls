@@ -100,6 +100,11 @@ public with sharing class ganttChart {
         return allocation;
     }
 
+    @AuraEnabled(Cacheable=true)
+    public static void deleteAllocation(Id allocationId) {
+        delete new Allocation__c(Id = allocationId);
+    }
+
     private static Allocation__c getPrimaryAllocation(Allocation__c a, Allocation__c b) {
         // if a is active today
         if (Date.today() >= a.Start_Date__c && Date.today() <= a.End_Date__c) {
