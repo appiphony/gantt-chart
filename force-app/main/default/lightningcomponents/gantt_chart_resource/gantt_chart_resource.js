@@ -126,7 +126,9 @@ export default class GanttChartResource extends Element {
 
     handleActionsClick(event) {
         var allocation = event.detail.boundingRect;
-        this.actionMenuPosition = 'top: ' + (allocation.y - allocation.height) + '; right: ' + (allocation.x - allocation.width) + ';';
+        var rightEdge = event.detail.right;
+        
+        this.actionMenuPosition = 'top: ' + allocation.height + 'px; right: ' + rightEdge + '; left: unset';
         this.actionMenuOpen = true;
     }
 }

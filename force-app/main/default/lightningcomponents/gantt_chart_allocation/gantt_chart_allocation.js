@@ -137,7 +137,7 @@ export default class GanttChartAllocation extends Element {
         var actionsClicked = new CustomEvent('showMenu', { 
             bubbles: true, 
             composed: true,
-            detail : {boundingRect: boundingRect}
+            detail : {boundingRect: boundingRect, right: this.getRight()}
         });
 
         this.dispatchEvent(actionsClicked);
