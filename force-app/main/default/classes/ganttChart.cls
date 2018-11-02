@@ -35,8 +35,9 @@ public with sharing class ganttChart {
         for (Allocation__c allocation : allocations) {
             if (!resourceById.containsKey(allocation.Resource__c)) {
                 resourceById.put(allocation.Resource__c, new Map<String, Object> {
-                    'id' => allocation.Resource__c,
-                    'name' => allocation.Resource__r.Name,
+                    'Id' => allocation.Resource__c,
+                    'Name' => allocation.Resource__r.Name,
+                    'Default_Role__c' => allocation.Role__c,
                     'primaryAllocation' => allocation,
                     'allocationsByProject' => new Map<String, Object>()
                 });
