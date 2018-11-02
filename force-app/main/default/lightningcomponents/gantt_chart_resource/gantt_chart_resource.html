@@ -69,8 +69,8 @@
                 <!-- /Allocations -->
 
                 <!-- Allocation Actions-->
-                <div if:true={actionMenuOpen}>
-                    <div class="slds-dropdown slds-dropdown_left slds-is-absolute" style={actionMenuPosition}>
+                <div if:true={menuData.show}>
+                    <div class="slds-dropdown slds-dropdown_left slds-is-absolute" style={menuData.style}>
                         <ul class="slds-dropdown__list" role="menu" aria-label="Show More">
                             <li class="slds-dropdown__item" role="presentation" onclick={handleEditClick}>
                                 <a href="javascript:void(0);" role="menuitem" tabindex="0">

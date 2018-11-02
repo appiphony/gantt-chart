@@ -21,9 +21,11 @@ export default class GanttChartResource extends Element {
     @track modalData = {
         show: false
     };
-    @track actionMenuOpen = false;
-    @track actionMenuPosition;
-    
+    @track menuData = {
+        show: false,
+        style: ''
+    };
+
     get times() {
         var _times = [];
 
@@ -100,7 +102,7 @@ export default class GanttChartResource extends Element {
                         variant: 'error'
                     });
                 });
-            
+
         }
     }
 
@@ -123,7 +125,9 @@ export default class GanttChartResource extends Element {
     }
 
     hideModal() {
-        this.modalData = { show: false };
+        this.modalData = {
+            show: false
+        };
     }
 
     handleSaveAllocation(event) {
@@ -143,7 +147,7 @@ export default class GanttChartResource extends Element {
             allocation.role = this.resource.primaryAllocation.Role__c;
         }
 
-       return saveAllocation(allocation)
+        return saveAllocation(allocation)
             .then(() => {
                 // send refresh to top
                 this.dispatchEvent(new CustomEvent('refresh', {
@@ -253,10 +257,29 @@ export default class GanttChartResource extends Element {
     handleActionsClick(event) {
         var container = this.template.querySelector('#' + event.currentTarget.dataset.id);
         var allocation = this.projects[container.dataset.project][container.dataset.allocation];
+        var projectHeight = this.template.querySelector('.project-container').getBoundingClientRect().height;
         var allocationHeight = this.template.querySelector('.allocation').getBoundingClientRect().height;
         var rightEdge = (this.endDate - new Date(allocation.End_Date__c + 'T00:00:00')) / (this.endDate - this.startDate + 24 * 60 * 60 * 1000) * 100 + '%';
+        var topEdge = projectHeight * container.dataset.project + allocationHeight;
 
-        this.actionMenuPosition = 'top: ' + allocationHeight + 'px; right: ' + rightEdge + '; left: unset';
-        this.actionMenuOpen = true;
+        this.menuData.allocationId = event.currentTarget.dataset.id;
+        this.menuData.style = 'top: ' + topEdge + 'px; right: ' + rightEdge + '; left: unset';
+        this.menuData.show = true;
+    }
+
+    handleDeleteClick(event) {
+        deleteAllocation({
+            allocationId: this.menuData.allocationId
+        }).then(() => {
+            this.menuData = {
+                show: false,
+                style: ''
+            };
+        }).catch(error => {
+            showToast({
+                message: error.message,
+                variant: 'error'
+            });
+        });
     }
 }
