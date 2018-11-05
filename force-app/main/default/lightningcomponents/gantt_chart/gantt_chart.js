@@ -60,12 +60,7 @@ export default class GanttChart extends Element {
     }
 
     // modal
-    @track modalResource;
-    @track modalResources = [];
-    @track showResourceModal = false;
-    @track showResourceRole = false;
-    @track modalAddDisabled = true;
-    @track showDeleteModal = false;
+    @track resourceModalData = {};
 
     connectedCallback() {
         this.days = 14;
@@ -151,13 +146,13 @@ export default class GanttChart extends Element {
     openAddResourceModal() {
         getResources().then(resources => {
             var excludeResources = this.resources;
-            this.modalResources = resources.filter(resource => {
+            this.resourceModalData.resources = resources.filter(resource => {
                 return excludeResources.filter(excludeResource => {
                     return excludeResource.Id === resource.Id
                 }).length === 0;
             });
-            this.modalAddDisabled = true;
-            this.showResourceModal = true;
+            
+            this.template.querySelector('#resource-modal').show();
         }).catch(error => {
             showToast({
                 message: error.message,
@@ -166,27 +161,28 @@ export default class GanttChart extends Element {
         });
     }
 
-    selectResource(event) {
-        this.modalResources.forEach(resource => {
+    handleResourceSelect(event) {
+        this.resourceModalData.resources.forEach(resource => {
             if (resource.Id === event.target.value) {
-                this.modalResource = Object.assign({}, resource);
-                this.showResourceRole = true;
+                this.resourceModalData.resource = Object.assign({}, resource);
+                this.resourceModalData.hasResource = true;
             }
         });
 
-        if (this.modalResource && this.modalResource.Default_Role__c) {
-            this.modalAddDisabled = false;
-        } else {
-            this.modalAddDisabled = true;
-        }
+        this.validateResourceModalData();
     }
 
     handleRoleChange(event) {
-        this.modalResource.Default_Role__c = event.detail.value.trim();
-        if (this.modalResource && this.modalResource.Default_Role__c) {
-            this.modalAddDisabled = false;
+        this.resourceModalData.resource.Default_Role__c = event.detail.value.trim();
+
+        this.validateResourceModalData();
+    }
+
+    validateResourceModalData() {
+        if (!this.resourceModalData.resource || !this.resourceModalData.resource.Default_Role__c) {
+            this.resourceModalData.disabled = true;
         } else {
-            this.modalAddDisabled = true;
+            this.resourceModalData.disabled = false;
         }
     }
 
@@ -198,16 +194,11 @@ export default class GanttChart extends Element {
         newResource.allocationsByProject = [];
         this.resources = this.resources.concat([newResource]);
 
-        this.modalResource = null;
-        this.modalResources = [];
-        this.showResourceModal = false;
-        this.showResourceRole = false;
-    }
+        this.template.querySelector('#resource-modal').show();
 
-    hideResourceModal() {
         this.modalResource = null;
         this.modalResources = [];
-        this.showResourceModal = false;
+        
         this.showResourceRole = false;
     }
 

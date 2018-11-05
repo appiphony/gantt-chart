@@ -132,11 +132,11 @@ export default class GanttChartResource extends NavigationMixin(Element) {
                 .then(projects => {
                     self.addAllocationData = {
                         projects: projects,
+                        role: self.resource.Default_Role__c,
                         disabled: true,
                         startDate: dateUTC + '',
                         endDate: dateUTC + ''
                     };
-
                     self.template.querySelector('#allocation-modal').show();
                 }).catch(error => {
                     showToast({
@@ -147,10 +147,22 @@ export default class GanttChartResource extends NavigationMixin(Element) {
         }
     }
 
-    selectProject(event) {
+    handleProjectSelect(event) {
         this.addAllocationData.projectId = event.target.value;
 
-        if (this.addAllocationData.projectId) {
+        this.validateAddAllocationData();
+    }
+
+    handleRoleChange(event) {
+        this.addAllocationData.role = event.target.value;
+
+        this.validateAddAllocationData();
+    }
+
+    validateAddAllocationData() {
+        if (!this.addAllocationData.projectId || !this.addAllocationData.role) {
+            this.addAllocationData.disabled = true;
+        } else {
             this.addAllocationData.disabled = false;
         }
     }
@@ -158,6 +170,7 @@ export default class GanttChartResource extends NavigationMixin(Element) {
     addAllocationModalSuccess() {
         this._saveAllocation({
             projectId: this.addAllocationData.projectId,
+            role: this.addAllocationData.role,
             startDate: this.addAllocationData.startDate,
             endDate: this.addAllocationData.endDate
         }).then(() => {
@@ -330,7 +343,7 @@ export default class GanttChartResource extends NavigationMixin(Element) {
                 bubbles: true,
                 composed: true
             }));
-            
+
             this.template.querySelector('#delete-modal').hide();
         }).catch(error => {
             showToast({

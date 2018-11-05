@@ -102,18 +102,18 @@
     </div>
 
     <c-gantt_chart_modal id="delete-modal">
-        <span slot="title">Are you sure?</span>
-        <span slot="body">
-            Are you sure?
-        </span>
-        <lightning-button slot="footer" variant="destructive" label="Delete" class="slds-m-left_xx-small" onclick={handleMenuDeleteSuccess}></lightning-button>
+        <span slot="title">Confirm Delete</span>
+        <p slot="body">
+            Are you sure you want to remove this allocation?
+        </p>
+        <lightning-button slot="footer" variant="destructive" label="Remove" class="slds-m-left_xx-small" onclick={handleMenuDeleteSuccess}></lightning-button>
     </c-gantt_chart_modal>
 
     <c-gantt_chart_modal id="allocation-modal">
         <span slot="title">Add Allocation</span>
         <div slot="body" class="slds-form slds-form_stacked">
-            <!-- Select Resource -->
-            <div class="slds-form-element" onchange={selectProject}>
+            <!-- Select Project -->
+            <div class="slds-form-element" onchange={handleProjectSelect}>
                 <label class="slds-form-element__label" for="select-01">What Project?</label>
                 <div class="slds-form-element__control">
                     <div class="slds-select_container">
@@ -126,14 +126,14 @@
                     </div>
                 </div>
             </div>
-            <!-- /Select Resource -->
+            <!-- /Select Project -->
 
             <!-- Determine Role -->
-            <lightning-input if:true={showResourceRole} value={modalResource.Default_Role__c} label="Role" onchange={handleRoleChange}></lightning-input>
+            <lightning-input value={addAllocationData.role} label="Role" onchange={handleRoleChange}></lightning-input>
             <!-- /Determine Role -->
         </div>
 
-        <lightning-button slot="footer" variant="brand" label="Add Allocation" onclick={addAllocationModalSuccess} class="slds-m-left_xx-small"
-                        disabled={addAllocationData.disabled}></lightning-button>
+        <lightning-button slot="footer" variant="brand" label="Add Allocation" onclick={addAllocationModalSuccess}
+            class="slds-m-left_xx-small" disabled={addAllocationData.disabled}></lightning-button>
     </c-gantt_chart_modal>
 </template>
