@@ -308,22 +308,21 @@ export default class GanttChartResource extends NavigationMixin(Element) {
                 recordId: recordId,
                 actionName: 'edit'
             }
-        }).then(() => {
-            this.closeAllocationMenu();
         });
+
+        this.closeAllocationMenu();
     }
 
     handleMenuDeleteClick(event) {
         deleteAllocation({
             allocationId: this.menuData.allocationId
-        }).then(() => {
-            this.closeAllocationMenu();
         }).catch(error => {
             showToast({
                 message: error.message,
                 variant: 'error'
             });
         });
+        this.closeAllocationMenu();
     }
 
     closeAllocationMenu() {

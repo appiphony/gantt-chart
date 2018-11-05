@@ -80,12 +80,12 @@
                 <div if:true={menuData.show} class="allocation-actions-container">
                     <div class="slds-dropdown slds-dropdown_left slds-is-absolute" style={menuData.style}>
                         <ul class="slds-dropdown__list" role="menu" aria-label="Show More">
-                            <li class="slds-dropdown__item" role="presentation" onclick={openEditModal} data-id={menuData.allocationId}>
+                            <li class="slds-dropdown__item" role="presentation" onclick={handleModalEditClick} data-id={menuData.allocationId}>
                                 <a href="javascript:void(0);" role="menuitem" tabindex="0">
                                     <span class="slds-truncate" title="Edit">Edit</span>
                                 </a>
                             </li>
-                            <li class="slds-dropdown__item" role="presentation" onclick={handleDeleteClick}>
+                            <li class="slds-dropdown__item" role="presentation" onclick={handleMenuDeleteClick}>
                                 <a href="javascript:void(0);" role="menuitem" tabindex="-1">
                                     <span class="slds-truncate" title="Delete">Delete</span>
                                 </a>
