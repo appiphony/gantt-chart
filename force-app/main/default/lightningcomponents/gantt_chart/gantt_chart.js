@@ -192,6 +192,9 @@ export default class GanttChart extends Element {
 
     addResourceById() {
         var newResource = Object.assign({}, this.modalResource);
+        newResource.primaryAllocation = {
+            Role__c: newResource.Default_Role__c
+        };
         newResource.allocationsByProject = [];
         this.resources = this.resources.concat([newResource]);
 

@@ -56,9 +56,7 @@ export default class GanttChartResource extends NavigationMixin(Element) {
     }
 
     @track projects;
-    @track modalData = {
-        show: false
-    };
+    @track addAllocationData = {};
     @track menuData = {
         show: false,
         style: ''
@@ -78,6 +76,10 @@ export default class GanttChartResource extends NavigationMixin(Element) {
 
     connectedCallback() {
         this.setProjects();
+        this.menuData = {
+            show: false,
+            style: ''
+        };
     }
 
     calcStyle(allocation) {
@@ -115,6 +117,8 @@ export default class GanttChartResource extends NavigationMixin(Element) {
                 endDate: dateUTC + ''
             });
         } else {
+            // CAN WE PREVENT REDIRECT TO NEW RECORD
+            // CAN WE SET DEFAULT VALUES
             // this[NavigationMixin.Navigate]({
             //     type: 'standard__objectPage',
             //     attributes: {
@@ -125,15 +129,16 @@ export default class GanttChartResource extends NavigationMixin(Element) {
 
             var self = this;
             getProjects()
-                .then((projects) => {
-                    self.modalData = {
+                .then(projects => {
+                    self.addAllocationData = {
                         projects: projects,
-                        show: true,
                         disabled: true,
                         startDate: dateUTC + '',
                         endDate: dateUTC + ''
                     };
-                }).catch((error) => {
+
+                    self.template.querySelector('#allocation-modal').show();
+                }).catch(error => {
                     showToast({
                         message: error.message,
                         variant: 'error'
@@ -143,27 +148,26 @@ export default class GanttChartResource extends NavigationMixin(Element) {
     }
 
     selectProject(event) {
-        this.modalData.projectId = event.target.value;
+        this.addAllocationData.projectId = event.target.value;
 
-        if (this.modalData.projectId) {
-            this.modalData.disabled = false;
+        if (this.addAllocationData.projectId) {
+            this.addAllocationData.disabled = false;
         }
     }
 
-    addAllocationFromModal() {
+    addAllocationModalSuccess() {
         this._saveAllocation({
-            projectId: this.modalData.projectId,
-            startDate: this.modalData.startDate,
-            endDate: this.modalData.endDate
+            projectId: this.addAllocationData.projectId,
+            startDate: this.addAllocationData.startDate,
+            endDate: this.addAllocationData.endDate
         }).then(() => {
-            this.hideModal();
+            this.template.querySelector('#allocation-modal').hide();
+        }).catch(error => {
+            showToast({
+                message: error.message,
+                variant: 'error'
+            });
         });
-    }
-
-    hideModal() {
-        this.modalData = {
-            show: false
-        };
     }
 
     _saveAllocation(allocation) {
@@ -314,22 +318,30 @@ export default class GanttChartResource extends NavigationMixin(Element) {
     }
 
     handleMenuDeleteClick(event) {
+        this.template.querySelector('#delete-modal').show();
+        this.closeAllocationMenu();
+    }
+
+    handleMenuDeleteSuccess() {
         deleteAllocation({
             allocationId: this.menuData.allocationId
+        }).then(() => {
+            this.dispatchEvent(new CustomEvent('refresh', {
+                bubbles: true,
+                composed: true
+            }));
+            
+            this.template.querySelector('#delete-modal').hide();
         }).catch(error => {
             showToast({
                 message: error.message,
                 variant: 'error'
             });
         });
-        this.closeAllocationMenu();
     }
 
     closeAllocationMenu() {
-        this.menuData = {
-            show: false,
-            style: ''
-        };
+        this.menuData.show = false;
     }
 
     render() {
