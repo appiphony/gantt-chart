@@ -7,9 +7,6 @@ import {
 import {
     showToast
 } from 'lightning-notifications-library';
-import {
-    refreshApex
-} from '@salesforce/apex';
 
 import getChartData from '@salesforce/apex/ganttChart.getChartData';
 import getResources from '@salesforce/apex/ganttChart.getResources';

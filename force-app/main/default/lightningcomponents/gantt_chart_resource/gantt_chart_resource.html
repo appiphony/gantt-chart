@@ -8,7 +8,7 @@
                 </div>
                 <div class="slds-media__body">
                     <h3 class="slds-text-body_default">
-                        <a target="_blank" href={link}>{resource.Name}</a>
+                        {resource.Name}
                     </h3>
                     <h3 class="slds-text-body_small slds-text-color_weak">
                         {resource.Default_Role__c}
@@ -25,7 +25,7 @@
                 <!-- Time Slots-->
                 <div class="slds-grid">
                     <template for:each={times} for:item="time">
-                        <div key={time} class="slds-col timeslot" data-time={time} onclick={handleClick} ondragenter={handleDragEnter}>
+                        <div key={time} class="slds-col timeslot" data-time={time} onclick={handleTimeslotClick} ondragenter={handleDragEnter}>
                             <!-- nothing -->
                         </div>
                     </template>
@@ -35,35 +35,43 @@
                 <!-- Allocations -->
                 <div class="slds-is-absolute allocations-container">
                     <template for:each={projects} for:item="allocations" for:index="projectIndex">
+                        <!-- Project Container -->
                         <div key={allocations} class="slds-is-relative project-container">
                             &nbsp;
                             <template for:each={allocations} for:item="allocation" for:index="allocationIndex">
+                                <!-- Allocation -->
                                 <div key={allocation} title={allocation.Name} id={allocation.Id} class="slds-is-absolute allocation"
                                     style={allocation.style} data-project={projectIndex} data-allocation={allocationIndex}>
                                     <div draggable="true" ondragstart={handleDragStart} ondragend={handleDragEnd}
                                         data-id={allocation.Id}>
                                         <div class="slds-grid slds-grid_vertical-align-center">
+                                            <!-- Allocation Left Handle -->
                                             <div class="slds-col slds-grow-none allocation_handle handle_left"
                                                 draggable="true" ondragstart={handleLeftDragStart} data-id={allocation.Id}>
                                                 <lightning-icon icon-name="utility:drag_and_drop" variant="inverse"
                                                     size="x-small"></lightning-icon>
                                             </div>
+                                            <!-- /Allocation Left Handle -->
                                             <div class="slds-col slds-truncate">
                                                 {allocation.Project__r.Name}
                                             </div>
                                             <div class="slds-col slds-grow-none allocation_actions">
-                                                <lightning-button-icon icon-name="utility:down" variant="bare-inverse" size="small" onclick={handleActionsClick} data-id={allocation.Id}></lightning-button-icon>
+                                                <lightning-button-icon icon-name="utility:down" variant="bare-inverse" size="small" onclick={openAllocationMenu} data-id={allocation.Id}></lightning-button-icon>
                                             </div>
+                                            <!-- Allocation Right Handle -->
                                             <div class="slds-col slds-grow-none allocation_handle handle_right"
                                                 draggable="true" ondragstart={handleRightDragStart} data-id={allocation.Id}>
                                                 <lightning-icon icon-name="utility:drag_and_drop" variant="inverse"
                                                     size="x-small"></lightning-icon>
                                             </div>
+                                            <!-- /Allocation Right Handle -->
                                         </div>
                                     </div>
                                 </div>
+                                <!-- /Allocation -->
                             </template>
                         </div>
+                        <!-- /Project Container -->
                     </template>
                 </div>
                 <!-- /Allocations -->
@@ -72,7 +80,7 @@
                 <div if:true={menuData.show} class="allocation-actions-container">
                     <div class="slds-dropdown slds-dropdown_left slds-is-absolute" style={menuData.style}>
                         <ul class="slds-dropdown__list" role="menu" aria-label="Show More">
-                            <li class="slds-dropdown__item" role="presentation" onclick={handleEditClick}>
+                            <li class="slds-dropdown__item" role="presentation" onclick={openEditModal} data-id={menuData.allocationId}>
                                 <a href="javascript:void(0);" role="menuitem" tabindex="0">
                                     <span class="slds-truncate" title="Edit">Edit</span>
                                 </a>
@@ -100,7 +108,7 @@
                 <!-- Modal Header -->
                 <header class="slds-modal__header">
                     <lightning-button-icon icon-name="utility:close" size="large" variant="bare-inverse" class="slds-modal__close"
-                        onclick={hideResourceModal}></lightning-button-icon>
+                        onclick={hideModal}></lightning-button-icon>
                     <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Add Allocation</h2>
                 </header>
                 <!-- /Modal Header -->
@@ -136,7 +144,7 @@
                 <!-- Modal Footer -->
                 <footer class="slds-modal__footer">
                     <lightning-button variant="neutral" label="Cancel" onclick={hideModal}></lightning-button>
-                    <lightning-button variant="brand" label="Add Allocation" onclick={addAllocation} class="slds-m-left_xx-small"
+                    <lightning-button variant="brand" label="Add Allocation" onclick={addAllocationFromModal} class="slds-m-left_xx-small"
                         disabled={modalData.disabled}></lightning-button>
                 </footer>
                 <!-- /Modal Footer -->

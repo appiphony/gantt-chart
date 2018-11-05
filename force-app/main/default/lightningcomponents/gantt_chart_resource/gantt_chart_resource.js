@@ -4,6 +4,9 @@ import {
     track
 } from 'engine';
 import {
+    NavigationMixin
+} from 'lightning-navigation';
+import {
     showToast
 } from 'lightning-notifications-library';
 
@@ -11,7 +14,9 @@ import getProjects from '@salesforce/apex/ganttChart.getProjects';
 import saveAllocation from '@salesforce/apex/ganttChart.saveAllocation';
 import deleteAllocation from '@salesforce/apex/ganttChart.deleteAllocation';
 
-export default class GanttChartResource extends Element {
+import tmpl from './gantt_chart_resource.html';
+
+export default class GanttChartResource extends NavigationMixin(Element) {
     @api
     get resource() {
         return this._resource;
@@ -19,7 +24,6 @@ export default class GanttChartResource extends Element {
     set resource(_resource) {
         this._resource = _resource;
         this.setProjects();
-        this.link = '/' + _resource.Id
     }
 
     setProjects() {
@@ -52,7 +56,6 @@ export default class GanttChartResource extends Element {
     }
 
     @track projects;
-    @track link;
     @track modalData = {
         show: false
     };
@@ -102,7 +105,7 @@ export default class GanttChartResource extends Element {
         return style.join('; ');
     }
 
-    handleClick(event) {
+    handleTimeslotClick(event) {
         const myDate = new Date(parseInt(event.currentTarget.dataset.time, 10));
         var dateUTC = myDate.getTime() + myDate.getTimezoneOffset() * 60 * 1000;
 
@@ -112,6 +115,14 @@ export default class GanttChartResource extends Element {
                 endDate: dateUTC + ''
             });
         } else {
+            // this[NavigationMixin.Navigate]({
+            //     type: 'standard__objectPage',
+            //     attributes: {
+            //         objectApiName: 'Allocation__c',
+            //         actionName: 'new'
+            //     }
+            // });
+
             var self = this;
             getProjects()
                 .then((projects) => {
@@ -128,7 +139,6 @@ export default class GanttChartResource extends Element {
                         variant: 'error'
                     });
                 });
-
         }
     }
 
@@ -140,7 +150,7 @@ export default class GanttChartResource extends Element {
         }
     }
 
-    addAllocation() {
+    addAllocationFromModal() {
         this._saveAllocation({
             projectId: this.modalData.projectId,
             startDate: this.modalData.startDate,
@@ -154,10 +164,6 @@ export default class GanttChartResource extends Element {
         this.modalData = {
             show: false
         };
-    }
-
-    handleSaveAllocation(event) {
-
     }
 
     _saveAllocation(allocation) {
@@ -280,7 +286,7 @@ export default class GanttChartResource extends Element {
         this.template.querySelector('#' + allocation.Id).style = this.calcStyle(allocation);
     }
 
-    handleActionsClick(event) {
+    openAllocationMenu(event) {
         var container = this.template.querySelector('#' + event.currentTarget.dataset.id);
         var allocation = this.projects[container.dataset.project][container.dataset.allocation];
         var projectHeight = this.template.querySelector('.project-container').getBoundingClientRect().height;
@@ -293,19 +299,41 @@ export default class GanttChartResource extends Element {
         this.menuData.show = true;
     }
 
-    handleDeleteClick(event) {
+    handleModalEditClick(event) {
+        var recordId = event.currentTarget.dataset.id;
+
+        this[NavigationMixin.Navigate]({
+            type: 'standard__recordPage',
+            attributes: {
+                recordId: recordId,
+                actionName: 'edit'
+            }
+        }).then(() => {
+            this.closeAllocationMenu();
+        });
+    }
+
+    handleMenuDeleteClick(event) {
         deleteAllocation({
             allocationId: this.menuData.allocationId
         }).then(() => {
-            this.menuData = {
-                show: false,
-                style: ''
-            };
+            this.closeAllocationMenu();
         }).catch(error => {
             showToast({
                 message: error.message,
                 variant: 'error'
             });
         });
+    }
+
+    closeAllocationMenu() {
+        this.menuData = {
+            show: false,
+            style: ''
+        };
+    }
+
+    render() {
+        return tmpl;
     }
 }
