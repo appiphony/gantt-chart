@@ -66,9 +66,17 @@ export default class GanttChartResource extends NavigationMixin(Element) {
         var right = (this.endDate - new Date(allocation.End_Date__c + 'T00:00:00')) / (this.endDate - this.startDate + 24 * 60 * 60 * 1000) * 100 + '%';
 
         const colorMap = {
-            Blue: '#0000FF',
-            Green: '#00FF00',
-            Red: '#FF0000'
+            Blue: '#1589ee',
+            Green: '#4AAD59',
+            Red: '#E52D34',
+            Turqoise: '#0DBCB9',
+            Navy: '#052F5F', 
+            Orange: '#E56532',
+            Purple: '#62548E',
+            Pink: '#CA7CCE', 
+            Brown: '#823E17',
+            Lime: '#7CCC47',
+            Gold: '#FCAF32'
         };
 
         var style = [
