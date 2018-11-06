@@ -187,26 +187,20 @@ export default class GanttChart extends Element {
     }
 
     addResourceById() {
-        var newResource = Object.assign({}, this.modalResource);
-        newResource.primaryAllocation = {
-            Role__c: newResource.Default_Role__c
-        };
+        var newResource = Object.assign({}, this.resourceModalData.resource);
         newResource.allocationsByProject = [];
         this.resources = this.resources.concat([newResource]);
 
-        this.template.querySelector('#resource-modal').show();
+        this.template.querySelector('#resource-modal').hide();
 
-        this.modalResource = null;
-        this.modalResources = [];
-        
-        this.showResourceRole = false;
+        this.resourceModalData = {
+            disabled: true,
+            resource: null,
+            resources: []
+        };
     }
 
     handleRefresh() {
-        // currently not returning correct data
-        //refreshApex(this.wiredChartData);
-
-        // workaround
         getChartData({
             recordId: this.recordIdOrEmpty,
             startDate: this.startDateUTC,
@@ -220,6 +214,5 @@ export default class GanttChart extends Element {
                 variant: 'error'
             });
         });
-        // /workaround
     }
 }

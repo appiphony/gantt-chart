@@ -4,16 +4,16 @@ public with sharing class ganttChart {
         Map<String, Object> data = new Map<String, Object>();
         Map<String, Object> resourceById = new Map<String, Object>();
 
-        List<Allocation__c> allocations;
+        List<Allocation__c> allocations = new List<Allocation__c>();
 
         if (String.isEmpty(recordId)) {
             allocations = [SELECT Resource__c, Resource__r.Name, Resource__r.Active__c,
                                   Project__c, Project__r.Name, Project__r.Active__c, Project__r.Color__c,
                                   Start_Date__c, End_Date__c, Role__c
-                          FROM Allocation__c
-                          WHERE Start_Date__c <= :DateTime.newInstance(Long.valueOf(endDate)).date()
-                          AND End_Date__c >= :DateTime.newInstance(Long.valueOf(startDate)).date()
-                          ORDER BY Resource__r.Name];
+                           FROM Allocation__c
+                           WHERE Start_Date__c <= :DateTime.newInstance(Long.valueOf(endDate)).date()
+                           AND End_Date__c >= :DateTime.newInstance(Long.valueOf(startDate)).date()
+                           ORDER BY Resource__r.Name, Project__r.Name, Start_Date__c];
         } else if ('Project__c' == Id.valueOf(recordId).getSobjectType().getDescribe().getName()) {
             data.put('projectId', recordId);
             
@@ -24,8 +24,8 @@ public with sharing class ganttChart {
                            WHERE Project__c = :recordId
                            AND Start_Date__c <= :DateTime.newInstance(Long.valueOf(endDate)).date()
                            AND End_Date__c >= :DateTime.newInstance(Long.valueOf(startDate)).date()
-                           ORDER BY Resource__r.Name];
-        } else {
+                           ORDER BY Resource__r.Name, Project__r.Name, Start_Date__c];
+        } else if ('Allocation__c' == Id.valueOf(recordId).getSobjectType().getDescribe().getName()) {
             allocations = [SELECT Resource__c, Resource__r.Name, Resource__r.Active__c,
                                   Project__c, Project__r.Name, Project__r.Active__c, Project__r.Color__c,
                                   Start_Date__c, End_Date__c, Role__c
@@ -33,7 +33,9 @@ public with sharing class ganttChart {
                            WHERE Resource__c = :recordId
                            AND Start_Date__c <= :DateTime.newInstance(Long.valueOf(endDate)).date()
                            AND End_Date__c >= :DateTime.newInstance(Long.valueOf(startDate)).date()
-                           ORDER BY Resource__r.Name];
+                           ORDER BY Resource__r.Name, Project__r.Name, Start_Date__c];
+        } else {
+            // unsupported recordId
         }
 
         for (Allocation__c allocation : allocations) {
@@ -48,10 +50,11 @@ public with sharing class ganttChart {
             }
 
             Map<String, Object> resource = (Map<String, Object>)resourceById.get(allocation.Resource__c);
-            Allocation__c primaryAllocation = (Allocation__c)resource.get('primaryAllocation');
+            Allocation__c primaryAllocation = getPrimaryAllocation((Allocation__c)resource.get('primaryAllocation'), allocation);
             Map<String, Object> allocationsByProject = (Map<String, Object>)resource.get('allocationsByProject');
             
-            resource.put('primaryAllocation', getPrimaryAllocation(primaryAllocation, allocation));
+            resource.put('primaryAllocation', primaryAllocation);
+            resource.put('Default_Role__c', primaryAllocation.Role__c);
 
             if (!allocationsByProject.containsKey(allocation.Project__c)) {
                 allocationsByProject.put(allocation.Project__c, new List<Object>());

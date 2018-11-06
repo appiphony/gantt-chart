@@ -88,8 +88,9 @@ export default class GanttChartResource extends NavigationMixin(Element) {
         var right = (this.endDate - new Date(allocation.End_Date__c + 'T00:00:00')) / (this.endDate - this.startDate + 24 * 60 * 60 * 1000) * 100 + '%';
 
         const colorMap = {
-            Red: '#FF0000',
-            Blue: '#0000FF'
+            Blue: '#0000FF',
+            Green: '#00FF00',
+            Red: '#FF0000'
         };
 
         var style = [
@@ -193,7 +194,7 @@ export default class GanttChartResource extends NavigationMixin(Element) {
         }
 
         if (null == allocation.role) {
-            allocation.role = this.resource.primaryAllocation.Role__c;
+            allocation.role = this.resource.Default_Role__c;
         }
 
         return saveAllocation(allocation)
