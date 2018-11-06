@@ -52,29 +52,6 @@ export default class GanttChartResource extends NavigationMixin(Element) {
     };
     @track projects;
     
-    setProjects() {
-        var self = this;
-        this.projects = Object.values(self.resource.allocationsByProject);
-
-        this.projects.forEach(function (allocations) {
-            allocations.forEach(function (allocation) {
-                allocation.style = self.calcStyle(allocation);
-            });
-        });
-    }
-
-    setTimes() {
-        if (this._startDate && this._endDate) {
-            var _times = [];
-
-            for (var date = new Date(this.startDate); date <= this.endDate; date.setDate(date.getDate() + 1)) {
-                _times.push(date.getTime());
-            }
-
-            this.times = _times;
-        }
-    }
-
     connectedCallback() {
         this.setProjects();
         this.menuData = {
@@ -107,6 +84,29 @@ export default class GanttChartResource extends NavigationMixin(Element) {
         }
 
         return style.join('; ');
+    }
+
+    setProjects() {
+        var self = this;
+        this.projects = Object.values(self.resource.allocationsByProject);
+
+        this.projects.forEach(function (allocations) {
+            allocations.forEach(function (allocation) {
+                allocation.style = self.calcStyle(allocation);
+            });
+        });
+    }
+
+    setTimes() {
+        if (this._startDate && this._endDate) {
+            var _times = [];
+
+            for (var date = new Date(this.startDate); date <= this.endDate; date.setDate(date.getDate() + 1)) {
+                _times.push(date.getTime());
+            }
+
+            this.times = _times;
+        }
     }
 
     handleTimeslotClick(event) {

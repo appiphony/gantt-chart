@@ -171,14 +171,35 @@ export default class GanttChart extends Element {
     }
 
     handleRefresh() {
+        var self =  this;
+
         getChartData({
-            recordId: this.recordIdOrEmpty,
-            startDate: this.startDateUTC,
-            endDate: this.endDateUTC
+            recordId: self.recordIdOrEmpty,
+            startDate: self.startDateUTC,
+            endDate: self.endDateUTC
         }).then(data => {
-            this.isResourceView = !this.recordId || !data.projectId;
-            this.projectId = data.projectId;
-            this.resources = data.resources;
+            self.isResourceView = self.recordId && !data.projectId;
+            self.projectId = data.projectId;
+
+            // empty old data
+            self.resources.forEach(function(resource, i) {
+                self.resources[i] = {
+                    Id: resource.Id,
+                    Name: resource.Name,
+                    allocationsByProject: {}
+                };
+            });
+            
+            data.resources.forEach(function(newResource) {
+                for (var i = 0; i < self.resources.length; i++) {
+                    if (self.resources[i].Id === newResource.Id) {
+                        self.resources[i] = newResource;
+                        return;
+                    }
+                }
+
+                self.resources.push(newResource);
+            });
         }).catch(error => {
             showToast({
                 message: error.message,

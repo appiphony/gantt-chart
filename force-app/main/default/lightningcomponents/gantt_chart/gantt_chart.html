@@ -54,7 +54,7 @@
             <!-- Allocation Table -->
             <template if:true={resources.length}>
                 <template for:each={resources} for:item="resource">
-                    <c-gantt_chart_resource key={resourceId} is-resource-view={isResourceView} resource={resource} project-id={projectId} start-date={startDate}
+                    <c-gantt_chart_resource key={resource.Id} is-resource-view={isResourceView} resource={resource} project-id={projectId} start-date={startDate}
                         end-date={endDate} onrefresh={handleRefresh}></c-gantt_chart_resource>
                 </template>
             </template>
@@ -67,7 +67,7 @@
             <!-- /Allocation Table -->
 
             <div class="slds-m-top_medium">
-                <lightning-button if:false={isResource} variant="neutral" label="Add Resource" icon-name="utility:add"
+                <lightning-button if:false={isResourceView} variant="neutral" label="Add Resource" icon-name="utility:add"
                     onclick={openAddResourceModal}></lightning-button>
             </div>
         </div>
@@ -100,5 +100,15 @@
         </div>
         <lightning-button slot="footer" variant="brand" label="Add Resource" onclick={addResourceById} class="slds-m-left_xx-small"
             disabled={resourceModalData.disabled}></lightning-button>
+    </c-gantt_chart_modal>
+
+    <c-gantt_chart_modal id="filter-modal">
+        <span slot="title">Filter</span>
+        <div slot="body">
+            <div>PROJECT</div>
+            <div>ROLE</div>
+            <div>STATUS</div>
+        </div>
+        <lightning-button slot="footer" variant="brand" label="Okay" onclick={filterAllocations} class="slds-m-left_xx-small"></lightning-button>
     </c-gantt_chart_modal>
 </template>
