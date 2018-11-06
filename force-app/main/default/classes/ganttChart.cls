@@ -14,28 +14,19 @@ public with sharing class ganttChart {
                            WHERE Start_Date__c <= :DateTime.newInstance(Long.valueOf(endDate)).date()
                            AND End_Date__c >= :DateTime.newInstance(Long.valueOf(startDate)).date()
                            ORDER BY Resource__r.Name, Project__r.Name, Start_Date__c];
-        } else if ('Project__c' == Id.valueOf(recordId).getSobjectType().getDescribe().getName()) {
-            data.put('projectId', recordId);
+        } else {
+            if ('Project__c' == Id.valueOf(recordId).getSobjectType().getDescribe().getName()) {
+                data.put('projectId', recordId);
+            }
             
             allocations = [SELECT Resource__c, Resource__r.Name, Resource__r.Active__c,
                                   Project__c, Project__r.Name, Project__r.Active__c, Project__r.Color__c,
                                   Start_Date__c, End_Date__c, Role__c
                            FROM Allocation__c
-                           WHERE Project__c = :recordId
+                           WHERE (Project__c = :recordId OR Resource__c = :recordId)
                            AND Start_Date__c <= :DateTime.newInstance(Long.valueOf(endDate)).date()
                            AND End_Date__c >= :DateTime.newInstance(Long.valueOf(startDate)).date()
                            ORDER BY Resource__r.Name, Project__r.Name, Start_Date__c];
-        } else if ('Allocation__c' == Id.valueOf(recordId).getSobjectType().getDescribe().getName()) {
-            allocations = [SELECT Resource__c, Resource__r.Name, Resource__r.Active__c,
-                                  Project__c, Project__r.Name, Project__r.Active__c, Project__r.Color__c,
-                                  Start_Date__c, End_Date__c, Role__c
-                           FROM Allocation__c
-                           WHERE Resource__c = :recordId
-                           AND Start_Date__c <= :DateTime.newInstance(Long.valueOf(endDate)).date()
-                           AND End_Date__c >= :DateTime.newInstance(Long.valueOf(startDate)).date()
-                           ORDER BY Resource__r.Name, Project__r.Name, Start_Date__c];
-        } else {
-            // unsupported recordId
         }
 
         for (Allocation__c allocation : allocations) {

@@ -1,8 +1,7 @@
 import {
     Element,
     api,
-    track,
-    wire
+    track
 } from 'engine';
 import {
     showToast
@@ -26,11 +25,8 @@ export default class GanttChart extends Element {
 
     // chart
     @track projectId;
-    @track resources;
-
-    get isResource() {
-        return null == this.projectId;
-    }
+    @track resources = [];
+    @track isResourceView = false;
 
     get dateShift() {
         switch (this.days) {
@@ -55,10 +51,6 @@ export default class GanttChart extends Element {
         this.dates = this.getDates();
     }
 
-    get recordIdOrEmpty() {
-        return this.recordId ? this.recordId : '';
-    }
-
     // modal
     @track resourceModalData = {};
 
@@ -71,6 +63,8 @@ export default class GanttChart extends Element {
         _startDate.setDate(_startDate.getDate() - _startDate.getDay());
 
         this.setStartDate(_startDate);
+
+        this.handleRefresh();
     }
 
     getDates() {
@@ -89,30 +83,6 @@ export default class GanttChart extends Element {
         }
 
         return dates.filter(d => d);
-    }
-
-    wiredChartData;
-    @wire(getChartData, {
-        recordId: '$recordIdOrEmpty',
-        startDate: '$startDateUTC',
-        endDate: '$endDateUTC'
-    })
-    wiredGetChartData(value) {
-        this.wiredChartData = value;
-
-        if (value.error) {
-            this.resources = [];
-            showToast({
-                message: value.error,
-                variant: 'error'
-            });
-        }
-        if (value.data) {
-            this.projectId = value.data.projectId;
-            this.resources = value.data.resources;
-        } else {
-            this.resources = [];
-        }
     }
 
     navigateToToday() {
@@ -206,6 +176,7 @@ export default class GanttChart extends Element {
             startDate: this.startDateUTC,
             endDate: this.endDateUTC
         }).then(data => {
+            this.isResourceView = !this.recordId || !data.projectId;
             this.projectId = data.projectId;
             this.resources = data.resources;
         }).catch(error => {

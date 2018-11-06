@@ -17,6 +17,8 @@ import deleteAllocation from '@salesforce/apex/ganttChart.deleteAllocation';
 import tmpl from './gantt_chart_resource.html';
 
 export default class GanttChartResource extends NavigationMixin(Element) {
+    @api isResourceView;
+    @api projectId;
     @api
     get resource() {
         return this._resource;
@@ -25,19 +27,7 @@ export default class GanttChartResource extends NavigationMixin(Element) {
         this._resource = _resource;
         this.setProjects();
     }
-
-    setProjects() {
-        var self = this;
-        this.projects = Object.values(self.resource.allocationsByProject);
-
-        this.projects.forEach(function (allocations) {
-            allocations.forEach(function (allocation) {
-                allocation.style = self.calcStyle(allocation);
-            });
-        });
-    }
-
-    @api projectId;
+    
     @api
     get startDate() {
         return this._startDate;
@@ -55,12 +45,23 @@ export default class GanttChartResource extends NavigationMixin(Element) {
         this.setTimes();
     }
 
-    @track projects;
     @track addAllocationData = {};
     @track menuData = {
         show: false,
         style: ''
     };
+    @track projects;
+    
+    setProjects() {
+        var self = this;
+        this.projects = Object.values(self.resource.allocationsByProject);
+
+        this.projects.forEach(function (allocations) {
+            allocations.forEach(function (allocation) {
+                allocation.style = self.calcStyle(allocation);
+            });
+        });
+    }
 
     setTimes() {
         if (this._startDate && this._endDate) {
