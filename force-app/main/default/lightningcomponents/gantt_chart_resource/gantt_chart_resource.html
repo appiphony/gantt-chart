@@ -23,7 +23,7 @@
             <!-- Time Slots-->
             <div class="slds-grid slds-is-absolute timeslots-container">
                 <template for:each={times} for:item="time">
-                    <div key={time} class="slds-col timeslot" data-time={time} onclick={handleTimeslotClick}
+                    <div key={time} class={time.class} data-time={time.value} onclick={handleTimeslotClick}
                         ondragenter={handleDragEnter}>
                         <!-- nothing -->
                     </div>

@@ -112,9 +112,21 @@ export default class GanttChartResource extends NavigationMixin(Element) {
     setTimes() {
         if (this._startDate && this._endDate) {
             var _times = [];
+            var today = new Date();
+            today.setHours(0, 0, 0, 0);
+            today = today.getTime();
 
             for (var date = new Date(this.startDate); date <= this.endDate; date.setDate(date.getDate() + 1)) {
-                _times.push(date.getTime());
+                var time = {
+                    class: 'slds-col timeslot',
+                    value: date.getTime()
+                };
+
+                if (time.value === today) {
+                    time.class += ' today';
+                }
+
+                _times.push(time);
             }
 
             this.times = _times;

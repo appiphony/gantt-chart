@@ -10,12 +10,14 @@
                     {formattedStartDate} - {formattedEndDate}
                 </h1>
             </div>
+            <!-- Date Navigation -->
             <div class="slds-col slds-grow-none">
                 <lightning-button-icon icon-name="utility:left" variant="border-filled" onclick={navigateToPrevious}></lightning-button-icon>
                 <lightning-button label="Today" onclick={navigateToToday}></lightning-button>
                 <lightning-button-icon icon-name="utility:right" variant="border-filled" onclick={navigateToNext}></lightning-button-icon>
-                <lightning-input type="date" name="select-date" class="gantt-datepicker slds-m-left_small"></lightning-input>
+                <lightning-input type="date" name="select-date" class="gantt-datepicker slds-m-left_small" value={datePickerString} onchange={navigateToDay}></lightning-input>
             </div>
+            <!-- /Date Navigation -->
         </div>
         <!-- /Header Bar -->
 
@@ -41,7 +43,7 @@
                                 </div>
                                 <div class="slds-grid">
                                     <template for:each={date.days} for:item="day">
-                                        <div key={day} class="slds-col slds-p-vertical_x-small slds-m-top_x-small timeline_day">{day}</div>
+                                        <div key={day} class={day.class}>{day.value}</div>
                                     </template>
                                 </div>
                             </div>

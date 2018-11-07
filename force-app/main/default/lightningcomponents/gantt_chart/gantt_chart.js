@@ -24,10 +24,11 @@ export default class GanttChart extends Element {
     @track dates;
 
     // chart
+    @track datePickerString;
+    @track isResourceView = false;
     @track projectId;
     @track resources = [];
-    @track isResourceView = false;
-
+    
     get dateShift() {
         switch (this.days) {
             case 14:
@@ -38,20 +39,33 @@ export default class GanttChart extends Element {
     }
 
     setStartDate(_startDate) {
-        _startDate.setHours(0, 0, 0, 0);
-        _startDate.setDate(_startDate.getDate() - _startDate.getDay());
+        if (_startDate instanceof Date && !isNaN(_startDate)) {
+            _startDate.setHours(0, 0, 0, 0);
 
-        this.startDate = _startDate;
+            // this.datePickerString = _startDate.toString().replace(/(\w+) (\w+) (\d+) (\d+).+/, '$2 $3, $4');
+            this.datePickerString = _startDate.toISOString();
 
-        this.endDate = new Date(this.startDate);
-        this.endDate.setDate(this.endDate.getDate() + this.days - 1);
+            _startDate.setDate(_startDate.getDate() - _startDate.getDay());
 
-        this.startDateUTC = this.startDate.getTime() + this.startDate.getTimezoneOffset() * 60 * 1000 + '';
-        this.endDateUTC = this.endDate.getTime() + this.endDate.getTimezoneOffset() * 60 * 1000 + '';
-        this.formattedStartDate = this.startDate.toLocaleDateString();
-        this.formattedEndDate = this.endDate.toLocaleDateString();
+            this.startDate = _startDate;
 
-        this.dates = this.getDates();
+            this.endDate = new Date(this.startDate);
+            this.endDate.setDate(this.endDate.getDate() + this.days - 1);
+
+            this.startDateUTC = this.startDate.getTime() + this.startDate.getTimezoneOffset() * 60 * 1000 + '';
+            this.endDateUTC = this.endDate.getTime() + this.endDate.getTimezoneOffset() * 60 * 1000 + '';
+            this.formattedStartDate = this.startDate.toLocaleDateString();
+            this.formattedEndDate = this.endDate.toLocaleDateString();
+
+            this.dates = this.getDates();
+
+            this.handleRefresh();
+        } else {
+            showToast({
+                error: 'Invalid Date',
+                variant: 'error'
+            });
+        }
     }
 
     // modal
@@ -62,13 +76,16 @@ export default class GanttChart extends Element {
         this.recordIdOrEmpty = this.recordId ? this.recordId : '';
 
         this.setStartDate(new Date());
-
-        this.handleRefresh();
     }
 
     getDates() {
         const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        var today = new Date();
+        today.setHours(0, 0, 0, 0);
+        today = today.getTime();
+
         var dates = [];
+
         for (var date = new Date(this.startDate); date <= this.endDate; date.setDate(date.getDate() + 1)) {
             if (!dates[date.getMonth()]) {
                 dates[date.getMonth()] = {
@@ -77,17 +94,25 @@ export default class GanttChart extends Element {
                 };
             }
 
-            dates[date.getMonth()].days.push((date.getMonth() + 1) + '/' + date.getDate());
+            var day = {
+                class: 'slds-col slds-p-vertical_x-small slds-m-top_x-small timeline_day',
+                value: (date.getMonth() + 1) + '/' + date.getDate()
+            }
+
+            if (date.getTime() === today) {
+                day.class += ' today';
+            }
+            
+            dates[date.getMonth()].days.push(day);
             dates[date.getMonth()].style = 'width: calc(' + dates[date.getMonth()].days.length + '/' + this.days + '*100%)';
         }
 
+        // reorder index
         return dates.filter(d => d);
     }
 
     navigateToToday() {
         this.setStartDate(new Date());
-
-        this.handleRefresh();
     }
 
     navigateToPrevious() {
@@ -95,8 +120,6 @@ export default class GanttChart extends Element {
         _startDate.setDate(_startDate.getDate() - this.dateShift);
 
         this.setStartDate(_startDate);
-        
-        this.handleRefresh();
     }
 
     navigateToNext() {
@@ -104,8 +127,10 @@ export default class GanttChart extends Element {
         _startDate.setDate(_startDate.getDate() + this.dateShift);
 
         this.setStartDate(_startDate);
+    }
 
-        this.handleRefresh();
+    navigateToDay(event) {
+        this.setStartDate(new Date(event.target.value + 'T00:00:00'));
     }
 
     openAddResourceModal() {
