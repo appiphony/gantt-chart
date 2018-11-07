@@ -37,8 +37,11 @@ export default class GanttChart extends Element {
         }
     }
 
-    setStartDate(startDate) {
-        this.startDate = startDate;
+    setStartDate(_startDate) {
+        _startDate.setHours(0, 0, 0, 0);
+        _startDate.setDate(_startDate.getDate() - _startDate.getDay());
+
+        this.startDate = _startDate;
 
         this.endDate = new Date(this.startDate);
         this.endDate.setDate(this.endDate.getDate() + this.days - 1);
@@ -58,11 +61,7 @@ export default class GanttChart extends Element {
         this.days = 14;
         this.recordIdOrEmpty = this.recordId ? this.recordId : '';
 
-        var _startDate = new Date();
-        _startDate.setHours(0, 0, 0, 0);
-        _startDate.setDate(_startDate.getDate() - _startDate.getDay());
-
-        this.setStartDate(_startDate);
+        this.setStartDate(new Date());
 
         this.handleRefresh();
     }
@@ -86,11 +85,7 @@ export default class GanttChart extends Element {
     }
 
     navigateToToday() {
-        var _startDate = new Date();
-        _startDate.setHours(0, 0, 0, 0);
-        _startDate.setDate(_startDate.getDate() - _startDate.getDay());
-
-        this.setStartDate(_startDate);
+        this.setStartDate(new Date());
 
         this.handleRefresh();
     }

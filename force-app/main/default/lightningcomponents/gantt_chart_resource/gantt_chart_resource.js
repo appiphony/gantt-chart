@@ -61,15 +61,16 @@ export default class GanttChartResource extends NavigationMixin(Element) {
     }
 
     calcStyle(allocation) {
-        var backgroundColor = allocation.Project__r.Color__c
-        var left = (new Date(allocation.Start_Date__c + 'T00:00:00') - this.startDate) / (this.endDate - this.startDate + 24 * 60 * 60 * 1000) * 100 + '%';
-        var right = (this.endDate - new Date(allocation.End_Date__c + 'T00:00:00')) / (this.endDate - this.startDate + 24 * 60 * 60 * 1000) * 100 + '%';
-
+        const backgroundColor = allocation.Project__r.Color__c
         const colorMap = {
             Blue: '#0000FF',
             Green: '#00FF00',
             Red: '#FF0000'
         };
+        const oneDay = 24*60*60*1000;
+        const totalDays = Math.round((this.endDate - this.startDate + oneDay) / oneDay);
+        const left = Math.round((new Date(allocation.Start_Date__c + 'T00:00:00') - this.startDate) / oneDay) / totalDays * 100 + '%';
+        const right = Math.round((this.endDate - new Date(allocation.End_Date__c + 'T00:00:00')) / oneDay) / totalDays * 100 + '%';
 
         var style = [
             'background-color: ' + colorMap[backgroundColor],
@@ -95,6 +96,9 @@ export default class GanttChartResource extends NavigationMixin(Element) {
                 allocation.style = self.calcStyle(allocation);
             });
         });
+
+        // empty space at bottom
+        this.projects.push([]);
     }
 
     setTimes() {
