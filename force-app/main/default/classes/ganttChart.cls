@@ -7,7 +7,7 @@ public with sharing class ganttChart {
         List<Allocation__c> allocations = new List<Allocation__c>();
 
         if (String.isEmpty(recordId)) {
-            allocations = [SELECT Resource__c, Resource__r.Name, Resource__r.Active__c,
+            allocations = [SELECT Resource__c, Resource__r.Name, Resource__r.Active__c, Resource__r.Default_Role__c,
                                   Project__c, Project__r.Name, Project__r.Active__c, Project__r.Color__c,
                                   Start_Date__c, End_Date__c, Role__c
                            FROM Allocation__c
@@ -19,7 +19,7 @@ public with sharing class ganttChart {
                 data.put('projectId', recordId);
             }
             
-            allocations = [SELECT Resource__c, Resource__r.Name, Resource__r.Active__c,
+            allocations = [SELECT Resource__c, Resource__r.Name, Resource__r.Active__c, Resource__r.Default_Role__c,
                                   Project__c, Project__r.Name, Project__r.Active__c, Project__r.Color__c,
                                   Start_Date__c, End_Date__c, Role__c
                            FROM Allocation__c
@@ -34,7 +34,7 @@ public with sharing class ganttChart {
                 resourceById.put(allocation.Resource__c, new Map<String, Object> {
                     'Id' => allocation.Resource__c,
                     'Name' => allocation.Resource__r.Name,
-                    'Default_Role__c' => allocation.Role__c,
+                    'Default_Role__c' => allocation.Resource__r.Default_Role__c,
                     'primaryAllocation' => allocation,
                     'allocationsByProject' => new Map<String, Object>()
                 });
@@ -45,8 +45,7 @@ public with sharing class ganttChart {
             Map<String, Object> allocationsByProject = (Map<String, Object>)resource.get('allocationsByProject');
             
             resource.put('primaryAllocation', primaryAllocation);
-            resource.put('Default_Role__c', primaryAllocation.Role__c);
-
+            
             if (!allocationsByProject.containsKey(allocation.Project__c)) {
                 allocationsByProject.put(allocation.Project__c, new List<Object>());
             }

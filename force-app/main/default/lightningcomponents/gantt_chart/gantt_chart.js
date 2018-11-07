@@ -210,6 +210,8 @@ export default class GanttChart extends Element {
                 self.resources[i] = {
                     Id: resource.Id,
                     Name: resource.Name,
+                    Default_Role__c: resource.Default_Role__c,
+                    primaryAllocation: null,
                     allocationsByProject: {}
                 };
             });
