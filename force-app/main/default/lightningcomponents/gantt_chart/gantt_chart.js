@@ -28,7 +28,7 @@ export default class GanttChart extends Element {
     @track isResourceView = false;
     @track projectId;
     @track resources = [];
-    
+
     get dateShift() {
         switch (this.days) {
             case 14:
@@ -232,5 +232,21 @@ export default class GanttChart extends Element {
                 variant: 'error'
             });
         });
+    }
+
+    //Filter Modal//
+    @track filterModalData = {
+        projects: [
+            {name: 'FICO'},
+            {name: 'Brandcast'}
+        ], 
+        roles: [
+            {title: 'Developer'},
+            {title: 'QA Analyst'}
+        ]
+    }
+    
+    handlePillRemove(event) {
+        
     }
 }
