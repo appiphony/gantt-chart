@@ -133,6 +133,10 @@ export default class GanttChart extends Element {
         this.setStartDate(new Date(event.target.value + 'T00:00:00'));
     }
 
+    openFilterModal() {
+        this.template.querySelector('#filter-modal').show();
+    }
+
     openAddResourceModal() {
         getResources().then(resources => {
             var excludeResources = this.resources;

@@ -2,9 +2,11 @@
     <div class="slds-card slds-theme_default">
         <!-- Header Bar -->
         <div class="slds-grid slds-grid_vertical-align-center slds-border_bottom slds-p-around_medium">
+            <!-- Filter Button -->
             <div class="slds-col slds-grow-none">
-                <lightning-button label="Filter" icon-name="utility:filterList"></lightning-button>
+                <lightning-button label="Filter" icon-name="utility:filterList" onclick={openFilterModal}></lightning-button>
             </div>
+            <!-- /Filter Button -->
             <div class="slds-col slds-text-align_center">
                 <h1 class="slds-text-heading_medium">
                     {formattedStartDate} - {formattedEndDate}
