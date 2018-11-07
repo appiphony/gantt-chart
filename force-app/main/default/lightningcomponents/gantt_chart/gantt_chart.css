@@ -19,3 +19,7 @@
 .gantt-datepicker {
     display: inline-block;
 }
+
+.slds-form_stacked .slds-form-element > .slds-form-element {
+    margin-bottom: .25rem;
+}

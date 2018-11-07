@@ -4,9 +4,9 @@
         <div class="slds-grid slds-grid_vertical-align-center slds-border_bottom slds-p-around_medium">
             <!-- Filter Button -->
             <div class="slds-col slds-grow-none">
-                <lightning-button label="Filter" icon-name="utility:filterList" onclick={openFilterModal}></lightning-button>
-            </div>
-            <!-- /Filter Button -->
+                    <lightning-button label="Filter" icon-name="utility:filterList" onclick={openFilterModal}></lightning-button>
+                </div>
+                <!-- /Filter Button -->
             <div class="slds-col slds-text-align_center">
                 <h1 class="slds-text-heading_medium">
                     {formattedStartDate} - {formattedEndDate}
@@ -108,10 +108,37 @@
 
     <c-gantt_chart_modal id="filter-modal">
         <span slot="title">Filter</span>
-        <div slot="body">
-            <div>PROJECT</div>
-            <div>ROLE</div>
-            <div>STATUS</div>
+        <div slot="body" class="slds-form slds-form_stacked">
+            <div class="slds-form-element">
+                <lightning-input type="search" label="Project" name="project-search"></lightning-input>
+                <!-- <lightning-pill label="My Project" onremove={handlePillRemove}></lightning-pill>
+                <lightning-pill label="Other Project" onremove={handlePillRemove}></lightning-pill> -->
+                <template for:each={filterModalData.projects} for:item="project">
+                    <lightning-pill key={project.name} value={project.name} label={project.name} onremove={handlePillRemove}></lightning-pill>
+                </template>
+            </div>
+
+            <div class="slds-form-element">
+                <lightning-input type="search" label="Role" name="role-search"></lightning-input>
+                <template for:each={filterModalData.roles} for:item="role">
+                        <lightning-pill key={role.title} value={role.title} label={role.title} onremove={handlePillRemove}></lightning-pill>
+                </template>
+                <!-- <lightning-pill label="Designer" onremove={handlePillRemove}></lightning-pill> -->
+            </div>
+
+            <div class="slds-form-element" onchange={handleStatusSelect}>
+                <label class="slds-form-element__label" for="status-select">Status</label>
+                <div class="slds-form-element__control">
+                    <div class="slds-select_container">
+                        <select class="slds-select" id="status-select">
+                            <option value="">-- Select Status --</option>
+                            <!-- <template for:each={resourceModalData.resources} for:item="resource">
+                                <option key={resource.Id} value={resource.Id}>{resource.Name}</option>
+                            </template> -->
+                        </select>
+                    </div>
+                </div>
+            </div>
         </div>
         <lightning-button slot="footer" variant="brand" label="Okay" onclick={filterAllocations} class="slds-m-left_xx-small"></lightning-button>
     </c-gantt_chart_modal>
