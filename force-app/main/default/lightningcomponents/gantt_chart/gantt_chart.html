@@ -37,8 +37,8 @@
                         <template for:each={dates} for:item="date">
                             <div key={date} class="slds-col" style={date.style}>
                                 <div class="slds-grid">
-                                    <div class="slds-col">
-                                        <div class="timeline_month slds-p-around_xx-small slds-theme_shade slds-text-align_center slds-text-color_weak slds-text-body_small slds-m-horizontal_x-small">
+                                    <div class="slds-col slds-has-flexi-truncate">
+                                        <div class="timeline_month slds-p-around_xx-small slds-theme_shade slds-text-align_center slds-text-color_weak slds-text-body_small slds-m-horizontal_x-small slds-truncate">
                                             {date.name}
                                         </div>
                                     </div>
