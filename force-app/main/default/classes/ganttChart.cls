@@ -9,7 +9,7 @@ public with sharing class ganttChart {
         if (String.isEmpty(recordId)) {
             allocations = [SELECT Resource__c, Resource__r.Name, Resource__r.Active__c, Resource__r.Default_Role__c,
                                   Project__c, Project__r.Name, Project__r.Active__c, Project__r.Color__c,
-                                  Start_Date__c, End_Date__c, Role__c
+                                  Start_Date__c, End_Date__c, Role__c, Status__c, Effort__c
                            FROM Allocation__c
                            WHERE Start_Date__c <= :DateTime.newInstance(Long.valueOf(endDate)).date()
                            AND End_Date__c >= :DateTime.newInstance(Long.valueOf(startDate)).date()
@@ -21,12 +21,27 @@ public with sharing class ganttChart {
             
             allocations = [SELECT Resource__c, Resource__r.Name, Resource__r.Active__c, Resource__r.Default_Role__c,
                                   Project__c, Project__r.Name, Project__r.Active__c, Project__r.Color__c,
-                                  Start_Date__c, End_Date__c, Role__c
+                                  Start_Date__c, End_Date__c, Role__c, Status__c, Effort__c
                            FROM Allocation__c
                            WHERE (Project__c = :recordId OR Resource__c = :recordId)
                            AND Start_Date__c <= :DateTime.newInstance(Long.valueOf(endDate)).date()
                            AND End_Date__c >= :DateTime.newInstance(Long.valueOf(startDate)).date()
                            ORDER BY Resource__r.Name, Project__r.Name, Start_Date__c];
+
+            // empty state on resource page
+            if (allocations.isEmpty() && 'Resource__c' == Id.valueOf(recordId).getSobjectType().getDescribe().getName()) {
+                Resource__c resource = [SELECT Id, Name, Active__c, Default_Role__c
+                                        FROM Resource__c
+                                        WHERE Id = :recordId];
+
+                resourceById.put(resource.Id, new Map<String, Object> {
+                    'Id' => resource.Id,
+                    'Name' => resource.Name,
+                    'Default_Role__c' => resource.Default_Role__c,
+                    'primaryAllocation' => null,
+                    'allocationsByProject' => new Map<String, Object>()
+                });
+            }
         }
 
         for (Allocation__c allocation : allocations) {

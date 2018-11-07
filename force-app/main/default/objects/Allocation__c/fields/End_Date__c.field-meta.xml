@@ -3,7 +3,7 @@
     <fullName>End_Date__c</fullName>
     <externalId>false</externalId>
     <label>End Date</label>
-    <required>false</required>
+    <required>true</required>
     <trackTrending>false</trackTrending>
     <type>Date</type>
 </CustomField>

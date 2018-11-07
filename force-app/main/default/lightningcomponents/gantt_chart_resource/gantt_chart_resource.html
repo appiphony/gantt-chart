@@ -44,7 +44,7 @@
                         &nbsp;
                         <template for:each={allocations} for:item="allocation" for:index="allocationIndex">
                             <!-- Allocation -->
-                            <div key={allocation} title={allocation.Name} id={allocation.Id} class="slds-is-absolute allocation"
+                            <div key={allocation} title={allocation.Name} id={allocation.Id} class={allocation.class}
                                 style={allocation.style} data-project={projectIndex} data-allocation={allocationIndex}>
                                 <div draggable="true" ondragstart={handleDragStart} ondragend={handleDragEnd} data-id={allocation.Id}>
                                     <div class="slds-grid slds-grid_vertical-align-center">

@@ -1,15 +1,7 @@
-.resource {
-    border: 1px solid #dddbda;
-    min-width: 190px;
-}
-
+/*** Containers ***/
 .allocations-container {
-    pointer-events: none;
     overflow: hidden;
-}
-
-.project-container {
-    padding: .25rem;
+    pointer-events: none;
 }
 
 /*** Allocation Actions Menu ***/
@@ -18,33 +10,43 @@
 }
 /*** Allocation Actions Menu ***/
 
+.project-container {
+    padding: .25rem;
+}
+/*** /Containers ***/
+
 /*** Allocations ***/
 .allocation {
-    padding: .25rem;
-    border-radius: .25rem;
     background-color: rgba(21, 137, 238);
-    opacity: .85;
+    border-radius: .25rem;
     color: rgb(255, 255, 255);
-    text-align: center;
-    pointer-events: auto;
     cursor: grab; 
+    opacity: .85;
+    padding: .25rem;
+    pointer-events: auto;
+    text-align: center;
     text-overflow: ellipsis;
     top: 0px;
 }
 
-.allocation .allocation_handle {
-    cursor: ew-resize;
+.allocation:hover {
+    opacity: .95;
 }
 
-.allocation .allocation_handle,
-.allocation .allocation_actions {
-    opacity: 0;
+/*** Allocation Status ***/
+.allocation.hold {
+    background-image: linear-gradient(45deg, rgba(0, 0, 0, 0.1) 25%, transparent 25%, transparent 50%, rgba(0, 0, 0, 0.1) 50%, rgba(0, 0, 0, 0.1) 75%, transparent 75%, transparent);
+    background-size: 64px 64px;
 }
 
-.allocation .slds-icon_container {
-    margin-bottom: 1px;
+.allocation.unavailable {
+    background-color: rgb(81, 79, 77);
+    background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.1) 75%, transparent 75%, transparent);
+    background-size: 64px 64px;
 }
+/*** /Allocation Status ***/
 
+/*** Allocation Efforts ***/
 .allocation.low-effort {
     opacity: 0.6;
 }
@@ -56,21 +58,15 @@
 .allocation.high-effort {
     opacity: 0.85;
 }
+/*** /Allocation Efforts ***/
 
-.allocation.project-one {
-    background-color: rgb(75, 202, 129);
+.allocation .allocation_actions,
+.allocation .allocation_handle {
+    opacity: 0;
 }
 
-.allocation.project-two {
-    background-color: rgb(255, 154, 60);
-}
-
-.allocation.project-three {
-    background-color: rgb(212, 80, 76);
-}
-
-.allocation:hover {
-    opacity: .95;
+.allocation .allocation_handle {
+    cursor: ew-resize;
 }
 
 .allocation:hover .allocation_handle,
@@ -83,49 +79,35 @@
     opacity: 1;
 }
 
+.allocation .slds-icon_container {
+    margin-bottom: 1px;
+}
+
 .allocation.is-selected {
-    opacity: 1;
     box-shadow: 0 2px 6px 0px rgba(0, 0, 0, .4);
-}
-
-.allocation.project-one:hover {
-    background-color: rgba(75, 202, 129, 1);
-}
-
-.allocation.project-two:hover {
-    background-color: rgba(255, 154, 60, 1);
-}
-
-.allocation.project-three:hover {
-    background-color: rgba(212, 80, 76, 1);
-}
-
-.allocation.hold {
-    background-image: linear-gradient(45deg, rgba(0, 0, 0, 0.1) 25%, transparent 25%, transparent 50%, rgba(0, 0, 0, 0.1) 50%, rgba(0, 0, 0, 0.1) 75%, transparent 75%, transparent);
-    background-size: 64px 64px;
-}
-
-.allocation.unavailable {
-    background-color: rgb(81, 79, 77);
-    background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.1) 75%, transparent 75%, transparent);
-    background-size: 64px 64px;
+    opacity: 1;
 }
 /*** /Allocations ***/
 
-.timeslots-container {
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
+/*** Resource ***/
+.resource {
+    border-bottom: 1px solid #dddbda;
+    border-left: 1px solid #dddbda;
+    border-top: 1px solid #dddbda;
+    min-width: 190px;
 }
+/*** /Resource ***/
 
 .timeslot {
-    border-top: 1px solid #dddbda;
     border-bottom: 1px solid #dddbda;
     border-right: 1px solid #dddbda;
-    min-width: 50px;
+    border-top: 1px solid #dddbda;
     cursor: pointer;
+    min-width: 50px;
     transition: background-color 200ms ease 0s;
+}
+.timeslot:first-child {
+    border-left: 1px solid #dddbda;
 }
 
 .timeslot:hover {
@@ -138,4 +120,11 @@
 
 .timeslot.today:hover {
     background: rgba(21, 137, 238, 0.2);
+}
+
+.timeslots-container {
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 0;
 }

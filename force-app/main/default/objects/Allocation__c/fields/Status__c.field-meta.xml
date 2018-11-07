@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Color__c</fullName>
+    <fullName>Status__c</fullName>
     <externalId>false</externalId>
-    <label>Color</label>
+    <label>Status</label>
     <required>true</required>
     <trackTrending>false</trackTrending>
     <type>Picklist</type>
@@ -11,19 +11,19 @@
         <valueSetDefinition>
             <sorted>false</sorted>
             <value>
-                <fullName>Blue</fullName>
+                <fullName>Active</fullName>
                 <default>false</default>
-                <label>Blue</label>
+                <label>Active</label>
             </value>
             <value>
-                <fullName>Green</fullName>
+                <fullName>Hold</fullName>
                 <default>false</default>
-                <label>Green</label>
+                <label>Hold</label>
             </value>
             <value>
-                <fullName>Red</fullName>
+                <fullName>Unavailable</fullName>
                 <default>false</default>
-                <label>Red</label>
+                <label>Unavailable</label>
             </value>
         </valueSetDefinition>
     </valueSet>

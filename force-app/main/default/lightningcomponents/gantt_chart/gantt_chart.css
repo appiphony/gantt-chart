@@ -1,9 +1,9 @@
-.timeline > .slds-col:first-child {
-    min-width: 190px;
+.gantt-datepicker {
+    display: inline-block;
 }
 
-.timeline_month {
-    border-radius: .25rem;
+.timeline > .slds-col:first-child {
+    min-width: 190px;
 }
 
 .timeline_day {
@@ -16,6 +16,6 @@
     border-top: 3px solid #1589ee;
 }
 
-.gantt-datepicker {
-    display: inline-block;
+.timeline_month {
+    border-radius: .25rem;
 }

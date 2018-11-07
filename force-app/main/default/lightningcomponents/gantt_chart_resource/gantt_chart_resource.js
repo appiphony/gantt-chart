@@ -60,6 +60,39 @@ export default class GanttChartResource extends NavigationMixin(Element) {
         };
     }
 
+    calcClass(allocation) {
+        var classes = [
+            'slds-is-absolute',
+            'allocation'
+        ];
+
+        switch(allocation.Status__c) {
+            case 'Hold':
+                classes.push('hold');
+                break;
+            case 'Unavailable':
+                classes.push('unavailable');
+                break;
+            default:
+                break;
+        }
+
+        switch(allocation.Effort__c) {
+            case 'Low':
+                classes.push('low-effort');
+                break;
+            case 'Medium':
+                classes.push('medium-effort');
+                break;
+            case 'High':
+                classes.push('high-effort');
+                break;
+            default:
+                break;
+        }
+
+        return classes.join(' ');
+    }
     calcStyle(allocation) {
         const backgroundColor = allocation.Project__r.Color__c
         const colorMap = {
@@ -80,19 +113,19 @@ export default class GanttChartResource extends NavigationMixin(Element) {
         const left = Math.round((new Date(allocation.Start_Date__c + 'T00:00:00') - this.startDate) / oneDay) / totalDays * 100 + '%';
         const right = Math.round((this.endDate - new Date(allocation.End_Date__c + 'T00:00:00')) / oneDay) / totalDays * 100 + '%';
 
-        var style = [
+        var styles = [
             'background-color: ' + colorMap[backgroundColor],
             'left: ' + left,
             'right: ' + right
         ];
 
         if (this.isDragging) {
-            style.push('pointer-events: none');
+            styles.push('pointer-events: none');
         } else {
-            style.push('pointer-events: auto');
+            styles.push('pointer-events: auto');
         }
 
-        return style.join('; ');
+        return styles.join('; ');
     }
 
     setProjects() {
@@ -101,6 +134,7 @@ export default class GanttChartResource extends NavigationMixin(Element) {
 
         this.projects.forEach(function (allocations) {
             allocations.forEach(function (allocation) {
+                allocation.class = self.calcClass(allocation);
                 allocation.style = self.calcStyle(allocation);
             });
         });
