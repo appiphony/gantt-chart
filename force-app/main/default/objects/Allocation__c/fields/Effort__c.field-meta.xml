@@ -3,7 +3,7 @@
     <fullName>Effort__c</fullName>
     <externalId>false</externalId>
     <label>Effort</label>
-    <required>true</required>
+    <required>false</required>
     <trackTrending>false</trackTrending>
     <type>Picklist</type>
     <valueSet>
