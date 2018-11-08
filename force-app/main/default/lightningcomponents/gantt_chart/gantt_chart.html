@@ -59,7 +59,7 @@
             <template if:true={resources.length}>
                 <template for:each={resources} for:item="resource">
                     <c-gantt_chart_resource key={resource.Id} is-resource-view={isResourceView} resource={resource} project-id={projectId} start-date={startDate}
-                        end-date={endDate} onrefresh={handleRefresh}></c-gantt_chart_resource>
+                        end-date={endDate} filter-data={filterData} onrefresh={handleRefresh}></c-gantt_chart_resource>
                 </template>
             </template>
 
@@ -111,7 +111,6 @@
         <div slot="body" class="slds-form slds-form_stacked">
             <div class="slds-form-element">
                 <lightning-input type="search" label="Project" name="project-search"></lightning-input>
-                <lightning-pill label="Other Project" onremove={handlePillRemove}></lightning-pill>
                 <template for:each={filterModalData.projects} for:item="project">
                     <lightning-pill key={project.name} value={project.name} label={project.name} onremove={handlePillRemove}></lightning-pill>
                 </template>
