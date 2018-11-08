@@ -38,11 +38,11 @@
 
             <!-- Allocations -->
             <div class="allocations-container">
-                <template for:each={projects} for:item="allocations" for:index="projectIndex">
+                <template for:each={projects} for:item="project" for:index="projectIndex">
                     <!-- Project Container -->
-                    <div key={allocations} class="slds-is-relative project-container">
+                    <div key={project.id} class="slds-is-relative project-container">
                         &nbsp;
-                        <template for:each={allocations} for:item="allocation" for:index="allocationIndex">
+                        <template for:each={project.allocations} for:item="allocation" for:index="allocationIndex">
                             <!-- Allocation -->
                             <div key={allocation} title={allocation.Name} id={allocation.Id} class={allocation.class}
                                 style={allocation.style} data-project={projectIndex} data-allocation={allocationIndex}>
@@ -100,39 +100,53 @@
         <!-- /Days -->
     </div>
 
+    <c-gantt_chart_modal id="add-allocation-modal">
+        <span slot="title">Add Allocation</span>
+        <div slot="body" class="slds-form slds-form_stacked">
+            <!-- Select Project -->
+            <lightning-combobox value={addAllocationData.projectId} label="What Project?" placeholder="-- Select Project --" options={addAllocationData.projects} onchange={handleAddAllocationDataChange} data-field="projectId"></lightning-combobox>
+            <!-- /Select Project -->
+
+            <!-- Determine Role -->
+            <lightning-input value={addAllocationData.role} label="Role" onchange={handleAddAllocationDataChange} data-field="role"></lightning-input>
+            <!-- /Determine Role -->
+        </div>
+
+        <lightning-button slot="footer" variant="brand" label="Add Allocation" onclick={addAllocationModalSuccess}
+            class="slds-m-left_xx-small" disabled={addAllocationData.disabled}></lightning-button>
+    </c-gantt_chart_modal>
+
+    <!-- Edit Modal -->
+    <c-gantt_chart_modal id="edit-allocation-modal">
+        <span slot="title">{editAllocationData.resourceName} on {editAllocationData.projectName}</span>
+        <div slot="body" class="slds-form slds-form_stacked">
+            <!-- Start Date -->
+            <lightning-input type="date" value={editAllocationData.startDate} label="Start Date" onchange={handleEditAllocationDataChange} data-field="startDate"></lightning-input>
+            <!-- /Start Date -->
+            <!-- End Date -->
+            <lightning-input type="date" value={editAllocationData.endDate} label="End Date" onchange={handleEditAllocationDataChange} data-field="endDate"></lightning-input>
+            <!-- /End Date -->
+            <!-- Role -->
+            <lightning-input value={editAllocationData.role} label="Role" onchange={handleEditAllocationDataChange} data-field="role"></lightning-input>
+            <!-- /Role -->
+            <!-- Effort -->
+            <lightning-combobox value={editAllocationData.effort} label="Effort" options={effortOptions} onchange={handleEditAllocationDataChange} data-field="effort"></lightning-combobox>
+            <!-- /Effort -->
+            <!-- Status -->
+            <lightning-combobox value={editAllocationData.status} label="Status" options={statusOptions} onchange={handleEditAllocationDataChange} data-field="status"></lightning-combobox>
+            <!-- /Status -->
+        </div>
+
+        <lightning-button slot="footer" variant="brand" label="Save" onclick={editAllocationModalSuccess}
+            class="slds-m-left_xx-small" disabled={editAllocationData.disabled}></lightning-button>
+    </c-gantt_chart_modal>
+    <!-- /Edit Modal -->
+
     <c-gantt_chart_modal id="delete-modal">
         <span slot="title">Confirm Delete</span>
         <p slot="body">
             Are you sure you want to remove this allocation?
         </p>
         <lightning-button slot="footer" variant="destructive" label="Remove" class="slds-m-left_xx-small" onclick={handleMenuDeleteSuccess}></lightning-button>
-    </c-gantt_chart_modal>
-
-    <c-gantt_chart_modal id="allocation-modal">
-        <span slot="title">Add Allocation</span>
-        <div slot="body" class="slds-form slds-form_stacked">
-            <!-- Select Project -->
-            <div class="slds-form-element" onchange={handleProjectSelect}>
-                <label class="slds-form-element__label" for="select-01">What Project?</label>
-                <div class="slds-form-element__control">
-                    <div class="slds-select_container">
-                        <select class="slds-select" id="select-01">
-                            <option value="">-- Select Project --</option>
-                            <template for:each={addAllocationData.projects} for:item="project">
-                                <option key={project.Id} value={project.Id}>{project.Name}</option>
-                            </template>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <!-- /Select Project -->
-
-            <!-- Determine Role -->
-            <lightning-input value={addAllocationData.role} label="Role" onchange={handleRoleChange}></lightning-input>
-            <!-- /Determine Role -->
-        </div>
-
-        <lightning-button slot="footer" variant="brand" label="Add Allocation" onclick={addAllocationModalSuccess}
-            class="slds-m-left_xx-small" disabled={addAllocationData.disabled}></lightning-button>
     </c-gantt_chart_modal>
 </template>

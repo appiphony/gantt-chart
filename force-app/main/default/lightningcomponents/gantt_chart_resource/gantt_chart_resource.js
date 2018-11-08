@@ -4,9 +4,6 @@ import {
     track
 } from 'engine';
 import {
-    NavigationMixin
-} from 'lightning-navigation';
-import {
     showToast
 } from 'lightning-notifications-library';
 
@@ -14,9 +11,7 @@ import getProjects from '@salesforce/apex/ganttChart.getProjects';
 import saveAllocation from '@salesforce/apex/ganttChart.saveAllocation';
 import deleteAllocation from '@salesforce/apex/ganttChart.deleteAllocation';
 
-import tmpl from './gantt_chart_resource.html';
-
-export default class GanttChartResource extends NavigationMixin(Element) {
+export default class GanttChartResource extends Element {
     @api isResourceView;
     @api projectId;
     @api
@@ -36,6 +31,7 @@ export default class GanttChartResource extends NavigationMixin(Element) {
         this._startDate = _startDate;
         this.setTimes();
     }
+    
     @api
     get endDate() {
         return this._endDate;
@@ -45,13 +41,73 @@ export default class GanttChartResource extends NavigationMixin(Element) {
         this.setTimes();
     }
 
+    @api
+    get filterData() {
+        return this._filterData;
+    }
+    set filterData(_filterData) {
+        var self = this;
+        self._filterData = _filterData;
+
+        self.projects.forEach(project => {
+            project.filtered = false;
+
+            if (self._filterData.projects.length) {
+                project.filtered = true;
+
+                self._filterData.projects.forEach(p => {
+                    if (p.id === project.id) {
+                        project.filtered = false;
+
+                        project.allocations.forEach(allocation => {
+                            allocation.filtered = false;
+
+                            if (self._filterData.role.length) {
+                                allocation.filtered = true;
+
+                                self._filterData.role.forEach(role => {
+                                    if (role === allocation.Role__c) {
+                                        allocation.filtered = false;
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+        });
+
+        
+    }
+
     @track addAllocationData = {};
+    @track editAllocationData = {};
     @track menuData = {
         show: false,
         style: ''
     };
-    @track projects;
-    
+    @track projects = [];
+    effortOptions = [{
+        label: 'Low',
+        value: 'Low'
+    }, {
+        label: 'Medium',
+        value: 'Medium'
+    }, {
+        label: 'High',
+        value: 'High'
+    }];
+    statusOptions = [{
+        label: 'Active',
+        value: 'Active'
+    }, {
+        label: 'Hold',
+        value: 'Hold'
+    }, {
+        label: 'Unavailable',
+        value: 'Unavailable'
+    }];
+
     connectedCallback() {
         this.setProjects();
         this.menuData = {
@@ -114,10 +170,13 @@ export default class GanttChartResource extends NavigationMixin(Element) {
         const right = Math.round((this.endDate - new Date(allocation.End_Date__c + 'T00:00:00')) / oneDay) / totalDays * 100 + '%';
 
         var styles = [
-            'background-color: ' + colorMap[backgroundColor],
             'left: ' + left,
             'right: ' + right
         ];
+
+        if ('Unavailable' !== allocation.Status__c) {
+            styles.push('background-color: ' + colorMap[backgroundColor]);
+        }
 
         if (this.isDragging) {
             styles.push('pointer-events: none');
@@ -130,13 +189,22 @@ export default class GanttChartResource extends NavigationMixin(Element) {
 
     setProjects() {
         var self = this;
-        this.projects = Object.values(self.resource.allocationsByProject);
+        self.projects = [];
 
-        this.projects.forEach(function (allocations) {
-            allocations.forEach(function (allocation) {
+        Object.keys(self.resource.allocationsByProject).forEach(projectId => {
+            var project = {
+                id: projectId,
+                allocations: []
+            };
+
+            self.resource.allocationsByProject[projectId].forEach(allocation => {
                 allocation.class = self.calcClass(allocation);
                 allocation.style = self.calcStyle(allocation);
+
+                project.allocations.push(allocation);
             });
+
+            self.projects.push(project);
         });
 
         // empty space at bottom
@@ -177,27 +245,22 @@ export default class GanttChartResource extends NavigationMixin(Element) {
                 endDate: dateUTC + ''
             });
         } else {
-            // CAN WE PREVENT REDIRECT TO NEW RECORD
-            // CAN WE SET DEFAULT VALUES
-            // this[NavigationMixin.Navigate]({
-            //     type: 'standard__objectPage',
-            //     attributes: {
-            //         objectApiName: 'Allocation__c',
-            //         actionName: 'new'
-            //     }
-            // });
-
             var self = this;
             getProjects()
                 .then(projects => {
                     self.addAllocationData = {
-                        projects: projects,
+                        projects: projects.map(project => {
+                            return {
+                                value: project.Id,
+                                label: project.Name
+                            };
+                        }),
                         role: self.resource.Default_Role__c,
                         disabled: true,
                         startDate: dateUTC + '',
                         endDate: dateUTC + ''
                     };
-                    self.template.querySelector('#allocation-modal').show();
+                    self.template.querySelector('#add-allocation-modal').show();
                 }).catch(error => {
                     showToast({
                         message: error.message,
@@ -207,19 +270,9 @@ export default class GanttChartResource extends NavigationMixin(Element) {
         }
     }
 
-    handleProjectSelect(event) {
-        this.addAllocationData.projectId = event.target.value;
+    handleAddAllocationDataChange(event) {
+        this.addAllocationData[event.target.dataset.field] = event.target.value;
 
-        this.validateAddAllocationData();
-    }
-
-    handleRoleChange(event) {
-        this.addAllocationData.role = event.target.value;
-
-        this.validateAddAllocationData();
-    }
-
-    validateAddAllocationData() {
         if (!this.addAllocationData.projectId || !this.addAllocationData.role) {
             this.addAllocationData.disabled = true;
         } else {
@@ -234,7 +287,7 @@ export default class GanttChartResource extends NavigationMixin(Element) {
             startDate: this.addAllocationData.startDate,
             endDate: this.addAllocationData.endDate
         }).then(() => {
-            this.template.querySelector('#allocation-modal').hide();
+            this.template.querySelector('#add-allocation-modal').hide();
         }).catch(error => {
             showToast({
                 message: error.message,
@@ -277,7 +330,7 @@ export default class GanttChartResource extends NavigationMixin(Element) {
         var container = this.template.querySelector('#' + event.currentTarget.dataset.id);
         this.dragInfo.projectIndex = container.dataset.project;
         this.dragInfo.allocationIndex = container.dataset.allocation;
-        this.dragInfo.newAllocation = this.projects[container.dataset.project][container.dataset.allocation];
+        this.dragInfo.newAllocation = this.projects[container.dataset.project].allocations[container.dataset.allocation];
 
         this.isDragging = true;
 
@@ -307,7 +360,7 @@ export default class GanttChartResource extends NavigationMixin(Element) {
         const allocation = this.dragInfo.newAllocation;
 
         this.projects = JSON.parse(JSON.stringify(this.projects));
-        this.projects[projectIndex][allocationIndex] = allocation;
+        this.projects[projectIndex].allocations[allocationIndex] = allocation;
 
         var startDate = new Date(allocation.Start_Date__c + 'T00:00:00');
         var endDate = new Date(allocation.End_Date__c + 'T00:00:00');
@@ -333,7 +386,7 @@ export default class GanttChartResource extends NavigationMixin(Element) {
             this.dragInfo.startTime = myDate;
         }
 
-        var allocation = JSON.parse(JSON.stringify(this.projects[projectIndex][allocationIndex]));
+        var allocation = JSON.parse(JSON.stringify(this.projects[projectIndex].allocations[allocationIndex]));
         var deltaDate = Math.trunc((myDate - this.dragInfo.startTime) / 1000 / 60 / 60 / 24);
         var startDate = new Date(allocation.Start_Date__c + 'T00:00:00')
         var newStartDate = new Date(startDate);
@@ -365,29 +418,64 @@ export default class GanttChartResource extends NavigationMixin(Element) {
 
     openAllocationMenu(event) {
         var container = this.template.querySelector('#' + event.currentTarget.dataset.id);
-        var allocation = this.projects[container.dataset.project][container.dataset.allocation];
+        var allocation = this.projects[container.dataset.project].allocations[container.dataset.allocation];
         var projectHeight = this.template.querySelector('.project-container').getBoundingClientRect().height;
         var allocationHeight = this.template.querySelector('.allocation').getBoundingClientRect().height;
         var rightEdge = (this.endDate - new Date(allocation.End_Date__c + 'T00:00:00')) / (this.endDate - this.startDate + 24 * 60 * 60 * 1000) * 100 + '%';
         var topEdge = projectHeight * container.dataset.project + allocationHeight;
 
-        this.menuData.allocationId = event.currentTarget.dataset.id;
+        this.menuData.allocation = Object.assign({}, allocation);
         this.menuData.style = 'top: ' + topEdge + 'px; right: ' + rightEdge + '; left: unset';
         this.menuData.show = true;
     }
 
     handleModalEditClick(event) {
-        var recordId = event.currentTarget.dataset.id;
-
-        this[NavigationMixin.Navigate]({
-            type: 'standard__recordPage',
-            attributes: {
-                recordId: recordId,
-                actionName: 'edit'
-            }
-        });
+        this.editAllocationData = {
+            resourceName: this.menuData.allocation.Resource__r.Name,
+            projectName: this.menuData.allocation.Project__r.Name,
+            id: this.menuData.allocation.Id,
+            startDate: this.menuData.allocation.Start_Date__c,
+            endDate: this.menuData.allocation.End_Date__c,
+            role: this.menuData.allocation.Role__c,
+            effort: this.menuData.allocation.Effort__c,
+            status: this.menuData.allocation.Status__c,
+            disabled: false
+        };
+        this.template.querySelector('#edit-allocation-modal').show();
 
         this.closeAllocationMenu();
+    }
+
+    handleEditAllocationDataChange(event) {
+        this.editAllocationData[event.target.dataset.field] = event.target.value;
+
+        if (!this.editAllocationData.role || !this.editAllocationData.startDate || !this.editAllocationData.endDate) {
+            this.editAllocationData.disabled = true;
+        } else {
+            this.editAllocationData.disabled = false;
+        }
+    }
+
+    editAllocationModalSuccess() {
+        const startDate = new Date(this.editAllocationData.startDate + 'T00:00:00');
+        const endDate = new Date(this.editAllocationData.endDate + 'T00:00:00');
+        
+        this._saveAllocation({
+            allocationId: this.editAllocationData.id,
+            startDate: startDate.getTime() + startDate.getTimezoneOffset() * 60 * 1000 + '',
+            endDate: endDate.getTime() + startDate.getTimezoneOffset() * 60 * 1000 + '',
+            role: this.editAllocationData.role,
+            effort: this.editAllocationData.effort,
+            status: this.editAllocationData.status
+        }).then(() => {
+            this.editAllocationData = {};
+            this.template.querySelector('#edit-allocation-modal').hide();
+        }).catch(error => {
+            showToast({
+                message: error.message,
+                variant: 'error'
+            });
+        });
     }
 
     handleMenuDeleteClick(event) {
@@ -397,7 +485,7 @@ export default class GanttChartResource extends NavigationMixin(Element) {
 
     handleMenuDeleteSuccess() {
         deleteAllocation({
-            allocationId: this.menuData.allocationId
+            allocationId: this.menuData.allocation.Id
         }).then(() => {
             this.dispatchEvent(new CustomEvent('refresh', {
                 bubbles: true,
@@ -415,9 +503,5 @@ export default class GanttChartResource extends NavigationMixin(Element) {
 
     closeAllocationMenu() {
         this.menuData.show = false;
-    }
-
-    render() {
-        return tmpl;
     }
 }

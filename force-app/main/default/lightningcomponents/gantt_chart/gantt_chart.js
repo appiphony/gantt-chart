@@ -25,6 +25,11 @@ export default class GanttChart extends Element {
 
     // chart
     @track datePickerString;
+    @track filterData = {
+        projects: [],
+        roles: [],
+        status: []
+    };
     @track isResourceView = false;
     @track projectId;
     @track resources = [];
@@ -204,6 +209,8 @@ export default class GanttChart extends Element {
         }).then(data => {
             self.isResourceView = self.recordId && !data.projectId;
             self.projectId = data.projectId;
+            self.projects = data.projects;
+            self.roles = data.roles;
 
             // empty old data
             self.resources.forEach(function(resource, i) {

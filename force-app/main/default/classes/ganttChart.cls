@@ -5,6 +5,8 @@ public with sharing class ganttChart {
         Map<String, Object> resourceById = new Map<String, Object>();
 
         List<Allocation__c> allocations = new List<Allocation__c>();
+        Map<String, Object> projectById = new Map<String, Object>();
+        Set<String> roles = new Set<String>();
 
         if (String.isEmpty(recordId)) {
             allocations = [SELECT Resource__c, Resource__r.Name, Resource__r.Active__c, Resource__r.Default_Role__c,
@@ -65,11 +67,20 @@ public with sharing class ganttChart {
                 allocationsByProject.put(allocation.Project__c, new List<Object>());
             }
 
+            projectById.put(allocation.Project__c, new Map<String, Object> {
+                'Id' => allocation.Project__c,
+                'Name' => allocation.Project__r.Name
+            });
+
             List<Object> projectAllocation = (List<Object>)allocationsByProject.get(allocation.Project__c);
             projectAllocation.add(allocation);
+
+            roles.add(allocation.Role__c);
         }
         
+        data.put('projects', projectById.values());
         data.put('resources', resourceById.values());
+        data.put('roles', roles);
         
         return data;
     }
@@ -89,7 +100,7 @@ public with sharing class ganttChart {
     }
 
     @AuraEnabled(Cacheable=true)
-    public static Object saveAllocation(Id allocationId, Id projectId, Id resourceId, String role, String startDate, String endDate) {
+    public static Object saveAllocation(Id allocationId, Id projectId, Id resourceId, String role, String effort, String status, String startDate, String endDate) {
         Allocation__c allocation = new Allocation__c(
             Role__c = role,
             Start_Date__c = DateTime.newInstance(Long.valueOf(startDate)).date(),
@@ -98,6 +109,14 @@ public with sharing class ganttChart {
 
         if (null != allocationId) {
             allocation.Id = allocationId;
+
+            if (null != effort) {
+                allocation.Effort__c = effort;
+            }
+
+            if (null != status) {
+                allocation.Status__c = status;
+            }
         } else {
             if (null != projectId) {
                 allocation.Project__c = projectId;
