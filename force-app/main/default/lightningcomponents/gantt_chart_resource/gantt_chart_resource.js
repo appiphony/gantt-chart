@@ -80,9 +80,24 @@ export default class GanttChartResource extends Element {
         
     }
 
+    @api 
+    closeAllocationMenu() {
+        if (this.menuData.open) {
+            this.menuData.show = true;
+            this.menuData.open = false;
+        } else {
+            this.menuData = {
+                show: false,
+                open: false,
+                style: ''
+            };
+        }
+    }
+
     @track addAllocationData = {};
     @track editAllocationData = {};
     @track menuData = {
+        open: false,
         show: false,
         style: ''
     };
@@ -419,14 +434,20 @@ export default class GanttChartResource extends Element {
     openAllocationMenu(event) {
         var container = this.template.querySelector('#' + event.currentTarget.dataset.id);
         var allocation = this.projects[container.dataset.project].allocations[container.dataset.allocation];
-        var projectHeight = this.template.querySelector('.project-container').getBoundingClientRect().height;
-        var allocationHeight = this.template.querySelector('.allocation').getBoundingClientRect().height;
-        var rightEdge = (this.endDate - new Date(allocation.End_Date__c + 'T00:00:00')) / (this.endDate - this.startDate + 24 * 60 * 60 * 1000) * 100 + '%';
-        var topEdge = projectHeight * container.dataset.project + allocationHeight;
-
-        this.menuData.allocation = Object.assign({}, allocation);
-        this.menuData.style = 'top: ' + topEdge + 'px; right: ' + rightEdge + '; left: unset';
-        this.menuData.show = true;
+        
+        if (this.menuData.allocation && this.menuData.allocation.Id === allocation.Id) {
+            this.closeAllocationMenu();
+        } else {
+            this.menuData.open = true;
+        
+            var projectHeight = this.template.querySelector('.project-container').getBoundingClientRect().height;
+            var allocationHeight = this.template.querySelector('.allocation').getBoundingClientRect().height;
+            var rightEdge = (this.endDate - new Date(allocation.End_Date__c + 'T00:00:00')) / (this.endDate - this.startDate + 24 * 60 * 60 * 1000) * 100 + '%';
+            var topEdge = projectHeight * container.dataset.project + allocationHeight;
+        
+            this.menuData.allocation = Object.assign({}, allocation);
+            this.menuData.style = 'top: ' + topEdge + 'px; right: ' + rightEdge + '; left: unset';
+        }
     }
 
     handleModalEditClick(event) {
@@ -499,9 +520,5 @@ export default class GanttChartResource extends Element {
                 variant: 'error'
             });
         });
-    }
-
-    closeAllocationMenu() {
-        this.menuData.show = false;
     }
 }

@@ -34,6 +34,11 @@ export default class GanttChart extends Element {
     @track projectId;
     @track resources = [];
 
+    constructor() {
+        super();
+        this.template.addEventListener('click', this.closeDropdowns.bind(this));
+    }
+
     get dateShift() {
         switch (this.days) {
             case 14:
@@ -41,6 +46,14 @@ export default class GanttChart extends Element {
             default:
                 return 7;
         }
+    }
+
+    closeDropdowns() {
+        this.template.querySelectorAll('.resource-component').forEach(
+            function(row, rowIndex) {
+                row.closeAllocationMenu();
+            }
+        )
     }
 
     setStartDate(_startDate) {
