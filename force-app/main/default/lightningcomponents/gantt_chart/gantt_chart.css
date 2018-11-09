@@ -28,6 +28,7 @@
 .timeline_day.today {
     background: rgba(21, 137, 238, 0.1);
     border-top: 3px solid #1589ee;
+    margin-top: 3px;
 }
 
 .timeline_month {
