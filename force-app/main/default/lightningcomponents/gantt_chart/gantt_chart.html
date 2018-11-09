@@ -58,7 +58,7 @@
             <!-- Allocation Table -->
             <template if:true={resources.length}>
                 <template for:each={resources} for:item="resource">
-                    <c-gantt_chart_resource key={resource.Id} is-resource-view={isResourceView} resource={resource} project-id={projectId} start-date={startDate}
+                    <c-gantt_chart_resource key={resource.Id} class="resource-component" is-resource-view={isResourceView} resource={resource} project-id={projectId} start-date={startDate}
                         end-date={endDate} onrefresh={handleRefresh}></c-gantt_chart_resource>
                 </template>
             </template>

@@ -47,6 +47,11 @@ export default class GanttChart extends Element {
     @track projectId;
     @track resources = [];
 
+    constructor() {
+        super();
+        this.template.addEventListener('click', this.closeDropdowns.bind(this));
+    }
+
     get dateShift() {
         switch (this.days) {
             case 14:
@@ -54,6 +59,14 @@ export default class GanttChart extends Element {
             default:
                 return 7;
         }
+    }
+
+    closeDropdowns() {
+        this.template.querySelectorAll('.resource-component').forEach(
+            function(row, rowIndex) {
+                row.closeAllocationMenu();
+            }
+        )
     }
 
     setStartDate(_startDate) {
@@ -116,7 +129,9 @@ export default class GanttChart extends Element {
                 class: 'slds-col slds-p-vertical_x-small slds-m-top_x-small timeline_day',
                 value: (date.getMonth() + 1) + '/' + date.getDate()
             }
-
+            if (date.getDay() === 6) {
+                day.class = day.class + ' is-saturday';
+            }
             if (date.getTime() === today) {
                 day.class += ' today';
             }
