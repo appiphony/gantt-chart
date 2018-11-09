@@ -81,11 +81,8 @@ export default class GanttChartResource extends Element {
             this.menuData.show = true;
             this.menuData.open = false;
         } else {
-            this.menuData = {
-                show: false,
-                open: false,
-                style: ''
-            };
+            this.menuData.show = false;
+            this.menuData.open = false;
         }
     }
 
