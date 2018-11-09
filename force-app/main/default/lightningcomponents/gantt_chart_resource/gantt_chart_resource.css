@@ -4,16 +4,18 @@
     pointer-events: none;
 }
 
-/*** Allocation Actions Menu ***/
+/****** Allocation Actions Menu ******/
 .allocations-container ~ .allocation-actions-container .slds-dropdown {
     margin-top: 0;
 }
-/*** Allocation Actions Menu ***/
+/****** Allocation Actions Menu ******/
 
 .project-container {
     padding: .25rem;
 }
 /*** /Containers ***/
+
+
 
 /*** Allocations ***/
 .allocation {
@@ -33,7 +35,7 @@
     opacity: .95;
 }
 
-/*** Allocation Status ***/
+/****** Allocation Status ******/
 .allocation.hold {
     background-image: linear-gradient(45deg, rgba(0, 0, 0, 0.1) 25%, transparent 25%, transparent 50%, rgba(0, 0, 0, 0.1) 50%, rgba(0, 0, 0, 0.1) 75%, transparent 75%, transparent);
     background-size: 64px 64px;
@@ -44,9 +46,9 @@
     background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.1) 75%, transparent 75%, transparent);
     background-size: 64px 64px;
 }
-/*** /Allocation Status ***/
+/****** /Allocation Status ******/
 
-/*** Allocation Efforts ***/
+/****** Allocation Efforts ******/
 .allocation.low-effort {
     opacity: 0.6;
 }
@@ -58,7 +60,7 @@
 .allocation.high-effort {
     opacity: 0.85;
 }
-/*** /Allocation Efforts ***/
+/****** /Allocation Efforts ******/
 
 .allocation .allocation_actions,
 .allocation .allocation_handle {
@@ -89,6 +91,8 @@
 }
 /*** /Allocations ***/
 
+
+
 /*** Resource ***/
 .resource {
     border-bottom: 1px solid #dddbda;
@@ -98,6 +102,8 @@
 }
 /*** /Resource ***/
 
+
+/*** Day View Timeslots ***/
 .timeslot {
     border-bottom: 1px solid #dddbda;
     border-right: 1px solid #dddbda;
@@ -106,8 +112,13 @@
     min-width: 50px;
     transition: background-color 200ms ease 0s;
 }
+
 .timeslot:first-child {
-    border-left: 1px solid #dddbda;
+    border-left: 3px solid #dddbda;
+}
+
+.timeslot:nth-child(7n) {
+    border-right: 3px solid #dddbda;
 }
 
 .timeslot:hover {
@@ -121,6 +132,9 @@
 .timeslot.today:hover {
     background: rgba(21, 137, 238, 0.2);
 }
+/*** Day View Timeslots ***/
+
+
 
 .timeslots-container {
     bottom: 0;

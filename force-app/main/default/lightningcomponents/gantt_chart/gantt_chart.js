@@ -116,7 +116,9 @@ export default class GanttChart extends Element {
                 class: 'slds-col slds-p-vertical_x-small slds-m-top_x-small timeline_day',
                 value: (date.getMonth() + 1) + '/' + date.getDate()
             }
-
+            if (date.getDay() === 6) {
+                day.class = day.class + ' is-saturday';
+            }
             if (date.getTime() === today) {
                 day.class += ' today';
             }
