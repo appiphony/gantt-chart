@@ -9,20 +9,25 @@
 .timeline_day {
     min-width: 50px;
     text-align: center;
+    padding-right: 1px;
 }
 
 .lwc-timeline_month-container:first-child .timeline_day:first-child,
 .lwc-timeline_month-container:only-child .timeline_day:first-child {
     border-left: 3px solid #dddbda;
+    
 }
 
 .lwc-timeline_month-container:last-child .timeline_day:last-child,
 .lwc-timeline_month-container:only-child .timeline_day:last-child {
     border-right: 3px solid #dddbda;
+    padding-right: 0;
 }
 
 .timeline_day.is-saturday {
     border-right: 3px solid #dddbda;
+    padding-right: 0;
+
 }
 
 .timeline_day.today {
