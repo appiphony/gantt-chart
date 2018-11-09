@@ -257,6 +257,8 @@ export default class GanttChart extends Element {
 
                 self.resources.push(newResource);
             });
+
+            this.applyFilters();
         }).catch(error => {
             showToast({
                 message: error.message,

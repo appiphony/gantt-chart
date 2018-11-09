@@ -81,8 +81,10 @@ export default class GanttChartResource extends Element {
             this.menuData.show = true;
             this.menuData.open = false;
         } else {
-            this.menuData.show = false;
-            this.menuData.open = false;
+            this.menuData = {
+                show: false,
+                open: false
+            };
         }
     }
 
@@ -489,20 +491,22 @@ export default class GanttChartResource extends Element {
     }
 
     handleMenuDeleteClick(event) {
+        this.editAllocationData = {
+            id: this.menuData.allocation.Id,
+        };
         this.template.querySelector('#delete-modal').show();
         this.closeAllocationMenu();
     }
 
     handleMenuDeleteSuccess() {
         deleteAllocation({
-            allocationId: this.menuData.allocation.Id
+            allocationId: this.editAllocationData.id
         }).then(() => {
+            this.template.querySelector('#delete-modal').hide();
             this.dispatchEvent(new CustomEvent('refresh', {
                 bubbles: true,
                 composed: true
             }));
-
-            this.template.querySelector('#delete-modal').hide();
         }).catch(error => {
             showToast({
                 message: error.message,
