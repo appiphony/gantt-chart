@@ -97,11 +97,6 @@
                 </div>
             </div>
             <!-- /Select Resource -->
-
-            <!-- Determine Role -->
-            <lightning-input if:true={resourceModalData.hasResource} value={resourceModalData.resource.Default_Role__c}
-                label="Role" onchange={handleRoleChange}></lightning-input>
-            <!-- /Determine Role -->
         </div>
         <lightning-button slot="footer" variant="brand" label="Add Resource" onclick={addResourceById} class="slds-m-left_xx-small"
             disabled={resourceModalData.disabled}></lightning-button>

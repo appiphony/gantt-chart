@@ -195,14 +195,8 @@ export default class GanttChart extends Element {
         this.validateResourceModalData();
     }
 
-    handleRoleChange(event) {
-        this.resourceModalData.resource.Default_Role__c = event.detail.value.trim();
-
-        this.validateResourceModalData();
-    }
-
     validateResourceModalData() {
-        if (!this.resourceModalData.resource || !this.resourceModalData.resource.Default_Role__c) {
+        if (!this.resourceModalData.resource) {
             this.resourceModalData.disabled = true;
         } else {
             this.resourceModalData.disabled = false;
@@ -242,7 +236,6 @@ export default class GanttChart extends Element {
                     Id: resource.Id,
                     Name: resource.Name,
                     Default_Role__c: resource.Default_Role__c,
-                    primaryAllocation: null,
                     allocationsByProject: {}
                 };
             });

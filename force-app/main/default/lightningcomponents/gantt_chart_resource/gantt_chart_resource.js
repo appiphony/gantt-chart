@@ -22,7 +22,7 @@ export default class GanttChartResource extends Element {
         this._resource = _resource;
         this.setProjects();
     }
-    
+
     @api
     get startDate() {
         return this._startDate;
@@ -31,7 +31,7 @@ export default class GanttChartResource extends Element {
         this._startDate = _startDate;
         this.setTimes();
     }
-    
+
     @api
     get endDate() {
         return this._endDate;
@@ -43,7 +43,20 @@ export default class GanttChartResource extends Element {
 
     @api
     applyFilters(_filterData) {
-        this.projects.forEach(project => {
+        var resource = JSON.parse(JSON.stringify(this._resource));
+        resource.filtered = !_filterData.roles.length;
+
+        if (_filterData.roles.length) {
+            _filterData.roles.forEach(r => {
+                if (r === resource.Default_Role__c) {
+                    resource.filtered = false;
+                }
+            });
+        }
+        this._resource = resource;
+
+        var projects = JSON.parse(JSON.stringify(this.projects));
+        projects.forEach(project => {
             project.filtered = _filterData.projects.length;
 
             if (_filterData.projects.length) {
@@ -55,27 +68,17 @@ export default class GanttChartResource extends Element {
             }
 
             project.allocations.forEach(allocation => {
-                var matchRole = !_filterData.roles.length;
-                var matchStatus = !_filterData.status;
-
-                if (_filterData.roles.length) {
-                    _filterData.roles.forEach(role => {
-                        if (role === allocation.Role__c) {
-                            matchRole = true;
-                        }
-                    });
-                }
+                allocation.filtered = !_filterData.status;
 
                 if (_filterData.status) {
-                    matchStatus = allocation.Status__c === _filterData.status;
+                    allocation.filtered = allocation.Status__c !== _filterData.status;
                 }
-                
-                allocation.filtered = !matchRole || !matchStatus;
             });
         });
+        this.projects = projects;
     }
 
-    @api 
+    @api
     closeAllocationMenu() {
         if (this.menuData.open) {
             this.menuData.show = true;
@@ -131,49 +134,37 @@ export default class GanttChartResource extends Element {
             'allocation'
         ];
 
-        switch(allocation.Status__c) {
-            case 'Hold':
-                classes.push('hold');
-                break;
+        switch (allocation.Status__c) {
             case 'Unavailable':
                 classes.push('unavailable');
+                break;
+            case 'Hold':
+                classes.push('hold');
                 break;
             default:
                 break;
         }
 
-        switch(allocation.Effort__c) {
-            case 'Low':
-                classes.push('low-effort');
-                break;
-            case 'Medium':
-                classes.push('medium-effort');
-                break;
-            case 'High':
-                classes.push('high-effort');
-                break;
-            default:
-                break;
+        if ('Unavailable' !== allocation.Status__c) {
+            switch (allocation.Effort__c) {
+                case 'Low':
+                    classes.push('low-effort');
+                    break;
+                case 'Medium':
+                    classes.push('medium-effort');
+                    break;
+                case 'High':
+                    classes.push('high-effort');
+                    break;
+                default:
+                    break;
+            }
         }
 
         return classes.join(' ');
     }
     calcStyle(allocation) {
-        const backgroundColor = allocation.Project__r.Color__c
-        const colorMap = {
-            Blue: '#1589ee',
-            Green: '#4AAD59',
-            Red: '#E52D34',
-            Turqoise: '#0DBCB9',
-            Navy: '#052F5F', 
-            Orange: '#E56532',
-            Purple: '#62548E',
-            Pink: '#CA7CCE', 
-            Brown: '#823E17',
-            Lime: '#7CCC47',
-            Gold: '#FCAF32'
-        };
-        const oneDay = 24*60*60*1000;
+        const oneDay = 24 * 60 * 60 * 1000;
         const totalDays = Math.round((this.endDate - this.startDate + oneDay) / oneDay);
         const left = Math.round((new Date(allocation.Start_Date__c + 'T00:00:00') - this.startDate) / oneDay) / totalDays * 100 + '%';
         const right = Math.round((this.endDate - new Date(allocation.End_Date__c + 'T00:00:00')) / oneDay) / totalDays * 100 + '%';
@@ -184,6 +175,20 @@ export default class GanttChartResource extends Element {
         ];
 
         if ('Unavailable' !== allocation.Status__c) {
+            const backgroundColor = allocation.Project__r.Color__c
+            const colorMap = {
+                Blue: '#1589ee',
+                Green: '#4AAD59',
+                Red: '#E52D34',
+                Turqoise: '#0DBCB9',
+                Navy: '#052F5F',
+                Orange: '#E56532',
+                Purple: '#62548E',
+                Pink: '#CA7CCE',
+                Brown: '#823E17',
+                Lime: '#7CCC47',
+                Gold: '#FCAF32'
+            };
             styles.push('background-color: ' + colorMap[backgroundColor]);
         }
 
@@ -254,18 +259,25 @@ export default class GanttChartResource extends Element {
             var self = this;
             getProjects()
                 .then(projects => {
+                    projects = projects.map(project => {
+                        return {
+                            value: project.Id,
+                            label: project.Name
+                        };
+                    });
+                    
+                    projects.unshift({
+                        value: 'Unavailable',
+                        label: 'Unavailable'
+                    });
+
                     self.addAllocationData = {
-                        projects: projects.map(project => {
-                            return {
-                                value: project.Id,
-                                label: project.Name
-                            };
-                        }),
-                        role: self.resource.Default_Role__c,
-                        disabled: true,
+                        projects: projects,
                         startDate: dateUTC + '',
-                        endDate: dateUTC + ''
+                        endDate: dateUTC + '',
+                        disabled: true
                     };
+
                     self.template.querySelector('#add-allocation-modal').show();
                 }).catch(error => {
                     showToast({
@@ -278,8 +290,8 @@ export default class GanttChartResource extends Element {
 
     handleAddAllocationDataChange(event) {
         this.addAllocationData[event.target.dataset.field] = event.target.value;
-
-        if (!this.addAllocationData.projectId || !this.addAllocationData.role) {
+        
+        if (!this.addAllocationData.projectId) {
             this.addAllocationData.disabled = true;
         } else {
             this.addAllocationData.disabled = false;
@@ -287,12 +299,18 @@ export default class GanttChartResource extends Element {
     }
 
     addAllocationModalSuccess() {
+        if ('Unavailable' === this.addAllocationData.projectId) {
+            this.addAllocationData.projectId = null;
+            this.addAllocationData.status = 'Unavailable';
+        }
+
         this._saveAllocation({
             projectId: this.addAllocationData.projectId,
-            role: this.addAllocationData.role,
+            status: this.addAllocationData.status,
             startDate: this.addAllocationData.startDate,
             endDate: this.addAllocationData.endDate
         }).then(() => {
+            this.addAllocationData = {};
             this.template.querySelector('#add-allocation-modal').hide();
         }).catch(error => {
             showToast({
@@ -303,16 +321,12 @@ export default class GanttChartResource extends Element {
     }
 
     _saveAllocation(allocation) {
-        if (null == allocation.projectId && null != this.projectId) {
+        if (null == allocation.projectId && null != this.projectId && !allocation.status) {
             allocation.projectId = this.projectId;
         }
 
         if (null == allocation.resourceId) {
             allocation.resourceId = this.resource.Id;
-        }
-
-        if (null == allocation.role) {
-            allocation.role = this.resource.Default_Role__c;
         }
 
         return saveAllocation(allocation)
@@ -425,17 +439,17 @@ export default class GanttChartResource extends Element {
     openAllocationMenu(event) {
         var container = this.template.querySelector('#' + event.currentTarget.dataset.id);
         var allocation = this.projects[container.dataset.project].allocations[container.dataset.allocation];
-        
+
         if (this.menuData.allocation && this.menuData.allocation.Id === allocation.Id) {
             this.closeAllocationMenu();
         } else {
             this.menuData.open = true;
-        
+
             var projectHeight = this.template.querySelector('.project-container').getBoundingClientRect().height;
             var allocationHeight = this.template.querySelector('.allocation').getBoundingClientRect().height;
             var rightEdge = (this.endDate - new Date(allocation.End_Date__c + 'T00:00:00')) / (this.endDate - this.startDate + 24 * 60 * 60 * 1000) * 100 + '%';
             var topEdge = projectHeight * container.dataset.project + allocationHeight;
-        
+
             this.menuData.allocation = Object.assign({}, allocation);
             this.menuData.style = 'top: ' + topEdge + 'px; right: ' + rightEdge + '; left: unset';
         }
@@ -443,12 +457,9 @@ export default class GanttChartResource extends Element {
 
     handleModalEditClick(event) {
         this.editAllocationData = {
-            resourceName: this.menuData.allocation.Resource__r.Name,
-            projectName: this.menuData.allocation.Project__r.Name,
             id: this.menuData.allocation.Id,
             startDate: this.menuData.allocation.Start_Date__c,
             endDate: this.menuData.allocation.End_Date__c,
-            role: this.menuData.allocation.Role__c,
             effort: this.menuData.allocation.Effort__c,
             status: this.menuData.allocation.Status__c,
             disabled: false
@@ -471,9 +482,10 @@ export default class GanttChartResource extends Element {
     editAllocationModalSuccess() {
         const startDate = new Date(this.editAllocationData.startDate + 'T00:00:00');
         const endDate = new Date(this.editAllocationData.endDate + 'T00:00:00');
-        
+
         this._saveAllocation({
             allocationId: this.editAllocationData.id,
+            projectId: this.editAllocationData.projectId,
             startDate: startDate.getTime() + startDate.getTimezoneOffset() * 60 * 1000 + '',
             endDate: endDate.getTime() + startDate.getTimezoneOffset() * 60 * 1000 + '',
             role: this.editAllocationData.role,

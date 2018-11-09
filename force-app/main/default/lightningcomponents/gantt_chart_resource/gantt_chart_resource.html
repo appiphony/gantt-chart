@@ -11,12 +11,7 @@
                         {resource.Name}
                     </h3>
                     <h3 class="slds-text-body_small slds-text-color_weak">
-                        <template if:true={resource.primaryAllocation}>
-                            {resource.primaryAllocation.Role__c}
-                        </template>
-                        <template if:false={resource.primaryAllocation}>
-                            {resource.Default_Role__c}
-                        </template>
+                        {resource.Default_Role__c}
                     </h3>
                 </div>
             </div>
@@ -55,7 +50,12 @@
                                         </div>
                                         <!-- /Allocation Left Handle -->
                                         <div class="slds-col slds-truncate">
-                                            {allocation.Project__r.Name}
+                                            <span if:true={allocation.Project__c}>
+                                                {allocation.Project__r.Name}
+                                            </span>
+                                            <span if:false={allocation.Project__c}>
+                                                Unavailable
+                                            </span>
                                         </div>
                                         <div class="slds-col slds-grow-none allocation_actions">
                                             <lightning-button-icon icon-name="utility:down" variant="bare-inverse" size="small"
@@ -111,10 +111,6 @@
             <!-- Select Project -->
             <lightning-combobox value={addAllocationData.projectId} label="What Project?" placeholder="-- Select Project --" options={addAllocationData.projects} onchange={handleAddAllocationDataChange} data-field="projectId"></lightning-combobox>
             <!-- /Select Project -->
-
-            <!-- Determine Role -->
-            <lightning-input value={addAllocationData.role} label="Role" onchange={handleAddAllocationDataChange} data-field="role"></lightning-input>
-            <!-- /Determine Role -->
         </div>
 
         <lightning-button slot="footer" variant="brand" label="Add Allocation" onclick={addAllocationModalSuccess}
@@ -131,9 +127,6 @@
             <!-- End Date -->
             <lightning-input type="date" value={editAllocationData.endDate} label="End Date" onchange={handleEditAllocationDataChange} data-field="endDate"></lightning-input>
             <!-- /End Date -->
-            <!-- Role -->
-            <lightning-input value={editAllocationData.role} label="Role" onchange={handleEditAllocationDataChange} data-field="role"></lightning-input>
-            <!-- /Role -->
             <!-- Effort -->
             <lightning-combobox value={editAllocationData.effort} label="Effort" options={effortOptions} onchange={handleEditAllocationDataChange} data-field="effort"></lightning-combobox>
             <!-- /Effort -->

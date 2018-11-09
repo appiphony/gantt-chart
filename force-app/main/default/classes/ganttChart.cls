@@ -11,11 +11,11 @@ public with sharing class ganttChart {
         if (String.isEmpty(recordId)) {
             allocations = [SELECT Resource__c, Resource__r.Name, Resource__r.Active__c, Resource__r.Default_Role__c,
                                   Project__c, Project__r.Name, Project__r.Active__c, Project__r.Color__c,
-                                  Start_Date__c, End_Date__c, Role__c, Status__c, Effort__c
+                                  Start_Date__c, End_Date__c, Status__c, Effort__c
                            FROM Allocation__c
                            WHERE Start_Date__c <= :DateTime.newInstance(Long.valueOf(endDate)).date()
                            AND End_Date__c >= :DateTime.newInstance(Long.valueOf(startDate)).date()
-                           ORDER BY Resource__r.Name, Project__r.Name, Start_Date__c];
+                           ORDER BY Resource__r.Name, Project__r.Name NULLS FIRST, Start_Date__c];
         } else {
             if ('Project__c' == Id.valueOf(recordId).getSobjectType().getDescribe().getName()) {
                 data.put('projectId', recordId);
@@ -23,12 +23,12 @@ public with sharing class ganttChart {
             
             allocations = [SELECT Resource__c, Resource__r.Name, Resource__r.Active__c, Resource__r.Default_Role__c,
                                   Project__c, Project__r.Name, Project__r.Active__c, Project__r.Color__c,
-                                  Start_Date__c, End_Date__c, Role__c, Status__c, Effort__c
+                                  Start_Date__c, End_Date__c, Status__c, Effort__c
                            FROM Allocation__c
                            WHERE (Project__c = :recordId OR Resource__c = :recordId)
                            AND Start_Date__c <= :DateTime.newInstance(Long.valueOf(endDate)).date()
                            AND End_Date__c >= :DateTime.newInstance(Long.valueOf(startDate)).date()
-                           ORDER BY Resource__r.Name, Project__r.Name, Start_Date__c];
+                           ORDER BY Resource__r.Name, Project__r.Name NULLS FIRST, Start_Date__c];
 
             // empty state on resource page
             if (allocations.isEmpty() && 'Resource__c' == Id.valueOf(recordId).getSobjectType().getDescribe().getName()) {
@@ -40,7 +40,6 @@ public with sharing class ganttChart {
                     'Id' => resource.Id,
                     'Name' => resource.Name,
                     'Default_Role__c' => resource.Default_Role__c,
-                    'primaryAllocation' => null,
                     'allocationsByProject' => new Map<String, Object>()
                 });
             }
@@ -52,16 +51,12 @@ public with sharing class ganttChart {
                     'Id' => allocation.Resource__c,
                     'Name' => allocation.Resource__r.Name,
                     'Default_Role__c' => allocation.Resource__r.Default_Role__c,
-                    'primaryAllocation' => allocation,
                     'allocationsByProject' => new Map<String, Object>()
                 });
             }
 
             Map<String, Object> resource = (Map<String, Object>)resourceById.get(allocation.Resource__c);
-            Allocation__c primaryAllocation = getPrimaryAllocation((Allocation__c)resource.get('primaryAllocation'), allocation);
             Map<String, Object> allocationsByProject = (Map<String, Object>)resource.get('allocationsByProject');
-            
-            resource.put('primaryAllocation', primaryAllocation);
             
             if (!allocationsByProject.containsKey(allocation.Project__c)) {
                 allocationsByProject.put(allocation.Project__c, new List<Object>());
@@ -75,7 +70,7 @@ public with sharing class ganttChart {
             List<Object> projectAllocation = (List<Object>)allocationsByProject.get(allocation.Project__c);
             projectAllocation.add(allocation);
 
-            roles.add(allocation.Role__c);
+            roles.add(allocation.Resource__r.Default_Role__c);
         }
         
         data.put('projects', projectById.values());
@@ -100,23 +95,14 @@ public with sharing class ganttChart {
     }
 
     @AuraEnabled(Cacheable=true)
-    public static Object saveAllocation(Id allocationId, Id projectId, Id resourceId, String role, String effort, String status, String startDate, String endDate) {
+    public static Object saveAllocation(Id allocationId, Id projectId, Id resourceId, String effort, String status, String startDate, String endDate) {
         Allocation__c allocation = new Allocation__c(
-            Role__c = role,
             Start_Date__c = DateTime.newInstance(Long.valueOf(startDate)).date(),
             End_Date__c = DateTime.newInstance(Long.valueOf(endDate)).date()
         );
 
         if (null != allocationId) {
             allocation.Id = allocationId;
-
-            if (null != effort) {
-                allocation.Effort__c = effort;
-            }
-
-            if (null != status) {
-                allocation.Status__c = status;
-            }
         } else {
             if (null != projectId) {
                 allocation.Project__c = projectId;
@@ -124,6 +110,18 @@ public with sharing class ganttChart {
 
             if (null != resourceId) {
                 allocation.Resource__c = resourceId;
+            }
+        }
+
+        if (null != effort) {
+            allocation.Effort__c = effort;
+        }
+
+        if (null != status) {
+            allocation.Status__c = status;
+
+            if ('Unavailable' == status) {
+                allocation.Project__c = null;
             }
         }
 
@@ -135,51 +133,5 @@ public with sharing class ganttChart {
     @AuraEnabled(Cacheable=true)
     public static void deleteAllocation(Id allocationId) {
         delete new Allocation__c(Id = allocationId);
-    }
-
-    private static Allocation__c getPrimaryAllocation(Allocation__c a, Allocation__c b) {
-        // if a is active today
-        if (Date.today() >= a.Start_Date__c && Date.today() <= a.End_Date__c) {
-            // if b is NOT active today
-            if (Date.today() < b.Start_Date__c || Date.today() > b.End_Date__c) {
-                return a;
-            }
-            else {
-                // if b ends before a
-                if (b.End_Date__c < a.End_Date__c) {
-                    return b;
-                } else {
-                    return a;
-                }
-            }
-        }
-        // if a is active in the future
-        else if (Date.today() < a.Start_Date__c) {
-            // if b is active in the past
-            if (Date.today() > b.Start_Date__c) {
-                return a;
-            } else {
-                // if b starts before a
-                if (b.Start_Date__c < a.Start_Date__c) {
-                    return b;
-                } else {
-                    return a;
-                }
-            }
-        }
-        // if a is active in the past
-        else {
-            // if b is active in the future
-            if (Date.today() < b.Start_Date__c) {
-                return b;
-            } else {
-                // if b ends before a
-                if (b.End_Date__c > a.End_Date__c) {
-                    return b;
-                } else {
-                    return a;
-                }
-            }
-        }
     }
 }
