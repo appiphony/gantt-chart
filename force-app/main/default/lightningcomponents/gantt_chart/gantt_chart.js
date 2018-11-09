@@ -25,12 +25,25 @@ export default class GanttChart extends Element {
 
     // chart
     @track datePickerString;
+
+    // TODO: move filter search to new component?
     @track filterData = {
         projects: [],
         roles: [],
-        status: []
+        status: '',
+        // TODO: pull from backend
+        statusOptions: [{
+            label: 'All',
+            value: 'All'
+        }, {
+            label: 'Hold',
+            value: 'Hold'
+        }, {
+            label: 'Unavailable',
+            value: 'Unavailable'
+        }]
     };
-    @track isResourceView = false;
+    @track view = false;
     @track projectId;
     @track resources = [];
 
@@ -138,10 +151,6 @@ export default class GanttChart extends Element {
         this.setStartDate(new Date(event.target.value + 'T00:00:00'));
     }
 
-    openFilterModal() {
-        this.template.querySelector('#filter-modal').show();
-    }
-
     openAddResourceModal() {
         getResources().then(resources => {
             var excludeResources = this.resources;
@@ -241,19 +250,59 @@ export default class GanttChart extends Element {
         });
     }
 
-    //Filter Modal//
-    @track filterModalData = {
-        projects: [
-            {name: 'FICO'},
-            {name: 'Brandcast'}
-        ], 
-        roles: [
-            {title: 'Developer'},
-            {title: 'QA Analyst'}
-        ]
+    /*** Filter Modal ***/
+    openFilterModal() {
+        this.template.querySelector('#filter-modal').show();
     }
-    
-    handlePillRemove(event) {
-        
+
+    filterProjects(event) {
+        var text = event.target.value;
+
+        this.filterData.projectOptions = this.projects.filter(project => {
+            return project.Name.toLowerCase().includes(text.toLowerCase()) && !this.filterData.projects.filter(p => {
+                return p.id === project.Id;
+            }).length;
+        });
+    }
+
+    addProjectFilter(event) {
+        this.filterData.projects.push(Object.assign({}, event.currentTarget.dataset));
+        this.filterData.projectOptions = [];
+        this.filterData.projectSearch = '';
+    }
+
+    removeProjectFilter(event) {
+        this.filterData.projects.splice(event.currentTarget.dataset.index, 1);
+    }
+
+    filterRoles(event) {
+        var text = event.target.value;
+
+        this.filterData.roleOptions = this.roles.filter(role => {
+            return role.toLowerCase().includes(text.toLowerCase()) && !this.filterData.roles.filter(r => {
+                return r === role
+            }).length;
+        });
+    }
+
+    addRoleFilter(event) {
+        this.filterData.roles.push(event.currentTarget.dataset.role);
+        this.filterData.roleOptions = [];
+        this.filterData.roleSearch = '';
+    }
+
+    removeRoleFilter(event) {
+        this.filterData.roles.splice(event.currentTarget.dataset.index, 1);
+    }
+
+    setStatusFilter(event) {
+        this.filterData.status = event.currentTarget.value;
+    }
+
+    applyFilters() {
+        this.template.querySelectorAll('c-gantt_chart_resource').forEach(resource => {
+            resource.applyFilters(this.filterData);
+        });
+        this.template.querySelector('#filter-modal').hide();
     }
 }

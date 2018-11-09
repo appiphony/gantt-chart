@@ -42,42 +42,37 @@ export default class GanttChartResource extends Element {
     }
 
     @api
-    get filterData() {
-        return this._filterData;
-    }
-    set filterData(_filterData) {
-        var self = this;
-        self._filterData = _filterData;
+    applyFilters(_filterData) {
+        this.projects.forEach(project => {
+            project.filtered = _filterData.projects.length;
 
-        self.projects.forEach(project => {
-            project.filtered = false;
-
-            if (self._filterData.projects.length) {
-                project.filtered = true;
-
-                self._filterData.projects.forEach(p => {
+            if (_filterData.projects.length) {
+                _filterData.projects.forEach(p => {
                     if (p.id === project.id) {
                         project.filtered = false;
-
-                        project.allocations.forEach(allocation => {
-                            allocation.filtered = false;
-
-                            if (self._filterData.role.length) {
-                                allocation.filtered = true;
-
-                                self._filterData.role.forEach(role => {
-                                    if (role === allocation.Role__c) {
-                                        allocation.filtered = false;
-                                    }
-                                });
-                            }
-                        });
                     }
                 });
             }
-        });
 
-        
+            project.allocations.forEach(allocation => {
+                var matchRole = !_filterData.roles.length;
+                var matchStatus = !_filterData.status;
+
+                if (_filterData.roles.length) {
+                    _filterData.roles.forEach(role => {
+                        if (role === allocation.Role__c) {
+                            matchRole = true;
+                        }
+                    });
+                }
+
+                if (_filterData.status) {
+                    matchStatus = allocation.Status__c === _filterData.status;
+                }
+                
+                allocation.filtered = !matchRole || !matchStatus;
+            });
+        });
     }
 
     @track addAllocationData = {};
@@ -206,9 +201,6 @@ export default class GanttChartResource extends Element {
 
             self.projects.push(project);
         });
-
-        // empty space at bottom
-        this.projects.push([]);
     }
 
     setTimes() {
