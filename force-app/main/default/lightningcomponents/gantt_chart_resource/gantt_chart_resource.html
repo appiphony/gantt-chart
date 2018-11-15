@@ -35,7 +35,7 @@
             <div class="allocations-container">
                 <template if:false={resource.filtered} for:each={projects} for:item="project" for:index="projectIndex">
                     <!-- Project Container -->
-                    <div if:false={project.filtered} key={project.id} class="slds-is-relative project-container">
+                    <div if:false={project.filtered} key={project.id} class="slds-is-relative project-container slds-m-vertical_xx-small slds-p-around_xx-small">
                         &nbsp;
                         <template for:each={project.allocations} for:item="allocation" for:index="allocationIndex">
                             <!-- Allocation -->
@@ -76,7 +76,7 @@
                     <!-- /Project Container -->
                 </template>
                 <!-- Extra Space -->
-                <div class="slds-is-relative project-container">
+                <div class="slds-is-relative project-container slds-m-vertical_xx-small slds-p-around_xx-small">
                     &nbsp;
                 </div>
                 <!-- /Extra Space -->
