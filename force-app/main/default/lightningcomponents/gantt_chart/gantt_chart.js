@@ -12,8 +12,7 @@ import getResources from '@salesforce/apex/ganttChart.getResources';
 
 export default class GanttChart extends Element {
     @api recordId;
-    @api days = 14;
-
+    
     // dates
     @track startDate;
     @track endDate;
@@ -22,9 +21,20 @@ export default class GanttChart extends Element {
     @track formattedStartDate;
     @track formattedEndDate;
     @track dates;
+    @track slots = 14;
 
-    // chart
+    // options
     @track datePickerString;
+    @track view = {
+        slotSize: '7',
+        options: [{
+            label: 'Detail',
+            value: '1'
+        }, {
+            label: 'High Density',
+            value: '7'
+        }]
+    };
 
     // TODO: move filter search to new component?
     @track filterData = {
@@ -43,22 +53,14 @@ export default class GanttChart extends Element {
             value: 'Unavailable'
         }]
     };
-    @track view = false;
     @track projectId;
     @track resources = [];
+
+    dateShift = 7;
 
     constructor() {
         super();
         this.template.addEventListener('click', this.closeDropdowns.bind(this));
-    }
-
-    get dateShift() {
-        switch (this.days) {
-            case 14:
-                return 7;
-            default:
-                return 7;
-        }
     }
 
     closeDropdowns() {
@@ -73,23 +75,15 @@ export default class GanttChart extends Element {
         if (_startDate instanceof Date && !isNaN(_startDate)) {
             _startDate.setHours(0, 0, 0, 0);
 
-            // this.datePickerString = _startDate.toString().replace(/(\w+) (\w+) (\d+) (\d+).+/, '$2 $3, $4');
             this.datePickerString = _startDate.toISOString();
 
             _startDate.setDate(_startDate.getDate() - _startDate.getDay());
 
             this.startDate = _startDate;
-
-            this.endDate = new Date(this.startDate);
-            this.endDate.setDate(this.endDate.getDate() + this.days - 1);
-
             this.startDateUTC = this.startDate.getTime() + this.startDate.getTimezoneOffset() * 60 * 1000 + '';
-            this.endDateUTC = this.endDate.getTime() + this.endDate.getTimezoneOffset() * 60 * 1000 + '';
             this.formattedStartDate = this.startDate.toLocaleDateString();
-            this.formattedEndDate = this.endDate.toLocaleDateString();
-
-            this.dates = this.getDates();
-
+            
+            this.setDateHeaders();
             this.handleRefresh();
         } else {
             showToast({
@@ -103,23 +97,38 @@ export default class GanttChart extends Element {
     @track resourceModalData = {};
 
     connectedCallback() {
-        this.days = 14;
-        this.recordIdOrEmpty = this.recordId ? this.recordId : '';
-
+        this.setView('7');
         this.setStartDate(new Date());
     }
 
-    getDates() {
+    setView(value) {
+        this.view.slotSize = value;
+        this.view.dateIncrement = parseInt(value, 10);
+        this.setDateHeaders();
+        this.handleRefresh();
+    }
+
+    handleViewChange(event) {
+        this.setView(event.target.value);
+    }
+    
+    setDateHeaders() {
+        this.endDate = new Date(this.startDate);
+        this.endDate.setDate(this.endDate.getDate() + this.slots * this.view.dateIncrement - 1);
+        this.endDateUTC = this.endDate.getTime() + this.endDate.getTimezoneOffset() * 60 * 1000 + '';
+        this.formattedEndDate = this.endDate.toLocaleDateString();
+
         const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
         var today = new Date();
         today.setHours(0, 0, 0, 0);
         today = today.getTime();
 
-        var dates = [];
+        var dates = {};
 
-        for (var date = new Date(this.startDate); date <= this.endDate; date.setDate(date.getDate() + 1)) {
-            if (!dates[date.getMonth()]) {
-                dates[date.getMonth()] = {
+        for (var date = new Date(this.startDate); date <= this.endDate; date.setDate(date.getDate() + this.view.dateIncrement)) {
+            var index = date.getFullYear() * 100 + date.getMonth();
+            if (!dates[index]) {
+                dates[index] = {
                     name: monthNames[date.getMonth()],
                     days: []
                 };
@@ -127,21 +136,36 @@ export default class GanttChart extends Element {
 
             var day = {
                 class: 'slds-col slds-p-vertical_x-small slds-m-top_x-small timeline_day',
-                value: (date.getMonth() + 1) + '/' + date.getDate()
+                label: (date.getMonth() + 1) + '/' + date.getDate(),
+                start: date
             }
-            if (date.getDay() === 6) {
-                day.class = day.class + ' is-saturday';
+
+            if (this.view.dateIncrement > 1) {
+                var end = new Date(date);
+                end.setDate(end.getDate() + this.view.dateIncrement - 1);
+                day.label = day.label + ' - ' + (end.getMonth() + 1) + '/' + end.getDate();
+                day.end = end;
+            } else {
+                day.end = date;
+                if (date.getDay() === 6) {
+                    day.class = day.class + ' is-saturday';
+                }    
             }
-            if (date.getTime() === today) {
+
+            if (today >= day.start && today <= day.end) {
                 day.class += ' today';
             }
             
-            dates[date.getMonth()].days.push(day);
-            dates[date.getMonth()].style = 'width: calc(' + dates[date.getMonth()].days.length + '/' + this.days + '*100%)';
+            dates[index].days.push(day);
+            dates[index].style = 'width: calc(' + dates[index].days.length + '/' + this.slots + '*100%)';
         }
 
         // reorder index
-        return dates.filter(d => d);
+        this.dates = Object.values(dates);
+
+        this.template.querySelectorAll('c-gantt_chart_resource').forEach(resource => {
+            resource.refreshDates(this.startDate, this.endDate, this.view.dateIncrement);
+        });
     }
 
     navigateToToday() {
@@ -221,9 +245,10 @@ export default class GanttChart extends Element {
         var self =  this;
 
         getChartData({
-            recordId: self.recordIdOrEmpty,
-            startDate: self.startDateUTC,
-            endDate: self.endDateUTC
+            recordId: self.recordId ? self.recordId : '',
+            startTime: self.startDateUTC,
+            endTime: self.endDateUTC,
+            slotSize: self.view.slotSize
         }).then(data => {
             self.isResourceView = self.recordId && !data.projectId;
             self.projectId = data.projectId;
@@ -277,6 +302,10 @@ export default class GanttChart extends Element {
 
     addProjectFilter(event) {
         this.filterData.projects.push(Object.assign({}, event.currentTarget.dataset));
+        this.hideProjectResults();
+    }
+
+    hideProjectResults() {
         this.filterData.projectOptions = [];
         this.filterData.projectSearch = '';
     }
@@ -297,6 +326,10 @@ export default class GanttChart extends Element {
 
     addRoleFilter(event) {
         this.filterData.roles.push(event.currentTarget.dataset.role);
+        this.hideRoleResults();
+    }
+
+    hideRoleResults() {
         this.filterData.roleOptions = [];
         this.filterData.roleSearch = '';
     }

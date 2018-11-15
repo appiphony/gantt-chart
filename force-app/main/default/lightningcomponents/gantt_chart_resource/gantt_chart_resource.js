@@ -23,22 +23,45 @@ export default class GanttChartResource extends Element {
         this.setProjects();
     }
 
-    @api
-    get startDate() {
-        return this._startDate;
-    }
-    set startDate(_startDate) {
-        this._startDate = _startDate;
-        this.setTimes();
-    }
+    @api startDate;
+    @api endDate;
+    @api dateIncrement;
 
     @api
-    get endDate() {
-        return this._endDate;
-    }
-    set endDate(_endDate) {
-        this._endDate = _endDate;
-        this.setTimes();
+    refreshDates(startDate, endDate, dateIncrement) {
+        if (startDate && endDate && dateIncrement) {
+            var times = [];
+            var today = new Date();
+            today.setHours(0, 0, 0, 0);
+            today = today.getTime();
+
+            for (var date = new Date(startDate); date <= endDate; date.setDate(date.getDate() + dateIncrement)) {
+                var time = {
+                    class: 'slds-col timeslot',
+                    start: date.getTime()
+                };
+
+                if (dateIncrement > 1) {
+                    var end = new Date(date);
+                    end.setDate(end.getDate() + dateIncrement - 1);
+                    time.end = end.getTime();
+                } else {
+                    time.end = date.getTime();
+                }
+
+                if (today >= time.start && today <= time.end) {
+                    time.class += ' today';
+                }
+
+                times.push(time);
+            }
+
+            this.times = times;
+            this.startDate = startDate;
+            this.endDate = endDate;
+            this.dateIncrement = dateIncrement;
+            this.setProjects();
+        }
     }
 
     @api
@@ -121,11 +144,7 @@ export default class GanttChartResource extends Element {
     }];
 
     connectedCallback() {
-        this.setProjects();
-        this.menuData = {
-            show: false,
-            style: ''
-        };
+        this.refreshDates(this.startDate, this.endDate, this.dateIncrement);
     }
 
     calcClass(allocation) {
@@ -164,18 +183,18 @@ export default class GanttChartResource extends Element {
         return classes.join(' ');
     }
     calcStyle(allocation) {
-        const oneDay = 24 * 60 * 60 * 1000;
-        const totalDays = Math.round((this.endDate - this.startDate + oneDay) / oneDay);
-        const left = Math.round((new Date(allocation.Start_Date__c + 'T00:00:00') - this.startDate) / oneDay) / totalDays * 100 + '%';
-        const right = Math.round((this.endDate - new Date(allocation.End_Date__c + 'T00:00:00')) / oneDay) / totalDays * 100 + '%';
+        if (!this.times) {
+            return;
+        }
 
+        const totalSlots = this.times.length;
         var styles = [
-            'left: ' + left,
-            'right: ' + right
+            'left: ' + allocation.left / totalSlots * 100 + '%',
+            'right: ' + (totalSlots - (allocation.right + 1)) / totalSlots * 100 + '%'
         ];
 
         if ('Unavailable' !== allocation.Status__c) {
-            const backgroundColor = allocation.Project__r.Color__c
+            const backgroundColor = allocation.color
             const colorMap = {
                 Blue: '#1589ee',
                 Green: '#4AAD59',
@@ -222,38 +241,16 @@ export default class GanttChartResource extends Element {
         });
     }
 
-    setTimes() {
-        if (this._startDate && this._endDate) {
-            var _times = [];
-            var today = new Date();
-            today.setHours(0, 0, 0, 0);
-            today = today.getTime();
-
-            for (var date = new Date(this.startDate); date <= this.endDate; date.setDate(date.getDate() + 1)) {
-                var time = {
-                    class: 'slds-col timeslot',
-                    value: date.getTime()
-                };
-
-                if (time.value === today) {
-                    time.class += ' today';
-                }
-
-                _times.push(time);
-            }
-
-            this.times = _times;
-        }
-    }
-
     handleTimeslotClick(event) {
-        const myDate = new Date(parseInt(event.currentTarget.dataset.time, 10));
-        var dateUTC = myDate.getTime() + myDate.getTimezoneOffset() * 60 * 1000;
+        const start = new Date(parseInt(event.currentTarget.dataset.start, 10));
+        const end = new Date(parseInt(event.currentTarget.dataset.end, 10));
+        const startUTC = start.getTime() + start.getTimezoneOffset() * 60 * 1000;
+        const endUTC = end.getTime() + end.getTimezoneOffset() * 60 * 1000;
 
         if (this.projectId) {
             this._saveAllocation({
-                startDate: dateUTC + '',
-                endDate: dateUTC + ''
+                startDate: startUTC + '',
+                endDate: endUTC + ''
             });
         } else {
             var self = this;
@@ -265,7 +262,7 @@ export default class GanttChartResource extends Element {
                             label: project.Name
                         };
                     });
-                    
+
                     projects.unshift({
                         value: 'Unavailable',
                         label: 'Unavailable'
@@ -273,8 +270,8 @@ export default class GanttChartResource extends Element {
 
                     self.addAllocationData = {
                         projects: projects,
-                        startDate: dateUTC + '',
-                        endDate: dateUTC + '',
+                        startDate: startUTC + '',
+                        endDate: endUTC + '',
                         disabled: true
                     };
 
@@ -290,7 +287,7 @@ export default class GanttChartResource extends Element {
 
     handleAddAllocationDataChange(event) {
         this.addAllocationData[event.target.dataset.field] = event.target.value;
-        
+
         if (!this.addAllocationData.projectId) {
             this.addAllocationData.disabled = true;
         } else {
@@ -357,7 +354,6 @@ export default class GanttChartResource extends Element {
         // hide drag image
         container.style.opacity = 0;
         setTimeout(function () {
-            container.style.opacity = 1;
             container.style.pointerEvents = 'none';
         }, 0);
     }
@@ -400,35 +396,40 @@ export default class GanttChartResource extends Element {
         const projectIndex = this.dragInfo.projectIndex;
         const allocationIndex = this.dragInfo.allocationIndex;
         const direction = this.dragInfo.direction;
-        const myDate = new Date(parseInt(event.currentTarget.dataset.time, 10));
+        const start = new Date(parseInt(event.currentTarget.dataset.start, 10));
+        const end = new Date(parseInt(event.currentTarget.dataset.end, 10));
+        const index = parseInt(event.currentTarget.dataset.index, 10);
 
-        if (!this.dragInfo.startTime) {
-            this.dragInfo.startTime = myDate;
+        if (!this.dragInfo.startIndex) {
+            this.dragInfo.startIndex = index;
         }
 
         var allocation = JSON.parse(JSON.stringify(this.projects[projectIndex].allocations[allocationIndex]));
-        var deltaDate = Math.trunc((myDate - this.dragInfo.startTime) / 1000 / 60 / 60 / 24);
-        var startDate = new Date(allocation.Start_Date__c + 'T00:00:00')
-        var newStartDate = new Date(startDate);
-        newStartDate.setDate(startDate.getDate() + deltaDate);
-        var endDate = new Date(allocation.End_Date__c + 'T00:00:00');
-        var newEndDate = new Date(endDate);
-        newEndDate.setDate(endDate.getDate() + deltaDate);
+        const totalSlots = this.times.length;
 
         switch (direction) {
             case 'left':
-                if (newStartDate <= endDate) {
-                    allocation.Start_Date__c = newStartDate.toJSON().substr(0, 10);
+                if (index <= allocation.right) {
+                    allocation.Start_Date__c = start.toJSON().substr(0, 10);
+                    allocation.left = index;
+                } else {
+                    allocation = this.dragInfo.newAllocation
                 }
                 break;
             case 'right':
-                if (newEndDate >= startDate) {
-                    allocation.End_Date__c = newEndDate.toJSON().substr(0, 10);
+                if (index >= allocation.left) {
+                    allocation.End_Date__c = end.toJSON().substr(0, 10);
+                    allocation.right = index;
+                } else {
+                    allocation = this.dragInfo.newAllocation
                 }
                 break;
             default:
-                allocation.Start_Date__c = newStartDate.toJSON().substr(0, 10);
-                allocation.End_Date__c = newEndDate.toJSON().substr(0, 10);
+                var deltaIndex = index - this.dragInfo.startIndex;
+                allocation.left = allocation.left + deltaIndex;
+                allocation.right = allocation.right + deltaIndex;
+                allocation.Start_Date__c = new Date(this.times[allocation.left].start).toJSON().substr(0, 10);
+                allocation.End_Date__c = new Date(this.times[allocation.right].end).toJSON().substr(0, 10);
 
         }
 
@@ -472,7 +473,7 @@ export default class GanttChartResource extends Element {
     handleEditAllocationDataChange(event) {
         this.editAllocationData[event.target.dataset.field] = event.target.value;
 
-        if (!this.editAllocationData.role || !this.editAllocationData.startDate || !this.editAllocationData.endDate) {
+        if (!this.editAllocationData.startDate || !this.editAllocationData.endDate) {
             this.editAllocationData.disabled = true;
         } else {
             this.editAllocationData.disabled = false;
