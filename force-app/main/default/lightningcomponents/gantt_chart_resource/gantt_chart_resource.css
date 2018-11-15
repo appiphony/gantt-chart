@@ -21,13 +21,10 @@
 .allocation {
     background-color: rgba(21, 137, 238);
     border-radius: .25rem;
-    color: rgb(255, 255, 255);
     cursor: grab; 
     opacity: .85;
     padding: .25rem;
     pointer-events: auto;
-    text-align: center;
-    text-overflow: ellipsis;
     top: 0px;
 }
 
@@ -91,7 +88,13 @@
 }
 /*** /Allocations ***/
 
-
+.allocationLabel {
+    color: rgb(255, 255, 255);
+    padding: .25rem;
+    text-align: center;
+    text-overflow: ellipsis;
+    top: 0px;
+}
 
 /*** Resource ***/
 .resource {

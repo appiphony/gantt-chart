@@ -187,6 +187,22 @@ export default class GanttChartResource extends Element {
         return styles.join('; ');
     }
 
+    calcLabelStyle(allocation) {
+        if (!this.times) {
+            return;
+        }
+
+        const totalSlots = this.times.length;
+        var left = (allocation.left / totalSlots < 0) ? 0 : (allocation.left / totalSlots);
+        var right = ((totalSlots - (allocation.right + 1)) / totalSlots < 0) ? 0 : ((totalSlots - (allocation.right + 1)) / totalSlots);
+        var styles = [
+            'left: ' + left * 100 + '%',
+            'right: ' + right * 100 + '%'
+        ];
+
+        return styles.join('; ');
+    }
+
     setProjects() {
         var self = this;
         self.projects = [];
@@ -200,6 +216,7 @@ export default class GanttChartResource extends Element {
             self.resource.allocationsByProject[projectId].forEach(allocation => {
                 allocation.class = self.calcClass(allocation);
                 allocation.style = self.calcStyle(allocation);
+                allocation.labelStyle = self.calcLabelStyle(allocation);
 
                 project.allocations.push(allocation);
             });
@@ -311,7 +328,7 @@ export default class GanttChartResource extends Element {
     dragInfo = {};
     isDragging = false;
     handleDragStart(event) {
-        var container = this.template.querySelector('#' + event.currentTarget.dataset.id);
+        var container = this.template.querySelector('#' + event.currentTarget.dataset.id + ' .allocation');
         this.dragInfo.projectIndex = container.dataset.project;
         this.dragInfo.allocationIndex = container.dataset.allocation;
         this.dragInfo.newAllocation = this.projects[container.dataset.project].allocations[container.dataset.allocation];
@@ -356,7 +373,7 @@ export default class GanttChartResource extends Element {
 
         this.dragInfo = {};
         this.isDragging = false;
-        this.template.querySelector('#' + allocation.Id).style.pointerEvents = 'auto';
+        this.template.querySelector('#' + allocation.Id + ' .allocation').style.pointerEvents = 'auto';
     }
 
     handleDragEnter(event) {
@@ -401,11 +418,12 @@ export default class GanttChartResource extends Element {
         }
 
         this.dragInfo.newAllocation = allocation;
-        this.template.querySelector('#' + allocation.Id).style = this.calcStyle(allocation);
+        this.template.querySelector('#' + allocation.Id + ' .allocation').style = this.calcStyle(allocation);
+        this.template.querySelector('#' + allocation.Id + ' .allocationLabel').style = this.calcLabelStyle(allocation);
     }
 
     openAllocationMenu(event) {
-        var container = this.template.querySelector('#' + event.currentTarget.dataset.id);
+        var container = this.template.querySelector('#' + event.currentTarget.dataset.id + ' .allocation');
         var allocation = this.projects[container.dataset.project].allocations[container.dataset.allocation];
 
         if (this.menuData.allocation && this.menuData.allocation.Id === allocation.Id) {
