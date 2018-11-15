@@ -69,43 +69,6 @@ export default class GanttChartResource extends Element {
     }
 
     @api
-    applyFilters(_filterData) {
-        var resource = JSON.parse(JSON.stringify(this._resource));
-        resource.filtered = _filterData.roles.length ? true : false;
-
-        if (_filterData.roles.length) {
-            _filterData.roles.forEach(r => {
-                if (r === resource.Default_Role__c) {
-                    resource.filtered = false;
-                }
-            });
-        }
-        this._resource = resource;
-
-        var projects = JSON.parse(JSON.stringify(this.projects));
-        projects.forEach(project => {
-            project.filtered = _filterData.projects.length ? true : false;
-
-            if (_filterData.projects.length) {
-                _filterData.projects.forEach(p => {
-                    if (p.id === project.id) {
-                        project.filtered = false;
-                    }
-                });
-            }
-
-            project.allocations.forEach(allocation => {
-                allocation.filtered = _filterData.status ? true : false;
-
-                if (_filterData.status) {
-                    allocation.filtered = allocation.Status__c !== _filterData.status;
-                }
-            });
-        });
-        this.projects = projects;
-    }
-
-    @api
     closeAllocationMenu() {
         if (this.menuData.open) {
             this.menuData.show = true;

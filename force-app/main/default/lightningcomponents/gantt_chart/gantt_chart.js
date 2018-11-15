@@ -257,12 +257,18 @@ export default class GanttChart extends Element {
 
     handleRefresh() {
         var self =  this;
+        var filterProjectIds = self._filterData.projects.map(project => {
+            return project.id;
+        });
 
         getChartData({
             recordId: self.recordId ? self.recordId : '',
             startTime: self.startDateUTC,
             endTime: self.endDateUTC,
-            slotSize: self.view.slotSize
+            slotSize: self.view.slotSize,
+            filterProjects: filterProjectIds,
+            filterRoles: self._filterData.roles,
+            filterStatus: self._filterData.status
         }).then(data => {
             self.isResourceView = self.recordId && !data.projectId;
             self.projectId = data.projectId;
@@ -289,8 +295,6 @@ export default class GanttChart extends Element {
 
                 self.resources.push(newResource);
             });
-
-            this.applyFilters();
         }).catch(error => {
             showToast({
                 message: error.message,
@@ -373,10 +377,7 @@ export default class GanttChart extends Element {
 
     applyFilters() {
         this._filterData = Object.assign({}, this.filterData);
-
-        this.template.querySelectorAll('c-gantt_chart_resource').forEach(resource => {
-            resource.applyFilters(this._filterData);
-        });
+        this.handleRefresh();
         this.template.querySelector('#filter-modal').hide();
     }
 }

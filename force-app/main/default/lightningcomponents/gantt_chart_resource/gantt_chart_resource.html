@@ -33,13 +33,13 @@
 
             <!-- Allocations -->
             <div class="allocations-container">
-                <template if:false={resource.filtered} for:each={projects} for:item="project" for:index="projectIndex">
+                <template for:each={projects} for:item="project" for:index="projectIndex">
                     <!-- Project Container -->
-                    <div if:false={project.filtered} key={project.id} class="slds-is-relative project-container">
+                    <div key={project.id} class="slds-is-relative project-container">
                         &nbsp;
                         <template for:each={project.allocations} for:item="allocation" for:index="allocationIndex">
                             <!-- Allocation -->
-                            <div if:false={allocation.filtered} key={allocation} title={allocation.Name} id={allocation.Id} class={allocation.class}
+                            <div key={allocation} title={allocation.Name} id={allocation.Id} class={allocation.class}
                                 style={allocation.style} data-project={projectIndex} data-allocation={allocationIndex}>
                                 <div draggable="true" ondragstart={handleDragStart} ondragend={handleDragEnd} data-id={allocation.Id}>
                                     <div class="slds-grid slds-grid_vertical-align-center">

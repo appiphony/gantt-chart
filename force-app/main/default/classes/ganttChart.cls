@@ -1,12 +1,23 @@
 public with sharing class ganttChart {
     @AuraEnabled(Cacheable=true)
-    public static Map<String, Object> getChartData(String recordId, String startTime, String endTime, Integer slotSize) {
+    public static Map<String, Object> getChartData(String recordId, String startTime, String endTime, Integer slotSize, List<String> filterProjects, List<String> filterRoles, String filterStatus) {
         Map<String, Object> data = new Map<String, Object>();
+        String query = 'SELECT Resource__c, Resource__r.Name, Resource__r.Active__c, Resource__r.Default_Role__c, Project__c, Project__r.Name, Project__r.Active__c, Project__r.Color__c, Start_Date__c, End_Date__c, Status__c, Effort__c FROM Allocation__c WHERE Start_Date__c <= :endDate AND End_Date__c >= :startDate AND (Project__c = NULL OR Project__r.Active__c = TRUE) AND Resource__r.Active__c = TRUE';
         
         List<Allocation__c> allocations = new List<Allocation__c>();
         Map<String, Object> projectById = new Map<String, Object>();
         Map<String, Object> resourceById = new Map<String, Object>();
         Set<String> roles = new Set<String>();
+
+        if (!filterProjects.isEmpty()) {
+            query += ' AND Project__c IN :filterProjects';
+        }
+        if (!filterRoles.isEmpty()) {
+            query += ' AND Resource__r.Default_Role__c IN :filterRoles';
+        }
+        if (String.isNotEmpty(filterStatus)) {
+            query += ' AND Status__c = :filterStatus';
+        }
 
         if (String.isNotEmpty(startTime) &&  String.isNotEmpty(endTime)) {
             Date startDate = DateTime.newInstance(Long.valueOf(startTime)).date();
@@ -17,15 +28,9 @@ public with sharing class ganttChart {
             
             // Overview View
             if (String.isEmpty(recordId)) {
-                allocations = [SELECT Resource__c, Resource__r.Name, Resource__r.Active__c, Resource__r.Default_Role__c,
-                                    Project__c, Project__r.Name, Project__r.Active__c, Project__r.Color__c,
-                                    Start_Date__c, End_Date__c, Status__c, Effort__c
-                            FROM Allocation__c
-                            WHERE Start_Date__c <= :endDate
-                            AND End_Date__c >= :startDate
-                            AND (Project__c = NULL OR Project__r.Active__c = TRUE)
-                            AND Resource__r.Active__c =TRUE
-                            ORDER BY Resource__r.Name, Project__r.Name NULLS FIRST, Start_Date__c];
+                query += ' ORDER BY Resource__r.Name, Project__r.Name NULLS FIRST, Start_Date__c';
+                System.debug(query);
+                allocations = Database.query(query);
 
                 // display all active resources
                 for (Resource__c resource : ganttChart.getResources()) {
@@ -40,17 +45,11 @@ public with sharing class ganttChart {
                 if ('Project__c' == Id.valueOf(recordId).getSobjectType().getDescribe().getName()) {
                     data.put('projectId', recordId);
                 }
-                
-                allocations = [SELECT Resource__c, Resource__r.Name, Resource__r.Active__c, Resource__r.Default_Role__c,
-                                    Project__c, Project__r.Name, Project__r.Active__c, Project__r.Color__c,
-                                    Start_Date__c, End_Date__c, Status__c, Effort__c
-                            FROM Allocation__c
-                            WHERE (Project__c = :recordId OR Resource__c = :recordId)
-                            AND Start_Date__c <= :endDate
-                            AND End_Date__c >= :startDate
-                            AND (Project__c = NULL OR Project__r.Active__c = TRUE)
-                            AND Resource__r.Active__c =TRUE
-                            ORDER BY Resource__r.Name, Project__r.Name NULLS FIRST, Start_Date__c];
+
+                query += ' AND (Project__c = :recordId OR Resource__c = :recordId)';
+                query += ' ORDER BY Resource__r.Name, Project__r.Name NULLS FIRST, Start_Date__c';
+                System.debug(query);                
+                allocations = Database.query(query);
 
                 // empty state on resource page
                 if (allocations.isEmpty() && 'Resource__c' == Id.valueOf(recordId).getSobjectType().getDescribe().getName()) {
