@@ -302,12 +302,6 @@ export default class GanttChart extends Element {
 
     addProjectFilter(event) {
         this.filterData.projects.push(Object.assign({}, event.currentTarget.dataset));
-        this.hideProjectResults();
-    }
-
-    hideProjectResults() {
-        this.filterData.projectOptions = [];
-        this.filterData.projectSearch = '';
     }
 
     removeProjectFilter(event) {
@@ -326,12 +320,6 @@ export default class GanttChart extends Element {
 
     addRoleFilter(event) {
         this.filterData.roles.push(event.currentTarget.dataset.role);
-        this.hideRoleResults();
-    }
-
-    hideRoleResults() {
-        this.filterData.roleOptions = [];
-        this.filterData.roleSearch = '';
     }
 
     removeRoleFilter(event) {
@@ -340,6 +328,11 @@ export default class GanttChart extends Element {
 
     setStatusFilter(event) {
         this.filterData.status = event.currentTarget.value;
+    }
+
+    hideDropdowns() {
+        this.filterData.projectOptions = [];
+        this.filterData.roleOptions = [];
     }
 
     applyFilters() {

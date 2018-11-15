@@ -91,7 +91,7 @@ export default class GanttChartResource extends Element {
             }
 
             project.allocations.forEach(allocation => {
-                allocation.filtered = !_filterData.status;
+                allocation.filtered = _filterData.status ? true : false;
 
                 if (_filterData.status) {
                     allocation.filtered = allocation.Status__c !== _filterData.status;
