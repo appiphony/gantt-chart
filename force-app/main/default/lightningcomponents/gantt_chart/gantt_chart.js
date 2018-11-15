@@ -294,7 +294,7 @@ export default class GanttChart extends Element {
         var text = event.target.value;
 
         this.filterData.projectOptions = this.projects.filter(project => {
-            return project.Name.toLowerCase().includes(text.toLowerCase()) && !this.filterData.projects.filter(p => {
+            return project.Name && project.Name.toLowerCase().includes(text.toLowerCase()) && !this.filterData.projects.filter(p => {
                 return p.id === project.Id;
             }).length;
         });
