@@ -20,7 +20,7 @@
                 <lightning-button-icon icon-name="utility:left" variant="border-filled" onclick={navigateToPrevious}></lightning-button-icon>
                 <lightning-button label="Today" onclick={navigateToToday}></lightning-button>
                 <lightning-button-icon icon-name="utility:right" variant="border-filled" onclick={navigateToNext}></lightning-button-icon>
-                <lightning-input type="date" name="select-date" class="gantt-datepicker slds-m-left_small" value={datePickerString}
+                <lightning-input type="date" name="select-date" variant="label-hidden" class="gantt-datepicker slds-m-left_small" value={datePickerString}
                     onchange={navigateToDay}></lightning-input>
             </div>
             <!-- /Date Navigation -->
