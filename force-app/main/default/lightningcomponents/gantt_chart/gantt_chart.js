@@ -301,7 +301,10 @@ export default class GanttChart extends Element {
     }
 
     addProjectFilter(event) {
+        event.preventDefault();
+        
         this.filterData.projects.push(Object.assign({}, event.currentTarget.dataset));
+        this.hideDropdowns();
     }
 
     removeProjectFilter(event) {
@@ -319,7 +322,10 @@ export default class GanttChart extends Element {
     }
 
     addRoleFilter(event) {
+        event.preventDefault();
+
         this.filterData.roles.push(event.currentTarget.dataset.role);
+        this.hideDropdowns();
     }
 
     removeRoleFilter(event) {
