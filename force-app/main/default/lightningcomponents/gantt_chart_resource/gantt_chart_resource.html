@@ -50,10 +50,10 @@
                                         </div>
                                         <!-- /Allocation Left Handle -->
                                         <div class="slds-col slds-truncate">
-                                            <span if:true={allocation.name}>
-                                                {allocation.name}
+                                            <span if:true={allocation.projectName}>
+                                                {allocation.projectName}
                                             </span>
-                                            <span if:false={allocation.name}>
+                                            <span if:false={allocation.projectName}>
                                                 Unavailable
                                             </span>
                                         </div>
@@ -105,6 +105,7 @@
         <!-- /Days -->
     </div>
 
+    <!-- Add Allocation Modal -->
     <c-gantt_chart_modal id="add-allocation-modal">
         <span slot="title">Add Allocation</span>
         <div slot="body" class="slds-form slds-form_stacked">
@@ -116,10 +117,15 @@
         <lightning-button slot="footer" variant="brand" label="Add Allocation" onclick={addAllocationModalSuccess}
             class="slds-m-left_xx-small" disabled={addAllocationData.disabled}></lightning-button>
     </c-gantt_chart_modal>
+    <!-- /Add Allocation Modal -->
 
     <!-- Edit Modal -->
     <c-gantt_chart_modal id="edit-allocation-modal">
-        <span slot="title">{editAllocationData.resourceName} on {editAllocationData.projectName}</span>
+        <span slot="title">
+            {editAllocationData.resourceName}
+            <span if:true={editAllocationData.isFullEdit}> on {editAllocationData.projectName}</span>
+            <span if:false={editAllocationData.isFullEdit}> (Unavailable)</span>
+        </span>
         <div slot="body" class="slds-form slds-form_stacked">
             <!-- Start Date -->
             <lightning-input type="date" value={editAllocationData.startDate} label="Start Date" onchange={handleEditAllocationDataChange} data-field="startDate"></lightning-input>
@@ -128,10 +134,10 @@
             <lightning-input type="date" value={editAllocationData.endDate} label="End Date" onchange={handleEditAllocationDataChange} data-field="endDate"></lightning-input>
             <!-- /End Date -->
             <!-- Effort -->
-            <lightning-combobox value={editAllocationData.effort} label="Effort" options={effortOptions} onchange={handleEditAllocationDataChange} data-field="effort"></lightning-combobox>
+            <lightning-combobox if:true={editAllocationData.isFullEdit} value={editAllocationData.effort} label="Effort" options={effortOptions} onchange={handleEditAllocationDataChange} data-field="effort"></lightning-combobox>
             <!-- /Effort -->
             <!-- Status -->
-            <lightning-combobox value={editAllocationData.status} label="Status" options={statusOptions} onchange={handleEditAllocationDataChange} data-field="status"></lightning-combobox>
+            <lightning-combobox if:true={editAllocationData.isFullEdit} value={editAllocationData.status} label="Status" options={statusOptions} onchange={handleEditAllocationDataChange} data-field="status"></lightning-combobox>
             <!-- /Status -->
         </div>
 

@@ -104,7 +104,7 @@ public with sharing class ganttChart {
                     'End_Date__c' => allocation.End_Date__c,
                     'Status__c' => allocation.Status__c,
                     'Effort__c' => allocation.Effort__c,
-                    'name' => allocation.Project__r.Name,
+                    'projectName' => allocation.Project__r.Name,
                     'color' => allocation.Project__r.Color__c,
                     'left' => left,
                     'right' => right

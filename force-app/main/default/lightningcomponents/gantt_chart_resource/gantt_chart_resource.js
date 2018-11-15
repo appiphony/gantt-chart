@@ -47,6 +47,10 @@ export default class GanttChartResource extends Element {
                     time.end = end.getTime();
                 } else {
                     time.end = date.getTime();
+                    
+                    if (times.length % 7 === 6) {
+                        time.class += ' is-last-day-of-week';
+                    }
                 }
 
                 if (today >= time.start && today <= time.end) {
@@ -458,11 +462,14 @@ export default class GanttChartResource extends Element {
 
     handleModalEditClick(event) {
         this.editAllocationData = {
+            resourceName: this.resource.Name,
+            projectName: this.menuData.allocation.projectName,
             id: this.menuData.allocation.Id,
             startDate: this.menuData.allocation.Start_Date__c,
             endDate: this.menuData.allocation.End_Date__c,
             effort: this.menuData.allocation.Effort__c,
             status: this.menuData.allocation.Status__c,
+            isFullEdit: this.menuData.allocation.Status__c !== 'Unavailable',
             disabled: false
         };
         this.template.querySelector('#edit-allocation-modal').show();
@@ -478,6 +485,8 @@ export default class GanttChartResource extends Element {
         } else {
             this.editAllocationData.disabled = false;
         }
+
+        this.editAllocationData.isFullEdit = this.menuData.allocation.Status__c !== 'Unavailable';
     }
 
     editAllocationModalSuccess() {
