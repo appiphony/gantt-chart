@@ -35,7 +35,7 @@
             <div class="allocations-container">
                 <template for:each={projects} for:item="project" for:index="projectIndex">
                     <!-- Project Container -->
-                    <div key={project.id} class="slds-is-relative project-container">
+                    <div key={project.id} class="slds-is-relative project-container slds-p-around_xx-small">
                         &nbsp;
                         <template for:each={project.allocations} for:item="allocation" for:index="allocationIndex">
                             <!-- Allocation -->
@@ -82,7 +82,7 @@
                     <!-- /Project Container -->
                 </template>
                 <!-- Extra Space -->
-                <div class="slds-is-relative project-container">
+                <div class="slds-is-relative project-container slds-p-around_xx-small">
                     &nbsp;
                 </div>
                 <!-- /Extra Space -->

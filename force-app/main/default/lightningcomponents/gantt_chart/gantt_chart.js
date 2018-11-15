@@ -29,10 +29,10 @@ export default class GanttChart extends Element {
         slotSize: 7,
         slots: 10,
         options: [{
-            label: 'Day View',
+            label: 'View by Day',
             value: '1/14'
         }, {
-            label: 'Week View',
+            label: 'View by Week',
             value: '7/10'
         }]
     };

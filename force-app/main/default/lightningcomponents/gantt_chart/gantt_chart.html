@@ -5,11 +5,13 @@
             <!-- Filter Button -->
             <div class="slds-col slds-grow-none">
                 <lightning-button label="Filter" icon-name="utility:filterList" onclick={openFilterModal}></lightning-button>
+                <div if:true={filterData.message} class="slds-show_inline-block slds-m-left_small">
+                    <p class="slds-text-body_small slds-text-color_weak">
+                        Filtered by ...
+                    </p>
+                </div> 
             </div>
             <!-- /Filter Button -->
-            <!-- View Select -->
-            <lightning-combobox value={view.value} options={view.options} onchange={handleViewChange} variant="label-hidden" class="slds-m-left_small"></lightning-combobox>
-            <!-- /View Select -->
             <div class="slds-col slds-text-align_center">
                 <h1 class="slds-text-heading_medium">
                     {formattedStartDate} - {formattedEndDate}
@@ -17,11 +19,20 @@
             </div>
             <!-- Date Navigation -->
             <div class="slds-col slds-grow-none">
-                <lightning-button-icon icon-name="utility:left" variant="border-filled" onclick={navigateToPrevious}></lightning-button-icon>
-                <lightning-button label="Today" onclick={navigateToToday}></lightning-button>
-                <lightning-button-icon icon-name="utility:right" variant="border-filled" onclick={navigateToNext}></lightning-button-icon>
-                <lightning-input type="date" name="select-date" class="gantt-datepicker slds-m-left_small" value={datePickerString}
-                    onchange={navigateToDay}></lightning-input>
+                <div class="slds-show_inline-block">
+                    <lightning-button-icon icon-name="utility:left" variant="border-filled" onclick={navigateToPrevious}></lightning-button-icon>
+                    <lightning-button label="Today" onclick={navigateToToday}></lightning-button>
+                    <lightning-button-icon icon-name="utility:right" variant="border-filled" onclick={navigateToNext}></lightning-button-icon>
+                </div>
+                <div class="slds-show_inline-block">
+                    <lightning-input type="date" name="select-date" variant="label-hidden" class="gantt-datepicker slds-m-left_small" value={datePickerString}
+                        onchange={navigateToDay}></lightning-input>
+                </div>
+                <!-- View Select -->
+                <div class="slds-show_inline-block">
+                    <lightning-combobox value={view.value} options={view.options} onchange={handleViewChange} variant="label-hidden" class="slds-m-left_small"></lightning-combobox>
+                <!-- /View Select -->
+                </div>
             </div>
             <!-- /Date Navigation -->
         </div>
