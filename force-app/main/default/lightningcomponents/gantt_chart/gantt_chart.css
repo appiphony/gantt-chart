@@ -24,7 +24,7 @@
     padding-right: 0;
 }
 
-.timeline_day.is-saturday {
+.timeline_day.is-last-day-of-week {
     border-right: 3px solid #dddbda;
     padding-right: 0;
 

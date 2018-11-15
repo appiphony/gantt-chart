@@ -21,18 +21,19 @@ export default class GanttChart extends Element {
     @track formattedStartDate;
     @track formattedEndDate;
     @track dates;
-    @track slots = 14;
-
+    
     // options
     @track datePickerString;
     @track view = {
-        slotSize: '7',
+        value: '7/10',
+        slotSize: 7,
+        slots: 10,
         options: [{
             label: 'View by Day',
-            value: '1'
+            value: '1/14'
         }, {
             label: 'View by Week',
-            value: '7'
+            value: '7/10'
         }]
     };
 
@@ -86,7 +87,7 @@ export default class GanttChart extends Element {
 
             this.datePickerString = _startDate.toISOString();
 
-            _startDate.setDate(_startDate.getDate() - _startDate.getDay());
+            _startDate.setDate(_startDate.getDate() - _startDate.getDay() + 1);
 
             this.startDate = _startDate;
             this.startDateUTC = this.startDate.getTime() + this.startDate.getTimezoneOffset() * 60 * 1000 + '';
@@ -106,13 +107,14 @@ export default class GanttChart extends Element {
     @track resourceModalData = {};
 
     connectedCallback() {
-        this.setView('7');
+        this.setView('7/10');
         this.setStartDate(new Date());
     }
 
     setView(value) {
-        this.view.slotSize = value;
-        this.view.dateIncrement = parseInt(value, 10);
+        var values = value.split('/');
+        this.view.slotSize = parseInt(value[0], 10);
+        this.view.slots = parseInt(values[1], 10);
         this.setDateHeaders();
         this.handleRefresh();
     }
@@ -123,7 +125,7 @@ export default class GanttChart extends Element {
     
     setDateHeaders() {
         this.endDate = new Date(this.startDate);
-        this.endDate.setDate(this.endDate.getDate() + this.slots * this.view.dateIncrement - 1);
+        this.endDate.setDate(this.endDate.getDate() + this.view.slots * this.view.slotSize - 1);
         this.endDateUTC = this.endDate.getTime() + this.endDate.getTimezoneOffset() * 60 * 1000 + '';
         this.formattedEndDate = this.endDate.toLocaleDateString();
 
@@ -135,7 +137,7 @@ export default class GanttChart extends Element {
 
         var dates = {};
 
-        for (var date = new Date(this.startDate); date <= this.endDate; date.setDate(date.getDate() + this.view.dateIncrement)) {
+        for (var date = new Date(this.startDate); date <= this.endDate; date.setDate(date.getDate() + this.view.slotSize)) {
             var index = date.getFullYear() * 100 + date.getMonth();
             if (!dates[index]) {
                 dates[index] = {
@@ -151,17 +153,17 @@ export default class GanttChart extends Element {
                 start: date
             }
 
-            if (this.view.dateIncrement > 1) {
+            if (this.view.slotSize > 1) {
                 var end = new Date(date);
-                end.setDate(end.getDate() + this.view.dateIncrement - 1);
+                end.setDate(end.getDate() + this.view.slotSize - 1);
                 day.label = day.label;
                 day.end = end;
                 day.dayName = '';
             } else {
                 day.end = date;
-                if (date.getDay() === 6) {
-                    day.class = day.class + ' is-saturday';
-                }
+                if (date.getDay() === 0) {
+                    day.class = day.class + ' is-last-day-of-week';
+                }    
             }
 
             if (today >= day.start && today <= day.end) {
@@ -169,14 +171,14 @@ export default class GanttChart extends Element {
             }
             
             dates[index].days.push(day);
-            dates[index].style = 'width: calc(' + dates[index].days.length + '/' + this.slots + '*100%)';
+            dates[index].style = 'width: calc(' + dates[index].days.length + '/' + this.view.slots + '*100%)';
         }
 
         // reorder index
         this.dates = Object.values(dates);
 
         this.template.querySelectorAll('c-gantt_chart_resource').forEach(resource => {
-            resource.refreshDates(this.startDate, this.endDate, this.view.dateIncrement);
+            resource.refreshDates(this.startDate, this.endDate, this.view.slotSize);
         });
     }
 

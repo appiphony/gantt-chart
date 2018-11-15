@@ -111,7 +111,7 @@
     border-left: 3px solid #dddbda;
 }
 
-.timeslot:nth-child(7n) {
+.timeslot.is-last-day-of-week {
     border-right: 3px solid #dddbda;
 }
 
