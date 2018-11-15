@@ -28,10 +28,10 @@ export default class GanttChart extends Element {
     @track view = {
         slotSize: '7',
         options: [{
-            label: 'Day View',
+            label: 'View by Day',
             value: '1'
         }, {
-            label: 'Week View',
+            label: 'View by Week',
             value: '7'
         }]
     };
@@ -161,7 +161,7 @@ export default class GanttChart extends Element {
                 day.end = date;
                 if (date.getDay() === 6) {
                     day.class = day.class + ' is-saturday';
-                }    
+                }
             }
 
             if (today >= day.start && today <= day.end) {
