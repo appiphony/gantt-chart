@@ -33,7 +33,7 @@
 
             <!-- Allocations -->
             <div class="allocations-container">
-                <template for:each={projects} for:item="project" for:index="projectIndex">
+                <template if:false={resource.filtered} for:each={projects} for:item="project" for:index="projectIndex">
                     <!-- Project Container -->
                     <div if:false={project.filtered} key={project.id} class="slds-is-relative project-container">
                         &nbsp;

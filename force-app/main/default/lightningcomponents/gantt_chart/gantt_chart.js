@@ -41,6 +41,8 @@ export default class GanttChart extends Element {
         projects: [],
         roles: [],
         status: '',
+        projectOptions: [],
+        roleOptions: [],
         // TODO: pull from backend
         statusOptions: [{
             label: 'All',
@@ -53,6 +55,13 @@ export default class GanttChart extends Element {
             value: 'Unavailable'
         }]
     };
+    _filterData = {
+        projects: [],
+        roles: [],
+        status: ''
+    };
+
+
     @track projectId;
     @track resources = [];
 
@@ -289,11 +298,24 @@ export default class GanttChart extends Element {
     }
 
     /*** Filter Modal ***/
+    stopProp(event) {
+        event.stopPropagation();
+    }
+
+    clearFocus() {
+        this.filterData.focus = null;
+    }
+
     openFilterModal() {
+        this.filterData.projects = Object.assign([], this._filterData.projects);
+        this.filterData.roles = Object.assign([], this._filterData.roles);
+        this.filterData.status = this._filterData.status;
         this.template.querySelector('#filter-modal').show();
     }
 
     filterProjects(event) {
+        this.hideDropdowns();
+        
         var text = event.target.value;
 
         this.filterData.projectOptions = this.projects.filter(project => {
@@ -301,13 +323,12 @@ export default class GanttChart extends Element {
                 return p.id === project.Id;
             }).length;
         });
+        this.filterData.focus = 'projects';
     }
 
     addProjectFilter(event) {
-        event.preventDefault();
-        
         this.filterData.projects.push(Object.assign({}, event.currentTarget.dataset));
-        this.hideDropdowns();
+        this.filterData.focus = null;
     }
 
     removeProjectFilter(event) {
@@ -315,6 +336,8 @@ export default class GanttChart extends Element {
     }
 
     filterRoles(event) {
+        this.hideDropdowns();
+
         var text = event.target.value;
 
         this.filterData.roleOptions = this.roles.filter(role => {
@@ -322,13 +345,12 @@ export default class GanttChart extends Element {
                 return r === role
             }).length;
         });
+        this.filterData.focus = 'roles';
     }
 
     addRoleFilter(event) {
-        event.preventDefault();
-
         this.filterData.roles.push(event.currentTarget.dataset.role);
-        this.hideDropdowns();
+        this.filterData.focus = null;
     }
 
     removeRoleFilter(event) {
@@ -340,13 +362,18 @@ export default class GanttChart extends Element {
     }
 
     hideDropdowns() {
+        if (this.filterData.focus) {
+            return;
+        }
         this.filterData.projectOptions = [];
         this.filterData.roleOptions = [];
     }
 
     applyFilters() {
+        this._filterData = Object.assign({}, this.filterData);
+
         this.template.querySelectorAll('c-gantt_chart_resource').forEach(resource => {
-            resource.applyFilters(this.filterData);
+            resource.applyFilters(this._filterData);
         });
         this.template.querySelector('#filter-modal').hide();
     }

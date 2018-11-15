@@ -67,7 +67,7 @@ export default class GanttChartResource extends Element {
     @api
     applyFilters(_filterData) {
         var resource = JSON.parse(JSON.stringify(this._resource));
-        resource.filtered = !_filterData.roles.length;
+        resource.filtered = _filterData.roles.length ? true : false;
 
         if (_filterData.roles.length) {
             _filterData.roles.forEach(r => {
@@ -80,7 +80,7 @@ export default class GanttChartResource extends Element {
 
         var projects = JSON.parse(JSON.stringify(this.projects));
         projects.forEach(project => {
-            project.filtered = _filterData.projects.length;
+            project.filtered = _filterData.projects.length ? true : false;
 
             if (_filterData.projects.length) {
                 _filterData.projects.forEach(p => {
