@@ -22,8 +22,8 @@
         <div class="slds-col slds-is-relative">
             <!-- Time Slots-->
             <div class="slds-grid slds-is-absolute timeslots-container">
-                <template for:each={times} for:item="time">
-                    <div key={time} class={time.class} data-time={time.value} onclick={handleTimeslotClick}
+                <template for:each={times} for:item="time" for:index="index">
+                    <div key={time} class={time.class} data-index={index} data-start={time.start} data-end={time.end} onclick={handleTimeslotClick}
                         ondragenter={handleDragEnter}>
                         <!-- nothing -->
                     </div>
@@ -50,10 +50,10 @@
                                         </div>
                                         <!-- /Allocation Left Handle -->
                                         <div class="slds-col slds-truncate">
-                                            <span if:true={allocation.Project__c}>
-                                                {allocation.Project__r.Name}
+                                            <span if:true={allocation.name}>
+                                                {allocation.name}
                                             </span>
-                                            <span if:false={allocation.Project__c}>
+                                            <span if:false={allocation.name}>
                                                 Unavailable
                                             </span>
                                         </div>
