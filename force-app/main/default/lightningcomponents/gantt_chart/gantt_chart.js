@@ -119,6 +119,7 @@ export default class GanttChart extends Element {
         this.formattedEndDate = this.endDate.toLocaleDateString();
 
         const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        const dayNames = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
         var today = new Date();
         today.setHours(0, 0, 0, 0);
         today = today.getTime();
@@ -137,14 +138,16 @@ export default class GanttChart extends Element {
             var day = {
                 class: 'slds-col slds-p-vertical_x-small slds-m-top_x-small timeline_day',
                 label: (date.getMonth() + 1) + '/' + date.getDate(),
+                dayName: dayNames[date.getDay()],
                 start: date
             }
 
             if (this.view.dateIncrement > 1) {
                 var end = new Date(date);
                 end.setDate(end.getDate() + this.view.dateIncrement - 1);
-                day.label = day.label + ' - ' + (end.getMonth() + 1) + '/' + end.getDate();
+                day.label = day.label;
                 day.end = end;
+                day.dayName = '';
             } else {
                 day.end = date;
                 if (date.getDay() === 6) {

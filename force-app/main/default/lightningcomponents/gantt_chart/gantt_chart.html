@@ -49,7 +49,10 @@
                                 </div>
                                 <div class="slds-grid">
                                     <template for:each={date.days} for:item="day">
-                                        <div key={day} class={day.class}>{day.label}</div>
+                                        <div key={day} class={day.class}>
+                                            <div if:true={day.dayName}>{day.dayName}</div>
+                                            <div>{day.label}</div>
+                                        </div>
                                     </template>
                                 </div>
                             </div>
