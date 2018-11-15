@@ -47,3 +47,8 @@
 .slds-form_stacked .slds-form-element > .slds-form-element {
     margin-bottom: .25rem;
 }
+
+.slds-dropdown[role="listbox"] {
+    max-height: 150px;
+    overscroll-behavior: none;
+}
