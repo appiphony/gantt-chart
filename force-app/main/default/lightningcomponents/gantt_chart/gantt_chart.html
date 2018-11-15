@@ -110,11 +110,11 @@
     <!-- /Add Resource -->
 
     <!-- Filter Modal -->
-    <c-gantt_chart_modal id="filter-modal">
+    <c-gantt_chart_modal id="filter-modal" onclick={hideDropdowns}>
         <span slot="title">Filter</span>
         <div slot="body" class="slds-form slds-form_stacked">
             <div if:false={projectId} class="slds-form-element">
-                <lightning-input type="search" label="Project" name="project-search" value={filterData.projectSearch} onchange={filterProjects} onfocus={filterProjects} onblur={hideProjectResults}></lightning-input>
+                <lightning-input type="search" label="Project" name="project-search" value={filterData.projectSearch} onchange={filterProjects} onfocus={filterProjects}></lightning-input>
                 <div if:true={filterData.projectOptions} class="slds-dropdown slds-dropdown_fluid slds-scrollable_y" role="listbox">
                     <ul class="slds-listbox slds-listbox_vertical" role="presentation">
                         <template for:each={filterData.projectOptions} for:item="project">
@@ -132,7 +132,7 @@
 
             <div class="slds-form-element">
                 <lightning-input type="search" label="Role" name="role-search" value={filterData.roleSearch} onchange={filterRoles}
-                    onfocus={filterRoles} onblur={hideRoleResults}></lightning-input>
+                    onfocus={filterRoles}></lightning-input>
                     <div if:true={filterData.roleOptions} class="slds-dropdown slds-dropdown_fluid slds-scrollable_y" role="listbox">
                         <ul class="slds-listbox slds-listbox_vertical" role="presentation">
                             <template for:each={filterData.roleOptions} for:item="role">
