@@ -44,7 +44,7 @@
 
 /****** Allocation Efforts ******/
 .allocation.low-effort {
-    opacity: 0.6;
+    opacity: 0.5;
 }
 
 .allocation.medium-effort {
@@ -52,7 +52,7 @@
 }
 
 .allocation.high-effort {
-    opacity: 0.85;
+    opacity: 0.9;
 }
 /****** /Allocation Efforts ******/
 
