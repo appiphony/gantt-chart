@@ -28,10 +28,10 @@ export default class GanttChart extends Element {
     @track view = {
         slotSize: '7',
         options: [{
-            label: 'Detail',
+            label: 'Day View',
             value: '1'
         }, {
-            label: 'High Density',
+            label: 'Week View',
             value: '7'
         }]
     };
