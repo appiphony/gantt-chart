@@ -1,3 +1,7 @@
+.slds-scope > .slds-card {
+    min-width: 1000px;
+}
+
 .lwc-datepicker {
     display: inline-block;
 }
