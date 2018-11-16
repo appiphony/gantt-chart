@@ -389,7 +389,6 @@ export default class GanttChartResource extends Element {
         }
 
         var allocation = JSON.parse(JSON.stringify(this.projects[projectIndex].allocations[allocationIndex]));
-        const totalSlots = this.times.length;
 
         switch (direction) {
             case 'left':
@@ -410,11 +409,18 @@ export default class GanttChartResource extends Element {
                 break;
             default:
                 var deltaIndex = index - this.dragInfo.startIndex;
+                var firstSlot = this.times[0];
+                var startDate = new Date(firstSlot.start);
+                var endDate = new Date(firstSlot.end);
+
                 allocation.left = allocation.left + deltaIndex;
                 allocation.right = allocation.right + deltaIndex;
-                allocation.Start_Date__c = new Date(this.times[allocation.left].start).toJSON().substr(0, 10);
-                allocation.End_Date__c = new Date(this.times[allocation.right].end).toJSON().substr(0, 10);
+                
+                startDate.setDate(startDate.getDate() + allocation.left * this.dateIncrement);
+                endDate.setDate(endDate.getDate() + allocation.right * this.dateIncrement);
 
+                allocation.Start_Date__c = startDate.toJSON().substr(0, 10);
+                allocation.End_Date__c = endDate.toJSON().substr(0, 10);
         }
 
         this.dragInfo.newAllocation = allocation;

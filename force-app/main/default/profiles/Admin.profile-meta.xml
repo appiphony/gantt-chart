@@ -62,6 +62,10 @@
         <viewAllRecords>true</viewAllRecords>
     </objectPermissions>
     <tabVisibilities>
+        <tab>Overview</tab>
+        <visibility>DefaultOn</visibility>
+    </tabVisibilities>
+    <tabVisibilities>
         <tab>Project__c</tab>
         <visibility>DefaultOn</visibility>
     </tabVisibilities>
