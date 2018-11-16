@@ -484,7 +484,6 @@ export default class GanttChartResource extends Element {
             projectId: this.editAllocationData.projectId,
             startDate: startDate.getTime() + startDate.getTimezoneOffset() * 60 * 1000 + '',
             endDate: endDate.getTime() + startDate.getTimezoneOffset() * 60 * 1000 + '',
-            role: this.editAllocationData.role,
             effort: this.editAllocationData.effort,
             status: this.editAllocationData.status
         }).then(() => {
