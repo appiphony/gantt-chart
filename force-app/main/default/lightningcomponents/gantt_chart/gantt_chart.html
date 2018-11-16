@@ -25,8 +25,8 @@
                     <lightning-button-icon icon-name="utility:right" variant="border-filled" onclick={navigateToNext}></lightning-button-icon>
                 </div>
                 <div class="slds-show_inline-block">
-                    <lightning-input type="date" name="select-date" variant="label-hidden" class="gantt-datepicker slds-m-left_small" value={datePickerString}
-                        onchange={navigateToDay}></lightning-input>
+                    <lightning-input type="date" name="select-date" label="Select Date" variant="label-hidden" class="lwc-datepicker slds-m-left_small" value={datePickerString}
+                        onchange={navigateToDay} message-when-pattern-mismatch="" message-when-bad-input=""></lightning-input>
                 </div>
                 <!-- View Select -->
                 <div class="slds-show_inline-block">
