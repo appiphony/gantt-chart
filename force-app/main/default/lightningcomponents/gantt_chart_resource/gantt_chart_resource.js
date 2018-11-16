@@ -99,16 +99,7 @@ export default class GanttChartResource extends Element {
         label: 'High',
         value: 'High'
     }];
-    statusOptions = [{
-        label: 'Active',
-        value: 'Active'
-    }, {
-        label: 'Hold',
-        value: 'Hold'
-    }, {
-        label: 'Unavailable',
-        value: 'Unavailable'
-    }];
+    @track statusOptions = [];
 
     connectedCallback() {
         this.refreshDates(this.startDate, this.endDate, this.dateIncrement);
@@ -258,6 +249,17 @@ export default class GanttChartResource extends Element {
                         endDate: endUTC + '',
                         disabled: true
                     };
+
+                    this.statusOptions = [{
+                        label: 'Active',
+                        value: 'Active'
+                    }, {
+                        label: 'Hold',
+                        value: 'Hold'
+                    }, {
+                        label: 'Unavailable',
+                        value: 'Unavailable'
+                    }];
 
                     self.template.querySelector('#add-allocation-modal').show();
                 }).catch(error => {
@@ -461,6 +463,21 @@ export default class GanttChartResource extends Element {
             isFullEdit: this.menuData.allocation.Status__c !== 'Unavailable',
             disabled: false
         };
+
+        switch(this.menuData.allocation.Status__c) {
+            case 'Active':
+            case 'Hold':
+                this.statusOptions = [{
+                    label: 'Active',
+                    value: 'Active'
+                }, {
+                    label: 'Hold',
+                    value: 'Hold'
+                }];
+                break;
+            default:
+                
+        }
         this.template.querySelector('#edit-allocation-modal').show();
 
         this.closeAllocationMenu();
