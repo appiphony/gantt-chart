@@ -46,7 +46,7 @@
                                         data-id={allocation.Id}>
                                         <div class="slds-grid slds-grid_vertical-align-center">
                                             <!-- Allocation Left Handle -->
-                                            <div class="slds-col slds-grow-none allocation_handle handle_left"
+                                            <div class="slds-col slds-grow-none slds-col_bump-right allocation_handle handle_left"
                                                 draggable="true" ondragstart={handleLeftDragStart} data-id={allocation.Id}>
                                                 <lightning-icon icon-name="utility:drag_and_drop" variant="inverse"
                                                     size="x-small"></lightning-icon>
@@ -67,7 +67,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="slds-truncate slds-is-absolute allocationLabel" style={allocation.labelStyle}>
+                                <div class="slds-truncate slds-is-absolute lwc-allocation-label" style={allocation.labelStyle}>
                                     <span if:true={allocation.projectName}>
                                         {allocation.projectName}
                                     </span>

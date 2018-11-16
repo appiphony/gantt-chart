@@ -82,7 +82,7 @@
 }
 /*** /Allocations ***/
 
-.allocationLabel {
+.lwc-allocation-label {
     color: rgb(255, 255, 255);
     padding: .25rem;
     text-align: center;

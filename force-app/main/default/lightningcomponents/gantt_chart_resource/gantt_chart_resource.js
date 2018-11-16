@@ -419,7 +419,7 @@ export default class GanttChartResource extends Element {
 
         this.dragInfo.newAllocation = allocation;
         this.template.querySelector('#' + allocation.Id + ' .allocation').style = this.calcStyle(allocation);
-        this.template.querySelector('#' + allocation.Id + ' .allocationLabel').style = this.calcLabelStyle(allocation);
+        this.template.querySelector('#' + allocation.Id + ' .lwc-allocation-label').style = this.calcLabelStyle(allocation);
     }
 
     openAllocationMenu(event) {
