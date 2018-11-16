@@ -25,6 +25,46 @@
                 <default>false</default>
                 <label>Red</label>
             </value>
+            <value>
+                <fullName>Orange</fullName>
+                <default>false</default>
+                <label>Orange</label>
+            </value>
+            <value>
+                <fullName>Gold</fullName>
+                <default>false</default>
+                <label>Gold</label>
+            </value>
+            <value>
+                <fullName>Pink</fullName>
+                <default>false</default>
+                <label>Pink</label>
+            </value>
+            <value>
+                <fullName>Purple</fullName>
+                <default>false</default>
+                <label>Purple</label>
+            </value>
+            <value>
+                <fullName>Brown</fullName>
+                <default>false</default>
+                <label>Brown</label>
+            </value>
+            <value>
+                <fullName>Turqoise</fullName>
+                <default>false</default>
+                <label>Turqoise</label>
+            </value>
+            <value>
+                <fullName>Navy</fullName>
+                <default>false</default>
+                <label>Navy</label>
+            </value>
+            <value>
+                <fullName>Lime</fullName>
+                <default>false</default>
+                <label>Lime</label>
+            </value>
         </valueSetDefinition>
     </valueSet>
 </CustomField>
