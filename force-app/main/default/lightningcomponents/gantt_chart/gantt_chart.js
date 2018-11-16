@@ -47,7 +47,7 @@ export default class GanttChart extends Element {
         // TODO: pull from backend
         statusOptions: [{
             label: 'All',
-            value: 'All'
+            value: ''
         }, {
             label: 'Hold',
             value: 'Hold'

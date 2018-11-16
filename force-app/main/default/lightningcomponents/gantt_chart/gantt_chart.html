@@ -9,7 +9,7 @@
                     <p class="slds-text-body_small slds-text-color_weak">
                         Filtered by ...
                     </p>
-                </div> 
+                </div>
             </div>
             <!-- /Filter Button -->
             <div class="slds-col slds-text-align_center">
@@ -25,13 +25,14 @@
                     <lightning-button-icon icon-name="utility:right" variant="border-filled" onclick={navigateToNext}></lightning-button-icon>
                 </div>
                 <div class="slds-show_inline-block">
-                    <lightning-input type="date" name="select-date" variant="label-hidden" class="gantt-datepicker slds-m-left_small" value={datePickerString}
-                        onchange={navigateToDay}></lightning-input>
+                    <lightning-input label="Date" type="date" name="select-date" variant="label-hidden" class="gantt-datepicker slds-m-left_small"
+                        value={datePickerString} onchange={navigateToDay}></lightning-input>
                 </div>
                 <!-- View Select -->
                 <div class="slds-show_inline-block">
-                    <lightning-combobox value={view.value} options={view.options} onchange={handleViewChange} variant="label-hidden" class="slds-m-left_small"></lightning-combobox>
-                <!-- /View Select -->
+                    <lightning-combobox value={view.value} options={view.options} onchange={handleViewChange} variant="label-hidden"
+                        class="slds-m-left_small"></lightning-combobox>
+                    <!-- /View Select -->
                 </div>
             </div>
             <!-- /Date Navigation -->
@@ -128,13 +129,16 @@
         <span slot="title">Filter</span>
         <div slot="body" class="slds-form slds-form_stacked">
             <div if:false={projectId} class="slds-form-element">
-                <lightning-input type="search" label="Project" name="project-search" value={filterData.projectSearch} onchange={filterProjects} onfocus={filterProjects} onblur={clearFocus}></lightning-input>
-                <div if:true={filterData.projectOptions.length} class="slds-dropdown slds-dropdown_fluid slds-scrollable_y" role="listbox">
+                <lightning-input type="search" label="Project" name="project-search" value={filterData.projectSearch}
+                    onchange={filterProjects} onfocus={filterProjects} onblur={clearFocus}></lightning-input>
+                <div if:true={filterData.projectOptions.length} class="slds-dropdown slds-dropdown_fluid slds-scrollable_y"
+                    role="listbox">
                     <ul class="slds-listbox slds-listbox_vertical" role="presentation">
                         <template for:each={filterData.projectOptions} for:item="project">
                             <li key={project} role="presentation" class="slds-listbox__item">
-                                <div onclick={addProjectFilter} data-id={project.Id} data-name={project.Name} class="slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta" role="option">{project.Name}</div>
-                            </li> 
+                                <div onclick={addProjectFilter} data-id={project.Id} data-name={project.Name} class="slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta"
+                                    role="option">{project.Name}</div>
+                            </li>
                         </template>
                     </ul>
                 </div>
@@ -147,15 +151,17 @@
             <div class="slds-form-element">
                 <lightning-input type="search" label="Role" name="role-search" value={filterData.roleSearch} onchange={filterRoles}
                     onfocus={filterRoles} onblur={clearFocus}></lightning-input>
-                    <div if:true={filterData.roleOptions.length} class="slds-dropdown slds-dropdown_fluid slds-scrollable_y" role="listbox">
-                        <ul class="slds-listbox slds-listbox_vertical" role="presentation">
-                            <template for:each={filterData.roleOptions} for:item="role">
-                                <li key={role} role="presentation" class="slds-listbox__item">
-                                    <div onclick={addRoleFilter} data-role={role} class="slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta" role="option">{role}</div>
-                                </li>
-                            </template>
-                        </ul>
-                    </div>
+                <div if:true={filterData.roleOptions.length} class="slds-dropdown slds-dropdown_fluid slds-scrollable_y"
+                    role="listbox">
+                    <ul class="slds-listbox slds-listbox_vertical" role="presentation">
+                        <template for:each={filterData.roleOptions} for:item="role">
+                            <li key={role} role="presentation" class="slds-listbox__item">
+                                <div onclick={addRoleFilter} data-role={role} class="slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta"
+                                    role="option">{role}</div>
+                            </li>
+                        </template>
+                    </ul>
+                </div>
                 <template for:each={filterData.roles} for:item="role" for:index="index">
                     <lightning-pill key={role} value={role} label={role} onremove={removeRoleFilter} data-index={index}></lightning-pill>
                 </template>

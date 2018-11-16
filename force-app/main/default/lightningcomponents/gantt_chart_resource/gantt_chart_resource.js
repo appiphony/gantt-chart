@@ -473,7 +473,7 @@ export default class GanttChartResource extends Element {
             this.editAllocationData.disabled = false;
         }
 
-        this.editAllocationData.isFullEdit = this.menuData.allocation.Status__c !== 'Unavailable';
+        this.editAllocationData.isFullEdit = this.editAllocationData.Status__c !== 'Unavailable';
     }
 
     editAllocationModalSuccess() {
