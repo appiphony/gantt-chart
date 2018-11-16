@@ -1,5 +1,5 @@
-.slds-scope > .slds-card {
-    min-width: 1000px;
+.slds-scope {
+    min-width: 900px;
 }
 
 .lwc-datepicker {
