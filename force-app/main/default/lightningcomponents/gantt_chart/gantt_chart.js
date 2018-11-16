@@ -12,7 +12,7 @@ import getResources from '@salesforce/apex/ganttChart.getResources';
 
 export default class GanttChart extends Element {
     @api recordId;
-    
+
     // dates
     @track startDate;
     @track endDate;
@@ -21,7 +21,7 @@ export default class GanttChart extends Element {
     @track formattedStartDate;
     @track formattedEndDate;
     @track dates;
-    
+
     // options
     @track datePickerString;
     @track view = {
@@ -75,7 +75,7 @@ export default class GanttChart extends Element {
 
     closeDropdowns() {
         this.template.querySelectorAll('.resource-component').forEach(
-            function(row, rowIndex) {
+            function (row, rowIndex) {
                 row.closeAllocationMenu();
             }
         )
@@ -92,7 +92,7 @@ export default class GanttChart extends Element {
             this.startDate = _startDate;
             this.startDateUTC = this.startDate.getTime() + this.startDate.getTimezoneOffset() * 60 * 1000 + '';
             this.formattedStartDate = this.startDate.toLocaleDateString();
-            
+
             this.setDateHeaders();
             this.handleRefresh();
         } else {
@@ -122,7 +122,7 @@ export default class GanttChart extends Element {
     handleViewChange(event) {
         this.setView(event.target.value);
     }
-    
+
     setDateHeaders() {
         this.endDate = new Date(this.startDate);
         this.endDate.setDate(this.endDate.getDate() + this.view.slots * this.view.slotSize - 1);
@@ -163,13 +163,13 @@ export default class GanttChart extends Element {
                 day.end = date;
                 if (date.getDay() === 0) {
                     day.class = day.class + ' is-last-day-of-week';
-                }    
+                }
             }
 
             if (today >= day.start && today <= day.end) {
                 day.class += ' today';
             }
-            
+
             dates[index].days.push(day);
             dates[index].style = 'width: calc(' + dates[index].days.length + '/' + this.view.slots + '*100%)';
         }
@@ -207,12 +207,21 @@ export default class GanttChart extends Element {
     openAddResourceModal() {
         getResources().then(resources => {
             var excludeResources = this.resources;
-            this.resourceModalData.resources = resources.filter(resource => {
-                return excludeResources.filter(excludeResource => {
-                    return excludeResource.Id === resource.Id
-                }).length === 0;
-            });
-            
+            this.resourceModalData = {
+                disabled: true,
+                resources: resources.filter(resource => {
+                    return excludeResources.filter(excludeResource => {
+                        return excludeResource.Id === resource.Id
+                    }).length === 0;
+                }).map(resource => {
+                    return {
+                        label: resource.Name,
+                        value: resource.Id,
+                        role: resource.Default_Role__c
+                    }
+                })
+            }
+
             this.template.querySelector('#resource-modal').show();
         }).catch(error => {
             showToast({
@@ -223,10 +232,15 @@ export default class GanttChart extends Element {
     }
 
     handleResourceSelect(event) {
-        this.resourceModalData.resources.forEach(resource => {
-            if (resource.Id === event.target.value) {
-                this.resourceModalData.resource = Object.assign({}, resource);
-                this.resourceModalData.hasResource = true;
+        var self = this;
+
+        self.resourceModalData.resources.forEach(resource => {
+            if (resource.value === event.target.value) {
+                self.resourceModalData.resource = {
+                    Id: resource.value,
+                    Name: resource.label,
+                    Default_Role__c: resource.role
+                };
             }
         });
 
@@ -250,13 +264,12 @@ export default class GanttChart extends Element {
 
         this.resourceModalData = {
             disabled: true,
-            resource: null,
             resources: []
         };
     }
 
     handleRefresh() {
-        var self =  this;
+        var self = this;
         var filterProjectIds = self._filterData.projects.map(project => {
             return project.id;
         });
@@ -276,7 +289,7 @@ export default class GanttChart extends Element {
             self.roles = data.roles;
 
             // empty old data
-            self.resources.forEach(function(resource, i) {
+            self.resources.forEach(function (resource, i) {
                 self.resources[i] = {
                     Id: resource.Id,
                     Name: resource.Name,
@@ -284,8 +297,8 @@ export default class GanttChart extends Element {
                     allocationsByProject: {}
                 };
             });
-            
-            data.resources.forEach(function(newResource) {
+
+            data.resources.forEach(function (newResource) {
                 for (var i = 0; i < self.resources.length; i++) {
                     if (self.resources[i].Id === newResource.Id) {
                         self.resources[i] = newResource;
@@ -321,7 +334,7 @@ export default class GanttChart extends Element {
 
     filterProjects(event) {
         this.hideDropdowns();
-        
+
         var text = event.target.value;
 
         this.filterData.projectOptions = this.projects.filter(project => {

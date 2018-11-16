@@ -154,16 +154,15 @@ public with sharing class ganttChart {
             allocation.Resource__c = resourceId;
         }
 
-        if (null != effort) {
+        if (String.isNotEmpty(effort)) {
             allocation.Effort__c = effort;
         }
-        if (null != status) {
+        if (String.isNotEmpty(status)) {
             allocation.Status__c = status;
 
             // remove project
             if ('Unavailable' == status) {
                 allocation.Project__c = null;
-                allocation.Effort__c = null;
             }
         }
         

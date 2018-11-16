@@ -103,21 +103,7 @@
     <c-gantt_chart_modal id="resource-modal">
         <span slot="title">Add Resource</span>
         <div slot="body" class="slds-form slds-form_stacked">
-            <!-- Select Resource -->
-            <div class="slds-form-element" onchange={handleResourceSelect}>
-                <label class="slds-form-element__label" for="select-01">Who is working on this?</label>
-                <div class="slds-form-element__control">
-                    <div class="slds-select_container">
-                        <select class="slds-select" id="select-01">
-                            <option value="">-- Select Resource --</option>
-                            <template for:each={resourceModalData.resources} for:item="resource">
-                                <option key={resource.Id} value={resource.Id}>{resource.Name}</option>
-                            </template>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <!-- /Select Resource -->
+            <lightning-combobox label="Who is working on this?" options={resourceModalData.resources} placeholder="-- Select Resource --" onchange={handleResourceSelect}></lightning-combobox>
         </div>
         <lightning-button slot="footer" variant="brand" label="Add Resource" onclick={addResourceById} class="slds-m-left_xx-small"
             disabled={resourceModalData.disabled}></lightning-button>
