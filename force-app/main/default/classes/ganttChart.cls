@@ -154,17 +154,19 @@ public with sharing class ganttChart {
             allocation.Resource__c = resourceId;
         }
 
+        if (null != effort) {
+            allocation.Effort__c = effort;
+        }
         if (null != status) {
             allocation.Status__c = status;
 
             // remove project
             if ('Unavailable' == status) {
                 allocation.Project__c = null;
+                allocation.Effort__c = null;
             }
-        } else if (null != effort) {
-            allocation.Effort__c = effort;
         }
-
+        
         upsert allocation;
 
         return allocation;
