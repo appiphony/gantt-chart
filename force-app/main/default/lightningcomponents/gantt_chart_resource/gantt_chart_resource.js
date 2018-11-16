@@ -193,8 +193,8 @@ export default class GanttChartResource extends Element {
         var left = (allocation.left / totalSlots < 0) ? 0 : (allocation.left / totalSlots);
         var right = ((totalSlots - (allocation.right + 1)) / totalSlots < 0) ? 0 : ((totalSlots - (allocation.right + 1)) / totalSlots);
         var styles = [
-            'left: ' + left * 100 + '%',
-            'right: ' + right * 100 + '%'
+            'left: calc(' + left * 100 + '% + 15px)',
+            'right: calc(' + right * 100 + '% + 30px)'
         ];
 
         return styles.join('; ');
