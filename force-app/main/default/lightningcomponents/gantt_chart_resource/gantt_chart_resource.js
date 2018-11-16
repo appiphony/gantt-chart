@@ -439,7 +439,9 @@ export default class GanttChartResource extends Element {
 
             var projectHeight = this.template.querySelector('.project-container').getBoundingClientRect().height;
             var allocationHeight = this.template.querySelector('.allocation').getBoundingClientRect().height;
-            var rightEdge = (this.endDate - new Date(allocation.End_Date__c + 'T00:00:00')) / (this.endDate - this.startDate + 24 * 60 * 60 * 1000) * 100 + '%';
+            var totalSlots = this.times.length;
+            var rightEdge = (totalSlots - (allocation.right + 1)) / totalSlots * 100 + '%';
+
             var topEdge = projectHeight * container.dataset.project + allocationHeight;
 
             this.menuData.allocation = Object.assign({}, allocation);
