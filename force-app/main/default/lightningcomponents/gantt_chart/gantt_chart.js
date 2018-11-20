@@ -173,12 +173,12 @@ export default class GanttChart extends Element {
             } else {
                 day.end = date;
                 if (date.getDay() === 0) {
-                    day.class = day.class + ' is-last-day-of-week';
+                    day.class = day.class + ' lwc-is-week-end';
                 }
             }
 
             if (today >= day.start && today <= day.end) {
-                day.class += ' today';
+                day.class += ' lwc-is-today';
             }
 
             dates[index].days.push(day);

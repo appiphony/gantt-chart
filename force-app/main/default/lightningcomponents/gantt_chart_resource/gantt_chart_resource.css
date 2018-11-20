@@ -114,7 +114,7 @@
     border-left: 3px solid #dddbda;
 }
 
-.timeslot.is-last-day-of-week, 
+.timeslot.lwc-is-week-end, 
 .timeslot:last-child {
     border-right: 3px solid #dddbda;
 }
@@ -123,11 +123,11 @@
     background-color: rgb(232, 232, 232);
 }
 
-.timeslot.today {
+.timeslot.lwc-is-today {
     background: rgba(21, 137, 238, 0.1);
 }
 
-.timeslot.today:hover {
+.timeslot.lwc-is-today:hover {
     background: rgba(21, 137, 238, 0.2);
 }
 /*** Day View Timeslots ***/

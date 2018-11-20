@@ -49,12 +49,12 @@ export default class GanttChartResource extends Element {
                     time.end = date.getTime();
                     
                     if (times.length % 7 === 6) {
-                        time.class += ' is-last-day-of-week';
+                        time.class += ' lwc-is-week-end';
                     }
                 }
 
                 if (today >= time.start && today <= time.end) {
-                    time.class += ' today';
+                    time.class += ' lwc-is-today';
                 }
 
                 times.push(time);
