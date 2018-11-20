@@ -8,23 +8,25 @@ import {
 } from 'lightning-notifications-library';
 
 import getChartData from '@salesforce/apex/ganttChart.getChartData';
+import getProjects from '@salesforce/apex/ganttChart.getProjects';
 import getResources from '@salesforce/apex/ganttChart.getResources';
 
 export default class GanttChart extends Element {
     @api recordId;
 
     // dates
-    @track startDate;
-    @track endDate;
-    @track startDateUTC;
-    @track endDateUTC;
-    @track formattedStartDate;
-    @track formattedEndDate;
-    @track dates;
+    @track startDate;               // gantt_chart_resource
+    @track endDate;                 // gantt_chart_resource
+    @track startDateUTC;            // sending to backend using time
+    @track endDateUTC;              // sending to backend using time
+    @track formattedStartDate;      // Title (Date Range)
+    @track formattedEndDate;        // Title (Date Range)
+
+    @track dates;                   // Dates (Header)
 
     // options
-    @track datePickerString;
-    @track view = {
+    @track datePickerString;        // Date Navigation (Date Picker)
+    @track view = {                 // View Select
         value: '7/10',
         slotSize: 7,
         slots: 10,
@@ -39,13 +41,13 @@ export default class GanttChart extends Element {
 
     // TODO: move filter search to new component?
     @track filterData = {
+        message: '',
         projects: [],
         roles: [],
         status: '',
         projectOptions: [],
         roleOptions: [],
-        // TODO: pull from backend
-        statusOptions: [{
+        statusOptions: [{           // TODO: pull from backend? unsure how to handle "All"
             label: 'All',
             value: ''
         }, {
@@ -337,12 +339,14 @@ export default class GanttChart extends Element {
 
         var text = event.target.value;
 
-        this.filterData.projectOptions = this.projects.filter(project => {
-            return project.Name && project.Name.toLowerCase().includes(text.toLowerCase()) && !this.filterData.projects.filter(p => {
-                return p.id === project.Id;
-            }).length;
+        getProjects().then(projects => {
+            this.filterData.projectOptions = projects.filter(project => {
+                return project.Name && project.Name.toLowerCase().includes(text.toLowerCase()) && !this.filterData.projects.filter(p => {
+                    return p.id === project.Id;
+                }).length;
+            });
+            this.filterData.focus = 'projects';
         });
-        this.filterData.focus = 'projects';
     }
 
     addProjectFilter(event) {
@@ -359,12 +363,16 @@ export default class GanttChart extends Element {
 
         var text = event.target.value;
 
-        this.filterData.roleOptions = this.roles.filter(role => {
-            return role.toLowerCase().includes(text.toLowerCase()) && !this.filterData.roles.filter(r => {
-                return r === role
-            }).length;
+        getResources().then(resources => {
+            this.filterData.roleOptions = resources.filter(resource => {
+                return resource.Default_Role__c.toLowerCase().includes(text.toLowerCase()) && !this.filterData.roles.filter(r => {
+                    return r === resource.Default_Role__c;
+                }).length;
+            }).map(resource => {
+                return resource.Default_Role__c
+            });
+            this.filterData.focus = 'roles';
         });
-        this.filterData.focus = 'roles';
     }
 
     addRoleFilter(event) {
@@ -389,7 +397,22 @@ export default class GanttChart extends Element {
     }
 
     applyFilters() {
-        this._filterData = Object.assign({}, this.filterData);
+        this._filterData = {
+            projects: Object.assign([], this.filterData.projects),
+            roles: Object.assign([], this.filterData.roles),
+            status: this.filterData.status
+        };
+
+        var filters = this._filterData.projects.map(project => project.name);
+        filters = filters.concat(this._filterData.roles);
+        if (this.filterData.status) {
+            filters.push(this.filterData.status);
+        }
+
+        if (filters.length) {
+            this._filterData.message = 'Filtered By ' + filters.join(', ');
+        }
+        
         this.handleRefresh();
         this.template.querySelector('#filter-modal').hide();
     }
