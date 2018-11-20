@@ -116,6 +116,9 @@
     <c-gantt_chart_modal id="filter-modal" onclick={hideDropdowns}>
         <span slot="title">Filter</span>
         <div slot="body" class="slds-form slds-form_stacked">
+            <div class="slds-text-align_right">
+                <lightning-button label="Remove All" variant="base"></lightning-button>
+            </div>
             <div if:false={projectId} class="slds-form-element">
                 <lightning-input type="search" label="Project" name="project-search" value={filterData.projectSearch}
                     onchange={filterProjects} onfocus={filterProjects} onblur={clearFocus}></lightning-input>
