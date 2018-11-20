@@ -6,18 +6,22 @@
                 <!-- Filter Button -->
                 <div class="slds-col slds-grow-none">
                     <lightning-button label="Filter" icon-name="utility:filterList" onclick={openFilterModal}></lightning-button>
-                    <div if:true={filterData.message} class="slds-show_inline-block slds-m-left_small">
+                    <div if:true={_filterData.message} class="slds-show_inline-block slds-m-left_small">
                         <p class="slds-text-body_small slds-text-color_weak">
-                            Filtered by ...
+                            {_filterData.message}
                         </p>
                     </div>
                 </div>
                 <!-- /Filter Button -->
+
+                <!-- Title (Date Range) -->
                 <div class="slds-col slds-text-align_center">
                     <h1 class="slds-text-heading_medium">
                         {formattedStartDate} - {formattedEndDate}
                     </h1>
                 </div>
+                <!-- /Title (Date Range) -->
+
                 <!-- Date Navigation -->
                 <div class="slds-col slds-grow-none">
                     <div class="slds-show_inline-block">
@@ -76,6 +80,7 @@
                 <!-- /Timeline -->
 
                 <!-- Allocation Table -->
+                <!-- Resource Rows -->
                 <template if:true={resources.length}>
                     <template for:each={resources} for:item="resource">
                         <c-gantt_chart_resource key={resource.Id} class="resource-component" is-resource-view={isResourceView}
@@ -83,6 +88,7 @@
                             end-date={endDate} onrefresh={handleRefresh}></c-gantt_chart_resource>
                     </template>
                 </template>
+                <!-- /Resource Rows -->
 
                 <!-- Empty State -->
                 <div if:false={resources.length} class="slds-text-align_center slds-p-around_medium">
@@ -101,7 +107,8 @@
         </div>
     </div>
 
-    <!-- Add Resource -->
+    <!-- Modals -->
+    <!-- Add Resource Modal -->
     <c-gantt_chart_modal id="resource-modal">
         <span slot="title">Add Resource</span>
         <div slot="body" class="slds-form slds-form_stacked">
@@ -110,7 +117,7 @@
         <lightning-button slot="footer" variant="brand" label="Add Resource" onclick={addResourceById} class="slds-m-left_xx-small"
             disabled={resourceModalData.disabled}></lightning-button>
     </c-gantt_chart_modal>
-    <!-- /Add Resource -->
+    <!-- /Add Resource Modal -->
 
     <!-- Filter Modal -->
     <c-gantt_chart_modal id="filter-modal" onclick={hideDropdowns}>
@@ -120,12 +127,12 @@
                 <lightning-button label="Remove All" variant="base"></lightning-button>
             </div>
             <div if:false={projectId} class="slds-form-element">
-                <lightning-input type="search" label="Project" name="project-search" value={filterData.projectSearch}
+                <lightning-input type="search" label="Project" name="project-search" value={filterModalData.projectSearch}
                     onchange={filterProjects} onfocus={filterProjects} onblur={clearFocus}></lightning-input>
-                <div if:true={filterData.projectOptions.length} class="slds-dropdown slds-dropdown_fluid slds-scrollable_y"
+                <div if:true={filterModalData.projectOptions.length} class="slds-dropdown slds-dropdown_fluid slds-scrollable_y"
                     role="listbox">
                     <ul class="slds-listbox slds-listbox_vertical" role="presentation">
-                        <template for:each={filterData.projectOptions} for:item="project">
+                        <template for:each={filterModalData.projectOptions} for:item="project">
                             <li key={project} role="presentation" class="slds-listbox__item">
                                 <div onclick={addProjectFilter} data-id={project.Id} data-name={project.Name} class="slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta"
                                     role="option">{project.Name}</div>
@@ -133,19 +140,19 @@
                         </template>
                     </ul>
                 </div>
-                <template for:each={filterData.projects} for:item="project" for:index="index">
+                <template for:each={filterModalData.projects} for:item="project" for:index="index">
                     <lightning-pill key={project.name} value={project.name} label={project.name} onremove={removeProjectFilter}
                         data-index={index}></lightning-pill>
                 </template>
             </div>
 
             <div class="slds-form-element">
-                <lightning-input type="search" label="Role" name="role-search" value={filterData.roleSearch} onchange={filterRoles}
+                <lightning-input type="search" label="Role" name="role-search" value={filterModalData.roleSearch} onchange={filterRoles}
                     onfocus={filterRoles} onblur={clearFocus}></lightning-input>
-                <div if:true={filterData.roleOptions.length} class="slds-dropdown slds-dropdown_fluid slds-scrollable_y"
+                <div if:true={filterModalData.roleOptions.length} class="slds-dropdown slds-dropdown_fluid slds-scrollable_y"
                     role="listbox">
                     <ul class="slds-listbox slds-listbox_vertical" role="presentation">
-                        <template for:each={filterData.roleOptions} for:item="role">
+                        <template for:each={filterModalData.roleOptions} for:item="role">
                             <li key={role} role="presentation" class="slds-listbox__item">
                                 <div onclick={addRoleFilter} data-role={role} class="slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta"
                                     role="option">{role}</div>
@@ -153,14 +160,15 @@
                         </template>
                     </ul>
                 </div>
-                <template for:each={filterData.roles} for:item="role" for:index="index">
+                <template for:each={filterModalData.roles} for:item="role" for:index="index">
                     <lightning-pill key={role} value={role} label={role} onremove={removeRoleFilter} data-index={index}></lightning-pill>
                 </template>
             </div>
 
-            <lightning-combobox value={filterData.status} label="Status" options={filterData.statusOptions} onchange={setStatusFilter}></lightning-combobox>
+            <lightning-combobox value={filterModalData.status} label="Status" options={filterModalData.statusOptions} onchange={setStatusFilter}></lightning-combobox>
         </div>
         <lightning-button slot="footer" variant="brand" label="Apply" onclick={applyFilters} class="slds-m-left_xx-small"></lightning-button>
     </c-gantt_chart_modal>
     <!-- /Filter Modal -->
+    <!-- /Modals -->
 </template>
