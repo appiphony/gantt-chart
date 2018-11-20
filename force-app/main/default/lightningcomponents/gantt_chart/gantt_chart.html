@@ -87,7 +87,7 @@
                 <!-- Resource Rows -->
                 <template if:true={resources.length}>
                     <template for:each={resources} for:item="resource">
-                        <c-gantt_chart_resource key={resource.Id} class="resource-component" is-resource-view={isResourceView}
+                        <c-gantt_chart_resource key={resource.Id} class="lwc-resource-component" is-resource-view={isResourceView}
                             resource={resource} project-id={projectId} date-increment={view.slotSize} start-date={startDate}
                             end-date={endDate} onrefresh={handleRefresh}></c-gantt_chart_resource>
                     </template>

@@ -82,7 +82,7 @@ export default class GanttChart extends Element {
     }
 
     closeDropdowns() {
-        this.template.querySelectorAll('.resource-component').forEach(
+        this.template.querySelectorAll('.lwc-resource-component').forEach(
             function (row, rowIndex) {
                 row.closeAllocationMenu();
             }
