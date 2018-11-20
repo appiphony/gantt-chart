@@ -14,19 +14,21 @@ import getResources from '@salesforce/apex/ganttChart.getResources';
 export default class GanttChart extends Element {
     @api recordId;
 
-    // dates
-    @track startDate;               // gantt_chart_resource
-    @track endDate;                 // gantt_chart_resource
-    @track startDateUTC;            // sending to backend using time
-    @track endDateUTC;              // sending to backend using time
-    @track formattedStartDate;      // Title (Date Range)
-    @track formattedEndDate;        // Title (Date Range)
+    // design attributes
+    @api defaultView;
 
-    @track dates;                   // Dates (Header)
+    // navigation
+    @track startDateUTC; // sending to backend using time
+    @track endDateUTC; // sending to backend using time
+    @track formattedStartDate; // Title (Date Range)
+    @track formattedEndDate; // Title (Date Range)
+    @track dates; // Dates (Header)
+    dateShift = 7;
+
 
     // options
-    @track datePickerString;        // Date Navigation
-    @track view = {                 // View Select
+    @track datePickerString; // Date Navigation
+    @track view = { // View Select
         value: '7/10',
         slotSize: 7,
         slots: 10,
@@ -39,15 +41,16 @@ export default class GanttChart extends Element {
         }]
     };
 
+    /*** Modals ***/
     // TODO: move filter search to new component?
-    @track filterData = {
+    @track filterModalData = {
         message: '',
         projects: [],
         roles: [],
         status: '',
         projectOptions: [],
         roleOptions: [],
-        statusOptions: [{           // TODO: pull from backend? unsure how to handle "All"
+        statusOptions: [{ // TODO: pull from backend? unsure how to handle "All"
             label: 'All',
             value: ''
         }, {
@@ -63,12 +66,15 @@ export default class GanttChart extends Element {
         roles: [],
         status: ''
     };
+    @track resourceModalData = {};
+    /*** /Modals ***/
 
-
+    // gantt_chart_resource
+    @track startDate;
+    @track endDate;
     @track projectId;
     @track resources = [];
 
-    dateShift = 7;
 
     constructor() {
         super();
@@ -105,11 +111,14 @@ export default class GanttChart extends Element {
         }
     }
 
-    // modal
-    @track resourceModalData = {};
-
     connectedCallback() {
-        this.setView('7/10');
+        switch (this.defaultView) {
+            case 'View By Day':
+                this.setView('1/14');
+                break;
+            default:
+                this.setView('7/10');
+        }
         this.setStartDate(new Date());
     }
 
@@ -324,13 +333,13 @@ export default class GanttChart extends Element {
     }
 
     clearFocus() {
-        this.filterData.focus = null;
+        this.filterModalData.focus = null;
     }
 
     openFilterModal() {
-        this.filterData.projects = Object.assign([], this._filterData.projects);
-        this.filterData.roles = Object.assign([], this._filterData.roles);
-        this.filterData.status = this._filterData.status;
+        this.filterModalData.projects = Object.assign([], this._filterData.projects);
+        this.filterModalData.roles = Object.assign([], this._filterData.roles);
+        this.filterModalData.status = this._filterData.status;
         this.template.querySelector('#filter-modal').show();
     }
 
@@ -340,22 +349,22 @@ export default class GanttChart extends Element {
         var text = event.target.value;
 
         getProjects().then(projects => {
-            this.filterData.projectOptions = projects.filter(project => {
-                return project.Name && project.Name.toLowerCase().includes(text.toLowerCase()) && !this.filterData.projects.filter(p => {
+            this.filterModalData.projectOptions = projects.filter(project => {
+                return project.Name && project.Name.toLowerCase().includes(text.toLowerCase()) && !this.filterModalData.projects.filter(p => {
                     return p.id === project.Id;
                 }).length;
             });
-            this.filterData.focus = 'projects';
+            this.filterModalData.focus = 'projects';
         });
     }
 
     addProjectFilter(event) {
-        this.filterData.projects.push(Object.assign({}, event.currentTarget.dataset));
-        this.filterData.focus = null;
+        this.filterModalData.projects.push(Object.assign({}, event.currentTarget.dataset));
+        this.filterModalData.focus = null;
     }
 
     removeProjectFilter(event) {
-        this.filterData.projects.splice(event.currentTarget.dataset.index, 1);
+        this.filterModalData.projects.splice(event.currentTarget.dataset.index, 1);
     }
 
     filterRoles(event) {
@@ -364,55 +373,55 @@ export default class GanttChart extends Element {
         var text = event.target.value;
 
         getResources().then(resources => {
-            this.filterData.roleOptions = resources.filter(resource => {
-                return resource.Default_Role__c.toLowerCase().includes(text.toLowerCase()) && !this.filterData.roles.filter(r => {
+            this.filterModalData.roleOptions = resources.filter(resource => {
+                return resource.Default_Role__c.toLowerCase().includes(text.toLowerCase()) && !this.filterModalData.roles.filter(r => {
                     return r === resource.Default_Role__c;
                 }).length;
             }).map(resource => {
                 return resource.Default_Role__c
             });
-            this.filterData.focus = 'roles';
+            this.filterModalData.focus = 'roles';
         });
     }
 
     addRoleFilter(event) {
-        this.filterData.roles.push(event.currentTarget.dataset.role);
-        this.filterData.focus = null;
+        this.filterModalData.roles.push(event.currentTarget.dataset.role);
+        this.filterModalData.focus = null;
     }
 
     removeRoleFilter(event) {
-        this.filterData.roles.splice(event.currentTarget.dataset.index, 1);
+        this.filterModalData.roles.splice(event.currentTarget.dataset.index, 1);
     }
 
     setStatusFilter(event) {
-        this.filterData.status = event.currentTarget.value;
+        this.filterModalData.status = event.currentTarget.value;
     }
 
     hideDropdowns() {
-        if (this.filterData.focus) {
+        if (this.filterModalData.focus) {
             return;
         }
-        this.filterData.projectOptions = [];
-        this.filterData.roleOptions = [];
+        this.filterModalData.projectOptions = [];
+        this.filterModalData.roleOptions = [];
     }
 
     applyFilters() {
         this._filterData = {
-            projects: Object.assign([], this.filterData.projects),
-            roles: Object.assign([], this.filterData.roles),
-            status: this.filterData.status
+            projects: Object.assign([], this.filterModalData.projects),
+            roles: Object.assign([], this.filterModalData.roles),
+            status: this.filterModalData.status
         };
 
         var filters = this._filterData.projects.map(project => project.name);
         filters = filters.concat(this._filterData.roles);
-        if (this.filterData.status) {
-            filters.push(this.filterData.status);
+        if (this.filterModalData.status) {
+            filters.push(this.filterModalData.status);
         }
 
         if (filters.length) {
             this._filterData.message = 'Filtered By ' + filters.join(', ');
         }
-        
+
         this.handleRefresh();
         this.template.querySelector('#filter-modal').hide();
     }
