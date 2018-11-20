@@ -1,121 +1,114 @@
 <template>
-    <div class="slds-card slds-theme_default">
-        <!-- Header Bar -->
-        <div class="slds-grid slds-grid_vertical-align-center slds-border_bottom slds-p-around_medium">
-            <!-- Filter Button -->
-            <div class="slds-col slds-grow-none">
-                <lightning-button label="Filter" icon-name="utility:filterList" onclick={openFilterModal}></lightning-button>
-                <div if:true={_filterData.message} class="slds-show_inline-block slds-m-left_small">
-                    <p class="slds-text-body_small slds-text-color_weak">
-                        {_filterData.message}
-                    </p>
-                </div>
-            </div>
-            <!-- /Filter Button -->
-
-            <!-- Title (Date Range) -->
-            <div class="slds-col slds-text-align_center">
-                <h1 class="slds-text-heading_medium">
-                    {formattedStartDate} - {formattedEndDate}
-                </h1>
-            </div>
-            <!-- /Title (Date Range) -->
-
-            <!-- Date Navigation -->
-            <div class="slds-col slds-grow-none">
-                <!-- Date Navigation (Button) -->
-                <div class="slds-show_inline-block">
-                    <lightning-button-icon icon-name="utility:left" variant="border-filled" onclick={navigateToPrevious}></lightning-button-icon>
-                    <lightning-button label="Today" onclick={navigateToToday}></lightning-button>
-                    <lightning-button-icon icon-name="utility:right" variant="border-filled" onclick={navigateToNext}></lightning-button-icon>
-                </div>
-                <!-- /Date Navigation (Button) -->
-
-                <!-- Date Navigation (Date Picker) -->
-                <div class="slds-show_inline-block">
-                    <lightning-input label="Date" type="date" name="select-date" variant="label-hidden" class="lwc-datepicker slds-m-left_small"
-                        value={datePickerString} onchange={navigateToDay}></lightning-input>
-                </div>
-                <!-- /Date Navigation (Date Picker) -->
-
-                <!-- View Select -->
-                <div class="slds-show_inline-block">
-                    <lightning-combobox value={view.value} options={view.options} onchange={handleViewChange} variant="label-hidden"
-                        class="slds-m-left_small"></lightning-combobox>
-                    <!-- /View Select -->
-                </div>
-            </div>
-            <!-- /Date Navigation -->
-        </div>
-        <!-- /Header Bar -->
-
-        <!-- Gantt Chart -->
-        <div class="slds-p-around_medium">
-            <!-- Gantt Chart Header -->
-            <div class="slds-grid timeline">
-                <div if:false={isResourceView} class="slds-col slds-size_1-of-6 slds-align-bottom ">
-                    <div class="slds-text-heading_medium slds-p-around_small">
-                        Resources
+    <div class="slds-scope">
+        <div class="slds-card slds-theme_default">
+            <!-- Header Bar -->
+            <div class="slds-grid slds-grid_vertical-align-center slds-border_bottom slds-p-around_medium">
+                <!-- Filter Button -->
+                <div class="slds-col slds-grow-none">
+                    <lightning-button label="Filter" icon-name="utility:filterList" onclick={openFilterModal}></lightning-button>
+                    <div if:true={_filterData.message} class="slds-show_inline-block slds-m-left_small">
+                        <p class="slds-text-body_small slds-text-color_weak">
+                            {_filterData.message}
+                        </p>
                     </div>
                 </div>
+                <!-- /Filter Button -->
 
-                <!-- Dates (Header) -->
-                <div class="slds-col">
-                    <div class="slds-grid">
-                        <template for:each={dates} for:item="date">
-                            <div key={date} class="slds-col lwc-timeline_month-container" style={date.style}>
-                                <div class="slds-grid">
-                                    <div class="slds-col slds-has-flexi-truncate">
-                                        <div class="timeline_month slds-p-around_xx-small slds-theme_shade slds-text-align_center slds-text-color_weak slds-text-body_small slds-m-horizontal_x-small slds-truncate">
-                                            {date.name}
+                <!-- Title (Date Range) -->
+                <div class="slds-col slds-text-align_center">
+                    <h1 class="slds-text-heading_medium">
+                        {formattedStartDate} - {formattedEndDate}
+                    </h1>
+                </div>
+                <!-- /Title (Date Range) -->
+
+                <!-- Date Navigation -->
+                <div class="slds-col slds-grow-none">
+                    <div class="slds-show_inline-block">
+                        <lightning-button-icon icon-name="utility:left" variant="border-filled" onclick={navigateToPrevious}></lightning-button-icon>
+                        <lightning-button label="Today" onclick={navigateToToday}></lightning-button>
+                        <lightning-button-icon icon-name="utility:right" variant="border-filled" onclick={navigateToNext}></lightning-button-icon>
+                    </div>
+                    <div class="slds-show_inline-block">
+                        <lightning-input label="Date" type="date" name="select-date" variant="label-hidden" class="lwc-datepicker slds-m-left_small"
+                            value={datePickerString} onchange={navigateToDay}></lightning-input>
+                    </div>
+                    <!-- View Select -->
+                    <div class="slds-show_inline-block">
+                        <lightning-combobox value={view.value} options={view.options} onchange={handleViewChange} variant="label-hidden"
+                            class="slds-m-left_small"></lightning-combobox>
+                        <!-- /View Select -->
+                    </div>
+                </div>
+                <!-- /Date Navigation -->
+            </div>
+            <!-- /Header Bar -->
+
+            <!-- Gantt Chart -->
+            <div class="slds-p-around_medium">
+                <!-- Timeline -->
+                <div class="slds-grid timeline">
+                    <div if:false={isResourceView} class="slds-col slds-size_1-of-6 slds-align-bottom ">
+                        <div class="slds-text-heading_medium slds-p-around_small">
+                            Resources
+                        </div>
+                    </div>
+                    <div class="slds-col">
+                        <div class="slds-grid">
+                            <template for:each={dates} for:item="date">
+                                <div key={date} class="slds-col lwc-timeline_month-container" style={date.style}>
+                                    <div class="slds-grid">
+                                        <div class="slds-col slds-has-flexi-truncate">
+                                            <div class="timeline_month slds-p-around_xx-small slds-theme_shade slds-text-align_center slds-text-color_weak slds-text-body_small slds-m-horizontal_x-small slds-truncate">
+                                                {date.name}
+                                            </div>
                                         </div>
                                     </div>
+                                    <div class="slds-grid">
+                                        <template for:each={date.days} for:item="day">
+                                            <div key={day} class={day.class}>
+                                                <div if:true={day.dayName}>{day.dayName}</div>
+                                                <div>{day.label}</div>
+                                            </div>
+                                        </template>
+                                    </div>
                                 </div>
-                                <div class="slds-grid">
-                                    <template for:each={date.days} for:item="day">
-                                        <div key={day} class={day.class}>
-                                            <div if:true={day.dayName}>{day.dayName}</div>
-                                            <div>{day.label}</div>
-                                        </div>
-                                    </template>
-                                </div>
-                            </div>
-                        </template>
+                            </template>
+                        </div>
                     </div>
                 </div>
-                <!-- /Dates (Header) -->
-            </div>
-            <!-- /Gantt Chart Header -->
+                <!-- /Timeline -->
 
-            <!-- Allocation Table -->
-            <!-- Resource Rows -->
-            <template if:true={resources.length}>
-                <template for:each={resources} for:item="resource">
-                    <c-gantt_chart_resource key={resource.Id} class="resource-component" is-resource-view={isResourceView}
-                        resource={resource} project-id={projectId} date-increment={view.slotSize} start-date={startDate}
-                        end-date={endDate} onrefresh={handleRefresh}></c-gantt_chart_resource>
+                <!-- Allocation Table -->
+                <!-- Resource Rows -->
+                <template if:true={resources.length}>
+                    <template for:each={resources} for:item="resource">
+                        <c-gantt_chart_resource key={resource.Id} class="resource-component" is-resource-view={isResourceView}
+                            resource={resource} project-id={projectId} date-increment={view.slotSize} start-date={startDate}
+                            end-date={endDate} onrefresh={handleRefresh}></c-gantt_chart_resource>
+                    </template>
                 </template>
-            </template>
-            <!-- /Resource Rows -->
+                <!-- /Resource Rows -->
 
-            <!-- Empty State -->
-            <div if:false={resources.length} class="slds-text-align_center slds-p-around_medium">
-                <span class="slds-text-color_weak">No Resources to Show</span>
-            </div>
-            <!-- /Empty State -->
-            <!-- /Allocation Table -->
+                <!-- Empty State -->
+                <div if:false={resources.length} class="slds-text-align_center slds-p-around_medium">
+                    <span class="slds-text-color_weak">No Resources to Show</span>
+                </div>
+                <!-- /Empty State -->
+                <!-- /Allocation Table -->
 
-            <!-- Add Resource Button -->
-            <div if:true={projectId} class="slds-m-top_medium">
-                <lightning-button variant="neutral" label="Add Resource" icon-name="utility:add" onclick={openAddResourceModal}></lightning-button>
+                <!-- Add Resource Button -->
+                <div if:true={projectId} class="slds-m-top_medium">
+                    <lightning-button variant="neutral" label="Add Resource" icon-name="utility:add" onclick={openAddResourceModal}></lightning-button>
+                </div>
+                <!-- /Add Resource Button -->
             </div>
-            <!-- /Add Resource Button -->
+            <!-- /Gantt Chart -->
         </div>
-        <!-- /Gantt Chart -->
     </div>
 
-    <!-- MODALS -->
-    <!-- Add Resource Moda -->
+    <!-- Modals -->
+    <!-- Add Resource Modal -->
     <c-gantt_chart_modal id="resource-modal">
         <span slot="title">Add Resource</span>
         <div slot="body" class="slds-form slds-form_stacked">
@@ -174,5 +167,5 @@
         <lightning-button slot="footer" variant="brand" label="Apply" onclick={applyFilters} class="slds-m-left_xx-small"></lightning-button>
     </c-gantt_chart_modal>
     <!-- /Filter Modal -->
-    <!-- /MODALS -->
+    <!-- /Modals -->
 </template>

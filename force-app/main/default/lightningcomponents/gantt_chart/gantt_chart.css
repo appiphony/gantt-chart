@@ -1,3 +1,7 @@
+.slds-scope {
+    min-width: 900px;
+}
+
 .lwc-datepicker {
     display: inline-block;
 }

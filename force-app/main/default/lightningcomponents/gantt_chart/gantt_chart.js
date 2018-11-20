@@ -25,7 +25,7 @@ export default class GanttChart extends Element {
     @track dates;                   // Dates (Header)
 
     // options
-    @track datePickerString;        // Date Navigation (Date Picker)
+    @track datePickerString;        // Date Navigation
     @track view = {                 // View Select
         value: '7/10',
         slotSize: 7,
