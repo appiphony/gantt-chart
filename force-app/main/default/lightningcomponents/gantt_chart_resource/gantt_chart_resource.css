@@ -75,11 +75,6 @@
 .lwc-allocation .slds-icon_container {
     margin-bottom: 1px;
 }
-
-.lwc-allocation.is-selected {
-    box-shadow: 0 2px 6px 0px rgba(0, 0, 0, .4);
-    opacity: 1;
-}
 /*** /Allocations ***/
 
 .lwc-allocation-label {
