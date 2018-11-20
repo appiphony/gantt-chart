@@ -158,7 +158,7 @@ export default class GanttChart extends Element {
             }
 
             var day = {
-                class: 'slds-col slds-p-vertical_x-small slds-m-top_x-small timeline_day',
+                class: 'slds-col slds-p-vertical_x-small slds-m-top_x-small lwc-timeline_day',
                 label: (date.getMonth() + 1) + '/' + date.getDate(),
                 dayName: dayNames[date.getDay()],
                 start: date
