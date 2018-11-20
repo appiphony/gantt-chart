@@ -114,7 +114,7 @@ export default class GanttChartResource extends Element {
     calcClass(allocation) {
         var classes = [
             'slds-is-absolute',
-            'allocation'
+            'lwc-allocation'
         ];
 
         switch (allocation.Status__c) {
@@ -325,7 +325,7 @@ export default class GanttChartResource extends Element {
     dragInfo = {};
     isDragging = false;
     handleDragStart(event) {
-        var container = this.template.querySelector('#' + event.currentTarget.dataset.id + ' .allocation');
+        var container = this.template.querySelector('#' + event.currentTarget.dataset.id + ' .lwc-allocation');
         this.dragInfo.projectIndex = container.dataset.project;
         this.dragInfo.allocationIndex = container.dataset.allocation;
         this.dragInfo.newAllocation = this.projects[container.dataset.project].allocations[container.dataset.allocation];
@@ -370,7 +370,7 @@ export default class GanttChartResource extends Element {
 
         this.dragInfo = {};
         this.isDragging = false;
-        this.template.querySelector('#' + allocation.Id + ' .allocation').style.pointerEvents = 'auto';
+        this.template.querySelector('#' + allocation.Id + ' .lwc-allocation').style.pointerEvents = 'auto';
     }
 
     handleDragEnter(event) {
@@ -421,12 +421,12 @@ export default class GanttChartResource extends Element {
         }
 
         this.dragInfo.newAllocation = allocation;
-        this.template.querySelector('#' + allocation.Id + ' .allocation').style = this.calcStyle(allocation);
+        this.template.querySelector('#' + allocation.Id + ' .lwc-allocation').style = this.calcStyle(allocation);
         this.template.querySelector('#' + allocation.Id + ' .lwc-allocation-label').style = this.calcLabelStyle(allocation);
     }
 
     openAllocationMenu(event) {
-        var container = this.template.querySelector('#' + event.currentTarget.dataset.id + ' .allocation');
+        var container = this.template.querySelector('#' + event.currentTarget.dataset.id + ' .lwc-allocation');
         var allocation = this.projects[container.dataset.project].allocations[container.dataset.allocation];
 
         if (this.menuData.allocation && this.menuData.allocation.Id === allocation.Id) {
@@ -435,7 +435,7 @@ export default class GanttChartResource extends Element {
             this.menuData.open = true;
 
             var projectHeight = this.template.querySelector('.project-container').getBoundingClientRect().height;
-            var allocationHeight = this.template.querySelector('.allocation').getBoundingClientRect().height;
+            var allocationHeight = this.template.querySelector('.lwc-allocation').getBoundingClientRect().height;
             var totalSlots = this.times.length;
             var rightEdge = (totalSlots - (allocation.right + 1)) / totalSlots * 100 + '%';
 

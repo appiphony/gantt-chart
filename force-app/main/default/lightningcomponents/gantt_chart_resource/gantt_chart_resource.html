@@ -32,7 +32,7 @@
             <!-- /Time Slots-->
 
             <!-- Allocations -->
-            <div class="allocations-container">
+            <div class="lwc-allocations-container">
                 <template for:each={projects} for:item="project" for:index="projectIndex">
                     <!-- Project Container -->
                     <div key={project.id} class="slds-is-relative project-container slds-p-around_xx-small">
@@ -46,19 +46,19 @@
                                         data-id={allocation.Id}>
                                         <div class="slds-grid slds-grid_vertical-align-center">
                                             <!-- Allocation Left Handle -->
-                                            <div class="slds-col slds-grow-none slds-col_bump-right allocation_handle handle_left"
+                                            <div class="slds-col slds-grow-none slds-col_bump-right lwc-allocation_handle handle_left"
                                                 draggable="true" ondragstart={handleLeftDragStart} data-id={allocation.Id}>
                                                 <lightning-icon icon-name="utility:drag_and_drop" variant="inverse"
                                                     size="x-small"></lightning-icon>
                                             </div>
                                             <!-- /Allocation Left Handle -->
 
-                                            <div class="slds-col slds-grow-none allocation_actions">
+                                            <div class="slds-col slds-grow-none lwc-allocation_actions">
                                                 <lightning-button-icon icon-name="utility:down" variant="bare-inverse"
                                                     size="small" onclick={openAllocationMenu} data-id={allocation.Id}></lightning-button-icon>
                                             </div>
                                             <!-- Allocation Right Handle -->
-                                            <div class="slds-col slds-grow-none allocation_handle handle_right"
+                                            <div class="slds-col slds-grow-none lwc-allocation_handle handle_right"
                                                 draggable="true" ondragstart={handleRightDragStart} data-id={allocation.Id}>
                                                 <lightning-icon icon-name="utility:drag_and_drop" variant="inverse"
                                                     size="x-small"></lightning-icon>
@@ -90,7 +90,7 @@
             <!-- /Allocations -->
 
             <!-- Allocation Actions-->
-            <div if:true={menuData.show} class="allocation-actions-container">
+            <div if:true={menuData.show} class="lwc-allocation-actions-container">
                 <div class="slds-dropdown slds-dropdown_left slds-is-absolute" style={menuData.style}>
                     <ul class="slds-dropdown__list" role="menu" aria-label="Show More">
                         <li class="slds-dropdown__item" role="presentation" onclick={handleModalEditClick} data-id={menuData.allocationId}>

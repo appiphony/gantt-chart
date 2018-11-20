@@ -1,18 +1,18 @@
 /*** Containers ***/
-.allocations-container {
+.lwc-allocations-container {
     overflow: hidden;
     pointer-events: none;
 }
 
 /****** Allocation Actions Menu ******/
-.allocations-container ~ .allocation-actions-container .slds-dropdown {
+.lwc-allocations-container ~ .lwc-allocation-actions-container .slds-dropdown {
     margin-top: 0;
 }
 /****** Allocation Actions Menu ******/
 
 
 /*** Allocations ***/
-.allocation {
+.lwc-allocation {
     background-color: rgba(21, 137, 238);
     border-radius: .25rem;
     cursor: grab; 
@@ -22,17 +22,17 @@
     top: 0px;
 }
 
-.allocation:hover {
+.lwc-allocation:hover {
     opacity: .95;
 }
 
 /****** Allocation Status ******/
-.allocation.hold {
+.lwc-allocation.hold {
     background-image: linear-gradient(45deg, rgba(0, 0, 0, 0.1) 25%, transparent 25%, transparent 50%, rgba(0, 0, 0, 0.1) 50%, rgba(0, 0, 0, 0.1) 75%, transparent 75%, transparent);
     background-size: 64px 64px;
 }
 
-.allocation.unavailable {
+.lwc-allocation.unavailable {
     background-color: rgb(81, 79, 77);
     background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.1) 75%, transparent 75%, transparent);
     background-size: 64px 64px;
@@ -40,43 +40,43 @@
 /****** /Allocation Status ******/
 
 /****** Allocation Efforts ******/
-.allocation.low-effort {
+.lwc-allocation.low-effort {
     opacity: 0.5;
 }
 
-.allocation.medium-effort {
+.lwc-allocation.medium-effort {
     opacity: 0.75;
 }
 
-.allocation.high-effort {
+.lwc-allocation.high-effort {
     opacity: 0.9;
 }
 /****** /Allocation Efforts ******/
 
-.allocation .allocation_actions,
-.allocation .allocation_handle {
+.lwc-allocation .lwc-allocation_actions,
+.lwc-allocation .lwc-allocation_handle {
     opacity: 0;
 }
 
-.allocation .allocation_handle {
+.lwc-allocation .lwc-allocation_handle {
     cursor: ew-resize;
 }
 
-.allocation:hover .allocation_handle,
-.allocation:hover .allocation_actions {
+.lwc-allocation:hover .lwc-allocation_handle,
+.lwc-allocation:hover .lwc-allocation_actions {
     opacity: .7;
 }
 
-.allocation .allocation_handle:hover,
-.allocation .allocation_actions:hover {
+.lwc-allocation .lwc-allocation_handle:hover,
+.lwc-allocation .lwc-allocation_actions:hover {
     opacity: 1;
 }
 
-.allocation .slds-icon_container {
+.lwc-allocation .slds-icon_container {
     margin-bottom: 1px;
 }
 
-.allocation.is-selected {
+.lwc-allocation.is-selected {
     box-shadow: 0 2px 6px 0px rgba(0, 0, 0, .4);
     opacity: 1;
 }
