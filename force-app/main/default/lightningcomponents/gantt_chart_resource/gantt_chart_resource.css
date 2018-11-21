@@ -96,7 +96,7 @@
 
 
 /*** Day View Timeslots ***/
-.timeslot {
+.lwc-timeslot {
     border-bottom: 1px solid #dddbda;
     border-right: 1px solid #dddbda;
     border-top: 1px solid #dddbda;
@@ -105,31 +105,31 @@
     transition: background-color 200ms ease 0s;
 }
 
-.timeslot:first-child {
+.lwc-timeslot:first-child {
     border-left: 3px solid #dddbda;
 }
 
-.timeslot.lwc-is-week-end, 
-.timeslot:last-child {
+.lwc-timeslot.lwc-is-week-end, 
+.lwc-timeslot:last-child {
     border-right: 3px solid #dddbda;
 }
 
-.timeslot:hover {
+.lwc-timeslot:hover {
     background-color: rgb(232, 232, 232);
 }
 
-.timeslot.lwc-is-today {
+.lwc-timeslot.lwc-is-today {
     background: rgba(21, 137, 238, 0.1);
 }
 
-.timeslot.lwc-is-today:hover {
+.lwc-timeslot.lwc-is-today:hover {
     background: rgba(21, 137, 238, 0.2);
 }
 /*** Day View Timeslots ***/
 
 
 
-.timeslots-container {
+.lwc-timeslots-container {
     bottom: 0;
     left: 0;
     right: 0;

@@ -21,7 +21,7 @@
         <!-- Days -->
         <div class="slds-col slds-is-relative">
             <!-- Time Slots-->
-            <div class="slds-grid slds-is-absolute timeslots-container">
+            <div class="slds-grid slds-is-absolute lwc-timeslots-container">
                 <template for:each={times} for:item="time" for:index="index">
                     <div key={time} class={time.class} data-index={index} data-start={time.start} data-end={time.end}
                         onclick={handleTimeslotClick} ondragenter={handleDragEnter}>

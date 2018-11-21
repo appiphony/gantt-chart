@@ -37,7 +37,7 @@ export default class GanttChartResource extends Element {
 
             for (var date = new Date(startDate); date <= endDate; date.setDate(date.getDate() + dateIncrement)) {
                 var time = {
-                    class: 'slds-col timeslot',
+                    class: 'slds-col lwc-timeslot',
                     start: date.getTime()
                 };
 
