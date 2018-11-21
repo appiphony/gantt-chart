@@ -44,12 +44,24 @@
     opacity: 0.5;
 }
 
+.lwc-allocation.low-effort:hover {
+    opacity: 0.65;
+}
+
 .lwc-allocation.medium-effort {
     opacity: 0.75;
 }
 
+.lwc-allocation.medium-effort:hover {
+    opacity: 0.85;
+}
+
 .lwc-allocation.high-effort {
     opacity: 0.9;
+}
+
+.lwc-allocation.high-effort:hover {
+    opacity: 0.95;
 }
 /****** /Allocation Efforts ******/
 
@@ -94,6 +106,12 @@
 }
 /*** /Resource ***/
 
+.lwc-timeslots-container {
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 0;
+}
 
 /*** Day View Timeslots ***/
 .lwc-timeslot {
@@ -126,12 +144,3 @@
     background: rgba(21, 137, 238, 0.2);
 }
 /*** Day View Timeslots ***/
-
-
-
-.lwc-timeslots-container {
-    bottom: 0;
-    left: 0;
-    right: 0;
-    top: 0;
-}
