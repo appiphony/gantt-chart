@@ -9,7 +9,7 @@
     </tags>
     <tagConfigs>
         <tagConfig tags="lightning__RecordHome">
-            <property name="defaultView" type="String" label="Default View Mode" datasource="View by Day, View by Week" default="7/10"/>
+            <property name="defaultView" type="String" label="Default View Mode" datasource="View by Day, View by Week" default="View by Week"/>
         </tagConfig>
     </tagConfigs>
 </LightningComponentBundle>

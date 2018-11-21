@@ -154,6 +154,7 @@ export default class GanttChartResource extends Element {
         const totalSlots = this.times.length;
         var styles = [
             'left: ' + allocation.left / totalSlots * 100 + '%',
+            'opacity: 1',
             'right: ' + (totalSlots - (allocation.right + 1)) / totalSlots * 100 + '%'
         ];
 
@@ -175,7 +176,7 @@ export default class GanttChartResource extends Element {
             styles.push('background-color: ' + colorMap[backgroundColor]);
         }
 
-        if (this.isDragging) {
+        if (this.dragInfo.startIndex) {
             styles.push('pointer-events: none');
         } else {
             styles.push('pointer-events: auto');
@@ -323,19 +324,17 @@ export default class GanttChartResource extends Element {
     }
 
     dragInfo = {};
-    isDragging = false;
     handleDragStart(event) {
         var container = this.template.querySelector('#' + event.currentTarget.dataset.id + ' .lwc-allocation');
         this.dragInfo.projectIndex = container.dataset.project;
         this.dragInfo.allocationIndex = container.dataset.allocation;
         this.dragInfo.newAllocation = this.projects[container.dataset.project].allocations[container.dataset.allocation];
 
-        this.isDragging = true;
-
         // hide drag image
         container.style.opacity = 0;
         setTimeout(function () {
             container.style.pointerEvents = 'none';
+            container.style.opacity = 1;
         }, 0);
     }
 
@@ -369,7 +368,6 @@ export default class GanttChartResource extends Element {
         });
 
         this.dragInfo = {};
-        this.isDragging = false;
         this.template.querySelector('#' + allocation.Id + ' .lwc-allocation').style.pointerEvents = 'auto';
     }
 
@@ -381,7 +379,7 @@ export default class GanttChartResource extends Element {
         const end = new Date(parseInt(event.currentTarget.dataset.end, 10));
         const index = parseInt(event.currentTarget.dataset.index, 10);
 
-        if (!this.dragInfo.startIndex) {
+        if (isNaN(this.dragInfo.startIndex)) {
             this.dragInfo.startIndex = index;
         }
 

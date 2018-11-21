@@ -40,31 +40,27 @@
                         <template for:each={project.allocations} for:item="allocation" for:index="allocationIndex">
                             <!-- Allocation -->
                             <div key={allocation} id={allocation.Id}>
-                                <div title={allocation.Name} class={allocation.class} style={allocation.style}
-                                    data-project={projectIndex} data-allocation={allocationIndex}>
-                                    <div draggable="true" ondragstart={handleDragStart} ondragend={handleDragEnd}
-                                        data-id={allocation.Id}>
-                                        <div class="slds-grid slds-grid_vertical-align-center">
-                                            <!-- Allocation Left Handle -->
-                                            <div class="slds-col slds-grow-none slds-col_bump-right lwc-allocation_handle handle_left"
-                                                draggable="true" ondragstart={handleLeftDragStart} data-id={allocation.Id}>
-                                                <lightning-icon icon-name="utility:drag_and_drop" variant="inverse"
-                                                    size="x-small"></lightning-icon>
-                                            </div>
-                                            <!-- /Allocation Left Handle -->
-
-                                            <div class="slds-col slds-grow-none lwc-allocation_actions">
-                                                <lightning-button-icon icon-name="utility:down" variant="bare-inverse"
-                                                    size="small" onclick={openAllocationMenu} data-id={allocation.Id}></lightning-button-icon>
-                                            </div>
-                                            <!-- Allocation Right Handle -->
-                                            <div class="slds-col slds-grow-none lwc-allocation_handle handle_right"
-                                                draggable="true" ondragstart={handleRightDragStart} data-id={allocation.Id}>
-                                                <lightning-icon icon-name="utility:drag_and_drop" variant="inverse"
-                                                    size="x-small"></lightning-icon>
-                                            </div>
-                                            <!-- /Allocation Right Handle -->
+                                <div title={allocation.Name} class={allocation.class} style={allocation.style} data-id={allocation.Id}
+                                    data-project={projectIndex} data-allocation={allocationIndex} draggable="true"
+                                    ondragstart={handleDragStart} ondragend={handleDragEnd}>
+                                    <div class="slds-grid slds-grid_vertical-align-center">
+                                        <!-- Allocation Left Handle -->
+                                        <div class="slds-col slds-grow-none slds-col_bump-right lwc-allocation_handle handle_left"
+                                            draggable="true" ondragstart={handleLeftDragStart} data-id={allocation.Id}>
+                                            <lightning-icon icon-name="utility:drag_and_drop" variant="inverse" size="x-small"></lightning-icon>
                                         </div>
+                                        <!-- /Allocation Left Handle -->
+
+                                        <div class="slds-col slds-grow-none lwc-allocation_actions">
+                                            <lightning-button-icon icon-name="utility:down" variant="bare-inverse" size="small"
+                                                onclick={openAllocationMenu} data-id={allocation.Id}></lightning-button-icon>
+                                        </div>
+                                        <!-- Allocation Right Handle -->
+                                        <div class="slds-col slds-grow-none lwc-allocation_handle handle_right" draggable="true"
+                                            ondragstart={handleRightDragStart} data-id={allocation.Id}>
+                                            <lightning-icon icon-name="utility:drag_and_drop" variant="inverse" size="x-small"></lightning-icon>
+                                        </div>
+                                        <!-- /Allocation Right Handle -->
                                     </div>
                                 </div>
                                 <div class="slds-truncate slds-is-absolute lwc-allocation-label" style={allocation.labelStyle}>
