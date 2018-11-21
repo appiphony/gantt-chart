@@ -12,8 +12,8 @@ import saveAllocation from '@salesforce/apex/ganttChart.saveAllocation';
 import deleteAllocation from '@salesforce/apex/ganttChart.deleteAllocation';
 
 export default class GanttChartResource extends Element {
-    @api isResourceView;
-    @api projectId;
+    @api isResourceView;                // resource page has different layout
+    @api projectId;                     // used on project page for quick adding of allocations
     @api
     get resource() {
         return this._resource;
@@ -23,6 +23,7 @@ export default class GanttChartResource extends Element {
         this.setProjects();
     }
 
+    // dates
     @api startDate;
     @api endDate;
     @api dateIncrement;
@@ -68,6 +69,7 @@ export default class GanttChartResource extends Element {
         }
     }
 
+    // used by parent level window
     @api
     closeAllocationMenu() {
         if (this.menuData.open) {
@@ -81,14 +83,18 @@ export default class GanttChartResource extends Element {
         }
     }
 
+    // modal data
     @track addAllocationData = {};
     @track editAllocationData = {};
+
     @track menuData = {
         open: false,
         show: false,
         style: ''
     };
+
     @track projects = [];
+
     effortOptions = [{
         label: 'Low',
         value: 'Low'
@@ -111,6 +117,7 @@ export default class GanttChartResource extends Element {
         this.refreshDates(this.startDate, this.endDate, this.dateIncrement);
     }
 
+    // calculate allocation classes
     calcClass(allocation) {
         var classes = [
             'slds-is-absolute',
@@ -146,6 +153,8 @@ export default class GanttChartResource extends Element {
 
         return classes.join(' ');
     }
+
+    // calculate allocation positions/styles
     calcStyle(allocation) {
         if (!this.times) {
             return;
@@ -186,6 +195,7 @@ export default class GanttChartResource extends Element {
         return styles.join('; ');
     }
 
+    // calculate allocation label position
     calcLabelStyle(allocation) {
         if (!this.times) {
             return;
@@ -330,6 +340,7 @@ export default class GanttChartResource extends Element {
             });
     }
 
+    /*** Drag/Drop ***/
     dragInfo = {};
     handleDragStart(event) {
         var container = this.template.querySelector('#' + event.currentTarget.dataset.id + ' .lwc-allocation');
@@ -428,6 +439,7 @@ export default class GanttChartResource extends Element {
         this.template.querySelector('#' + allocation.Id + ' .lwc-allocation').style = this.calcStyle(allocation);
         this.template.querySelector('#' + allocation.Id + ' .lwc-allocation-label').style = this.calcLabelStyle(allocation);
     }
+    /*** /Drag/Drop ***/
 
     openAllocationMenu(event) {
         var container = this.template.querySelector('#' + event.currentTarget.dataset.id + ' .lwc-allocation');
