@@ -334,7 +334,6 @@ export default class GanttChartResource extends Element {
         container.style.opacity = 0;
         setTimeout(function () {
             container.style.pointerEvents = 'none';
-            container.style.opacity = 1;
         }, 0);
     }
 
