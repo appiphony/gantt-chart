@@ -37,7 +37,7 @@ export default class GanttChartResource extends Element {
 
             for (var date = new Date(startDate); date <= endDate; date.setDate(date.getDate() + dateIncrement)) {
                 var time = {
-                    class: 'slds-col timeslot',
+                    class: 'slds-col lwc-timeslot',
                     start: date.getTime()
                 };
 
@@ -49,12 +49,12 @@ export default class GanttChartResource extends Element {
                     time.end = date.getTime();
                     
                     if (times.length % 7 === 6) {
-                        time.class += ' is-last-day-of-week';
+                        time.class += ' lwc-is-week-end';
                     }
                 }
 
                 if (today >= time.start && today <= time.end) {
-                    time.class += ' today';
+                    time.class += ' lwc-is-today';
                 }
 
                 times.push(time);
@@ -114,7 +114,7 @@ export default class GanttChartResource extends Element {
     calcClass(allocation) {
         var classes = [
             'slds-is-absolute',
-            'allocation'
+            'lwc-allocation'
         ];
 
         switch (allocation.Status__c) {
@@ -154,7 +154,6 @@ export default class GanttChartResource extends Element {
         const totalSlots = this.times.length;
         var styles = [
             'left: ' + allocation.left / totalSlots * 100 + '%',
-            'opacity: 1',
             'right: ' + (totalSlots - (allocation.right + 1)) / totalSlots * 100 + '%'
         ];
 
@@ -176,10 +175,12 @@ export default class GanttChartResource extends Element {
             styles.push('background-color: ' + colorMap[backgroundColor]);
         }
 
-        if (this.dragInfo.startIndex) {
+        if (!isNaN(this.dragInfo.startIndex)) {
             styles.push('pointer-events: none');
+            styles.push('transition: left ease 250ms, right ease 250ms');
         } else {
             styles.push('pointer-events: auto');
+            styles.push('transition: none');
         }
 
         return styles.join('; ');
@@ -197,6 +198,12 @@ export default class GanttChartResource extends Element {
             'left: calc(' + left * 100 + '% + 15px)',
             'right: calc(' + right * 100 + '% + 30px)'
         ];
+
+        if (!isNaN(this.dragInfo.startIndex)) {
+            styles.push('transition: left ease 250ms, right ease 250ms');
+        } else {
+            styles.push('transition: none');
+        }
 
         return styles.join('; ');
     }
@@ -325,7 +332,7 @@ export default class GanttChartResource extends Element {
 
     dragInfo = {};
     handleDragStart(event) {
-        var container = this.template.querySelector('#' + event.currentTarget.dataset.id + ' .allocation');
+        var container = this.template.querySelector('#' + event.currentTarget.dataset.id + ' .lwc-allocation');
         this.dragInfo.projectIndex = container.dataset.project;
         this.dragInfo.allocationIndex = container.dataset.allocation;
         this.dragInfo.newAllocation = this.projects[container.dataset.project].allocations[container.dataset.allocation];
@@ -367,7 +374,7 @@ export default class GanttChartResource extends Element {
         });
 
         this.dragInfo = {};
-        this.template.querySelector('#' + allocation.Id + ' .allocation').style.pointerEvents = 'auto';
+        this.template.querySelector('#' + allocation.Id + ' .lwc-allocation').style.pointerEvents = 'auto';
     }
 
     handleDragEnter(event) {
@@ -418,12 +425,12 @@ export default class GanttChartResource extends Element {
         }
 
         this.dragInfo.newAllocation = allocation;
-        this.template.querySelector('#' + allocation.Id + ' .allocation').style = this.calcStyle(allocation);
+        this.template.querySelector('#' + allocation.Id + ' .lwc-allocation').style = this.calcStyle(allocation);
         this.template.querySelector('#' + allocation.Id + ' .lwc-allocation-label').style = this.calcLabelStyle(allocation);
     }
 
     openAllocationMenu(event) {
-        var container = this.template.querySelector('#' + event.currentTarget.dataset.id + ' .allocation');
+        var container = this.template.querySelector('#' + event.currentTarget.dataset.id + ' .lwc-allocation');
         var allocation = this.projects[container.dataset.project].allocations[container.dataset.allocation];
 
         if (this.menuData.allocation && this.menuData.allocation.Id === allocation.Id) {
@@ -432,7 +439,7 @@ export default class GanttChartResource extends Element {
             this.menuData.open = true;
 
             var projectHeight = this.template.querySelector('.project-container').getBoundingClientRect().height;
-            var allocationHeight = this.template.querySelector('.allocation').getBoundingClientRect().height;
+            var allocationHeight = this.template.querySelector('.lwc-allocation').getBoundingClientRect().height;
             var totalSlots = this.times.length;
             var rightEdge = (totalSlots - (allocation.right + 1)) / totalSlots * 100 + '%';
 

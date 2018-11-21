@@ -90,7 +90,7 @@ export default class GanttChart extends Element {
 
     // catch blur on allocation menus
     closeDropdowns() {
-        this.template.querySelectorAll('.resource-component').forEach(
+        this.template.querySelectorAll('.lwc-resource-component').forEach(
             function (row, rowIndex) {
                 row.closeAllocationMenu();
             }
@@ -145,7 +145,7 @@ export default class GanttChart extends Element {
             }
 
             var day = {
-                class: 'slds-col slds-p-vertical_x-small slds-m-top_x-small timeline_day',
+                class: 'slds-col slds-p-vertical_x-small slds-m-top_x-small lwc-timeline_day',
                 label: (date.getMonth() + 1) + '/' + date.getDate(),
                 dayName: dayNames[date.getDay()],
                 start: date
@@ -160,12 +160,12 @@ export default class GanttChart extends Element {
             } else {
                 day.end = date;
                 if (date.getDay() === 0) {
-                    day.class = day.class + ' is-last-day-of-week';
+                    day.class = day.class + ' lwc-is-week-end';
                 }
             }
 
             if (today >= day.start && today <= day.end) {
-                day.class += ' today';
+                day.class += ' lwc-is-today';
             }
 
             dates[index].days.push(day);
