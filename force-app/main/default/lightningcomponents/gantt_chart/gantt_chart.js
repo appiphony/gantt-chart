@@ -75,6 +75,9 @@ export default class GanttChart extends Element {
     constructor() {
         super();
         this.template.addEventListener('click', this.closeDropdowns.bind(this));
+    }
+
+    connectedCallback() {
         switch (this.defaultView) {
             case 'View By Day':
                 this.setView('1/14');
