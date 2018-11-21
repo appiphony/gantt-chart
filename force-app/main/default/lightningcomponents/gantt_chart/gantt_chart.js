@@ -18,20 +18,16 @@ export default class GanttChart extends Element {
     @api defaultView;
 
     // navigation
-    @track startDateUTC; // sending to backend using time
-    @track endDateUTC; // sending to backend using time
-    @track formattedStartDate; // Title (Date Range)
-    @track formattedEndDate; // Title (Date Range)
-    @track dates; // Dates (Header)
-    dateShift = 7;
-
+    @track startDateUTC;        // sending to backend using time
+    @track endDateUTC;          // sending to backend using time
+    @track formattedStartDate;  // Title (Date Range)
+    @track formattedEndDate;    // Title (Date Range)
+    @track dates;               // Dates (Header)
+    dateShift = 7;              // determines how many days we shift by
 
     // options
-    @track datePickerString; // Date Navigation
-    @track view = { // View Select
-        value: '7/10',
-        slotSize: 7,
-        slots: 10,
+    @track datePickerString;    // Date Navigation
+    @track view = {             // View Select
         options: [{
             label: 'View by Day',
             value: '1/14'
@@ -44,6 +40,7 @@ export default class GanttChart extends Element {
     /*** Modals ***/
     // TODO: move filter search to new component?
     @track filterModalData = {
+        disabled: true,
         message: '',
         projects: [],
         roles: [],
@@ -75,12 +72,20 @@ export default class GanttChart extends Element {
     @track projectId;
     @track resources = [];
 
-
     constructor() {
         super();
         this.template.addEventListener('click', this.closeDropdowns.bind(this));
+        switch (this.defaultView) {
+            case 'View By Day':
+                this.setView('1/14');
+                break;
+            default:
+                this.setView('7/10');
+        }
+        this.setStartDate(new Date());
     }
 
+    // catch blur on allocation menus
     closeDropdowns() {
         this.template.querySelectorAll('.resource-component').forEach(
             function (row, rowIndex) {
@@ -89,6 +94,8 @@ export default class GanttChart extends Element {
         )
     }
 
+    
+    /*** Navigation ***/
     setStartDate(_startDate) {
         if (_startDate instanceof Date && !isNaN(_startDate)) {
             _startDate.setHours(0, 0, 0, 0);
@@ -109,29 +116,6 @@ export default class GanttChart extends Element {
                 variant: 'error'
             });
         }
-    }
-
-    connectedCallback() {
-        switch (this.defaultView) {
-            case 'View By Day':
-                this.setView('1/14');
-                break;
-            default:
-                this.setView('7/10');
-        }
-        this.setStartDate(new Date());
-    }
-
-    setView(value) {
-        var values = value.split('/');
-        this.view.slotSize = parseInt(value[0], 10);
-        this.view.slots = parseInt(values[1], 10);
-        this.setDateHeaders();
-        this.handleRefresh();
-    }
-
-    handleViewChange(event) {
-        this.setView(event.target.value);
     }
 
     setDateHeaders() {
@@ -214,7 +198,22 @@ export default class GanttChart extends Element {
     navigateToDay(event) {
         this.setStartDate(new Date(event.target.value + 'T00:00:00'));
     }
+    
+    setView(value) {
+        var values = value.split('/');
+        this.view.value = value;
+        this.view.slotSize = parseInt(value[0], 10);
+        this.view.slots = parseInt(values[1], 10);
+        this.setDateHeaders();
+        this.handleRefresh();
+    }
 
+    handleViewChange(event) {
+        this.setView(event.target.value);
+    }
+    /*** /Navigation ***/
+
+    /*** Resource Modal ***/
     openAddResourceModal() {
         getResources().then(resources => {
             var excludeResources = this.resources;
@@ -278,6 +277,136 @@ export default class GanttChart extends Element {
             resources: []
         };
     }
+    /*** /Resource Modal ***/
+
+    /*** Filter Modal ***/
+    stopProp(event) {
+        event.stopPropagation();
+    }
+
+    clearFocus() {
+        this.filterModalData.focus = null;
+    }
+
+    openFilterModal() {
+        this.filterModalData.projects = Object.assign([], this._filterData.projects);
+        this.filterModalData.roles = Object.assign([], this._filterData.roles);
+        this.filterModalData.status = this._filterData.status;
+        this.template.querySelector('#filter-modal').show();
+    }
+
+    filterProjects(event) {
+        this.hideDropdowns();
+
+        var text = event.target.value;
+
+        getProjects().then(projects => {
+            // only show projects not selected
+            this.filterModalData.projectOptions = projects.filter(project => {
+                return project.Name && project.Name.toLowerCase().includes(text.toLowerCase()) && !this.filterModalData.projects.filter(p => {
+                    return p.id === project.Id;
+                }).length;
+            });
+            this.filterModalData.focus = 'projects';
+        });
+    }
+
+    addProjectFilter(event) {
+        this.filterModalData.projects.push(Object.assign({}, event.currentTarget.dataset));
+        this.filterModalData.focus = null;
+
+        this.setFilterModalDataDisable();
+    }
+
+    removeProjectFilter(event) {
+        this.filterModalData.projects.splice(event.currentTarget.dataset.index, 1);
+        this.setFilterModalDataDisable();
+    }
+
+    filterRoles(event) {
+        this.hideDropdowns();
+
+        var text = event.target.value;
+
+        getResources().then(resources => {
+            // only show roles not selected
+            this.filterModalData.roleOptions = resources.filter(resource => {
+                return resource.Default_Role__c.toLowerCase().includes(text.toLowerCase()) && !this.filterModalData.roles.filter(r => {
+                    return r === resource.Default_Role__c;
+                }).length;
+            }).map(resource => {
+                return resource.Default_Role__c
+            });
+            this.filterModalData.focus = 'roles';
+        });
+    }
+
+    addRoleFilter(event) {
+        this.filterModalData.roles.push(event.currentTarget.dataset.role);
+        this.filterModalData.focus = null;
+        this.setFilterModalDataDisable();
+    }
+
+    removeRoleFilter(event) {
+        this.filterModalData.roles.splice(event.currentTarget.dataset.index, 1);
+        this.setFilterModalDataDisable();
+    }
+
+    setStatusFilter(event) {
+        this.filterModalData.status = event.currentTarget.value;
+        this.setFilterModalDataDisable();
+    }
+
+    clearFilters() {
+        this.filterModalData.projects = [];
+        this.filterModalData.roles = [];
+        this.filterModalData.status = '';
+        this.filterModalData.disabled = true;
+    }
+
+    setFilterModalDataDisable() {
+        this.filterModalData.disabled = true;
+        
+        if (this.filterModalData.projects.length > 0 || this.filterModalData.roles.length > 0 || this.filterModalData.status !== '') {
+            this.filterModalData.disabled = false;
+        }
+    }
+
+    hideDropdowns() {
+        // prevent menu from closing if focused
+        if (this.filterModalData.focus) {
+            return;
+        }
+        this.filterModalData.projectOptions = [];
+        this.filterModalData.roleOptions = [];
+    }
+
+    applyFilters() {
+        this._filterData = {
+            projects: Object.assign([], this.filterModalData.projects),
+            roles: Object.assign([], this.filterModalData.roles),
+            status: this.filterModalData.status
+        };
+
+        var filters = [];
+        if (this.filterModalData.projects.length) {
+            filters.push('Projects');
+        }
+        if (this.filterModalData.roles.length) {
+            filters.push('Roles');
+        }
+        if (this.filterModalData.status) {
+            filters.push('Status');
+        }
+
+        if (filters.length) {
+            this._filterData.message = 'Filtered By ' + filters.join(', ');
+        }
+
+        this.handleRefresh();
+        this.template.querySelector('#filter-modal').hide();
+    }
+    /*** /Filter Modal ***/
 
     handleRefresh() {
         var self = this;
@@ -300,6 +429,7 @@ export default class GanttChart extends Element {
             self.roles = data.roles;
 
             // empty old data
+            // we want to keep resources we've already seen
             self.resources.forEach(function (resource, i) {
                 self.resources[i] = {
                     Id: resource.Id,
@@ -325,104 +455,5 @@ export default class GanttChart extends Element {
                 variant: 'error'
             });
         });
-    }
-
-    /*** Filter Modal ***/
-    stopProp(event) {
-        event.stopPropagation();
-    }
-
-    clearFocus() {
-        this.filterModalData.focus = null;
-    }
-
-    openFilterModal() {
-        this.filterModalData.projects = Object.assign([], this._filterData.projects);
-        this.filterModalData.roles = Object.assign([], this._filterData.roles);
-        this.filterModalData.status = this._filterData.status;
-        this.template.querySelector('#filter-modal').show();
-    }
-
-    filterProjects(event) {
-        this.hideDropdowns();
-
-        var text = event.target.value;
-
-        getProjects().then(projects => {
-            this.filterModalData.projectOptions = projects.filter(project => {
-                return project.Name && project.Name.toLowerCase().includes(text.toLowerCase()) && !this.filterModalData.projects.filter(p => {
-                    return p.id === project.Id;
-                }).length;
-            });
-            this.filterModalData.focus = 'projects';
-        });
-    }
-
-    addProjectFilter(event) {
-        this.filterModalData.projects.push(Object.assign({}, event.currentTarget.dataset));
-        this.filterModalData.focus = null;
-    }
-
-    removeProjectFilter(event) {
-        this.filterModalData.projects.splice(event.currentTarget.dataset.index, 1);
-    }
-
-    filterRoles(event) {
-        this.hideDropdowns();
-
-        var text = event.target.value;
-
-        getResources().then(resources => {
-            this.filterModalData.roleOptions = resources.filter(resource => {
-                return resource.Default_Role__c.toLowerCase().includes(text.toLowerCase()) && !this.filterModalData.roles.filter(r => {
-                    return r === resource.Default_Role__c;
-                }).length;
-            }).map(resource => {
-                return resource.Default_Role__c
-            });
-            this.filterModalData.focus = 'roles';
-        });
-    }
-
-    addRoleFilter(event) {
-        this.filterModalData.roles.push(event.currentTarget.dataset.role);
-        this.filterModalData.focus = null;
-    }
-
-    removeRoleFilter(event) {
-        this.filterModalData.roles.splice(event.currentTarget.dataset.index, 1);
-    }
-
-    setStatusFilter(event) {
-        this.filterModalData.status = event.currentTarget.value;
-    }
-
-    hideDropdowns() {
-        if (this.filterModalData.focus) {
-            return;
-        }
-        this.filterModalData.projectOptions = [];
-        this.filterModalData.roleOptions = [];
-    }
-
-    applyFilters() {
-        this._filterData = {
-            projects: Object.assign([], this.filterModalData.projects),
-            roles: Object.assign([], this.filterModalData.roles),
-            status: this.filterModalData.status
-        };
-
-        var filters = this._filterData.projects.map(project => project.name);
-        filters = filters.concat(this._filterData.roles);
-        if (this.filterModalData.status) {
-            filters.push(this.filterModalData.status);
-        }
-
-        if (filters.length) {
-            this._filterData.message = 'Filtered By ' + filters.join(', ');
-        }
-
-        this.handleRefresh();
-        this.template.querySelector('#filter-modal').hide();
     }
 }
