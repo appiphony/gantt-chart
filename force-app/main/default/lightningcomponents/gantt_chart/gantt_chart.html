@@ -2,45 +2,49 @@
     <div class="slds-scope">
         <div class="slds-card slds-theme_default">
             <!-- Header Bar -->
-            <div class="slds-grid slds-grid_vertical-align-center slds-border_bottom slds-p-around_medium">
-                <!-- Filter Button -->
-                <div class="slds-col slds-grow-none">
-                    <lightning-button label="Filter" icon-name="utility:filterList" onclick={openFilterModal}></lightning-button>
-                    <div if:true={_filterData.message} class="slds-show_inline-block slds-m-left_small">
-                        <p class="slds-text-body_small slds-text-color_weak">
-                            {_filterData.message}
-                        </p>
+            <div class="slds-p-around_medium slds-border_bottom">
+                <div class="slds-grid slds-grid_vertical-align-center">
+                    <!-- Filter Button -->
+                    <div class="slds-col slds-grow-none slds-col_bump-right">
+                        <lightning-button-icon icon-name="utility:filterList" onclick={openFilterModal}></lightning-button-icon>
                     </div>
-                </div>
-                <!-- /Filter Button -->
+                    <!-- /Filter Button -->
 
-                <!-- Title (Date Range) -->
-                <div class="slds-col slds-text-align_center">
-                    <h1 class="slds-text-heading_medium">
-                        {formattedStartDate} - {formattedEndDate}
-                    </h1>
-                </div>
-                <!-- /Title (Date Range) -->
+                    <!-- Title (Date Range) -->
+                    <div class="slds-col slds-text-align_center">
+                        <h1 class="slds-text-heading_medium slds-truncate">
+                            {formattedStartDate} - {formattedEndDate}
+                        </h1>
+                    </div>
+                    <!-- /Title (Date Range) -->
 
-                <!-- Date Navigation -->
-                <div class="slds-col slds-grow-none">
-                    <div class="slds-show_inline-block">
-                        <lightning-button-icon icon-name="utility:left" variant="border-filled" onclick={navigateToPrevious}></lightning-button-icon>
-                        <lightning-button label="Today" onclick={navigateToToday}></lightning-button>
-                        <lightning-button-icon icon-name="utility:right" variant="border-filled" onclick={navigateToNext}></lightning-button-icon>
+                    <!-- Date Navigation -->
+                    <div class="slds-col slds-grow-none">
+                        <div class="slds-show_inline-block">
+                            <lightning-button-icon icon-name="utility:left" variant="border-filled" onclick={navigateToPrevious}></lightning-button-icon>
+                            <lightning-button label="Today" onclick={navigateToToday}></lightning-button>
+                            <lightning-button-icon icon-name="utility:right" variant="border-filled" onclick={navigateToNext}></lightning-button-icon>
+                        </div>
+                        <div class="slds-show_inline-block">
+                            <lightning-input label="Date" type="date" name="select-date" variant="label-hidden" class="lwc-datepicker slds-m-left_small"
+                                value={datePickerString} onchange={navigateToDay}></lightning-input>
+                        </div>
+                        <!-- View Select -->
+                        <div class="slds-show_inline-block">
+                            <lightning-combobox value={view.value} options={view.options} onchange={handleViewChange} variant="label-hidden"
+                                class="slds-m-left_small"></lightning-combobox>
+                            <!-- /View Select -->
+                        </div>
                     </div>
-                    <div class="slds-show_inline-block">
-                        <lightning-input label="Date" type="date" name="select-date" variant="label-hidden" class="lwc-datepicker slds-m-left_small"
-                            value={datePickerString} onchange={navigateToDay}></lightning-input>
-                    </div>
-                    <!-- View Select -->
-                    <div class="slds-show_inline-block">
-                        <lightning-combobox value={view.value} options={view.options} onchange={handleViewChange} variant="label-hidden"
-                            class="slds-m-left_small"></lightning-combobox>
-                        <!-- /View Select -->
-                    </div>
+                    <!-- /Date Navigation -->
                 </div>
-                <!-- /Date Navigation -->
+                <!-- Filter Status -->
+                <div if:true={_filterData.message} class="slds-m-top_x-small">
+                    <p class="slds-text-body_small slds-text-color_weak">
+                        {_filterData.message}
+                    </p>
+                </div>
+                <!-- /Filter Status -->
             </div>
             <!-- /Header Bar -->
 
