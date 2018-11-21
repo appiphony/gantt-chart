@@ -154,7 +154,6 @@ export default class GanttChartResource extends Element {
         const totalSlots = this.times.length;
         var styles = [
             'left: ' + allocation.left / totalSlots * 100 + '%',
-            'opacity: 1',
             'right: ' + (totalSlots - (allocation.right + 1)) / totalSlots * 100 + '%'
         ];
 
@@ -176,10 +175,12 @@ export default class GanttChartResource extends Element {
             styles.push('background-color: ' + colorMap[backgroundColor]);
         }
 
-        if (this.dragInfo.startIndex) {
+        if (!isNaN(this.dragInfo.startIndex)) {
             styles.push('pointer-events: none');
+            styles.push('transition: left ease 250ms, right ease 250ms');
         } else {
             styles.push('pointer-events: auto');
+            styles.push('transition: none');
         }
 
         return styles.join('; ');
@@ -197,6 +198,12 @@ export default class GanttChartResource extends Element {
             'left: calc(' + left * 100 + '% + 15px)',
             'right: calc(' + right * 100 + '% + 30px)'
         ];
+
+        if (!isNaN(this.dragInfo.startIndex)) {
+            styles.push('transition: left ease 250ms, right ease 250ms');
+        } else {
+            styles.push('transition: none');
+        }
 
         return styles.join('; ');
     }

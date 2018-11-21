@@ -20,7 +20,6 @@
     padding: .25rem;
     pointer-events: auto;
     top: 0px;
-    transition: left ease 250ms, right ease 250ms;
 }
 
 .lwc-allocation:hover {
@@ -96,7 +95,6 @@
     text-align: center;
     text-overflow: ellipsis;
     top: 1px;
-    transition: left ease 250ms, right ease 250ms;
 }
 
 /*** Resource ***/
