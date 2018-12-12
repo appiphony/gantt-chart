@@ -1,17 +1,11 @@
-import {
-    Element,
-    api,
-    track
-} from 'engine';
-import {
-    showToast
-} from 'lightning-notifications-library';
+import { LightningElement, api, track } from 'lwc';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 import getProjects from '@salesforce/apex/ganttChart.getProjects';
 import saveAllocation from '@salesforce/apex/ganttChart.saveAllocation';
 import deleteAllocation from '@salesforce/apex/ganttChart.deleteAllocation';
 
-export default class GanttChartResource extends Element {
+export default class GanttChartResource extends LightningElement {
     @api isResourceView;                // resource page has different layout
     @api projectId;                     // used on project page for quick adding of allocations
     @api
@@ -31,19 +25,19 @@ export default class GanttChartResource extends Element {
     @api
     refreshDates(startDate, endDate, dateIncrement) {
         if (startDate && endDate && dateIncrement) {
-            var times = [];
-            var today = new Date();
+            let times = [];
+            let today = new Date();
             today.setHours(0, 0, 0, 0);
             today = today.getTime();
 
-            for (var date = new Date(startDate); date <= endDate; date.setDate(date.getDate() + dateIncrement)) {
-                var time = {
+            for (let date = new Date(startDate); date <= endDate; date.setDate(date.getDate() + dateIncrement)) {
+                let time = {
                     class: 'slds-col lwc-timeslot',
                     start: date.getTime()
                 };
 
                 if (dateIncrement > 1) {
-                    var end = new Date(date);
+                    let end = new Date(date);
                     end.setDate(end.getDate() + dateIncrement - 1);
                     time.end = end.getTime();
                 } else {
@@ -119,7 +113,7 @@ export default class GanttChartResource extends Element {
 
     // calculate allocation classes
     calcClass(allocation) {
-        var classes = [
+        let classes = [
             'slds-is-absolute',
             'lwc-allocation'
         ];
@@ -161,7 +155,7 @@ export default class GanttChartResource extends Element {
         }
 
         const totalSlots = this.times.length;
-        var styles = [
+        let styles = [
             'left: ' + allocation.left / totalSlots * 100 + '%',
             'right: ' + (totalSlots - (allocation.right + 1)) / totalSlots * 100 + '%'
         ];
@@ -169,17 +163,17 @@ export default class GanttChartResource extends Element {
         if ('Unavailable' !== allocation.Status__c) {
             const backgroundColor = allocation.color
             const colorMap = {
-                Blue: '#1589ee',
-                Green: '#4AAD59',
-                Red: '#E52D34',
-                Turqoise: '#0DBCB9',
-                Navy: '#052F5F',
-                Orange: '#E56532',
-                Purple: '#62548E',
-                Pink: '#CA7CCE',
-                Brown: '#823E17',
-                Lime: '#7CCC47',
-                Gold: '#FCAF32'
+                Blue: '.1589ee',
+                Green: '.4AAD59',
+                Red: '.E52D34',
+                Turqoise: '.0DBCB9',
+                Navy: '.052F5F',
+                Orange: '.E56532',
+                Purple: '.62548E',
+                Pink: '.CA7CCE',
+                Brown: '.823E17',
+                Lime: '.7CCC47',
+                Gold: '.FCAF32'
             };
             styles.push('background-color: ' + colorMap[backgroundColor]);
         }
@@ -202,9 +196,9 @@ export default class GanttChartResource extends Element {
         }
 
         const totalSlots = this.times.length;
-        var left = (allocation.left / totalSlots < 0) ? 0 : (allocation.left / totalSlots);
-        var right = ((totalSlots - (allocation.right + 1)) / totalSlots < 0) ? 0 : ((totalSlots - (allocation.right + 1)) / totalSlots);
-        var styles = [
+        let left = (allocation.left / totalSlots < 0) ? 0 : (allocation.left / totalSlots);
+        let right = ((totalSlots - (allocation.right + 1)) / totalSlots < 0) ? 0 : ((totalSlots - (allocation.right + 1)) / totalSlots);
+        let styles = [
             'left: calc(' + left * 100 + '% + 15px)',
             'right: calc(' + right * 100 + '% + 30px)'
         ];
@@ -219,11 +213,11 @@ export default class GanttChartResource extends Element {
     }
 
     setProjects() {
-        var self = this;
+        let self = this;
         self.projects = [];
 
-        Object.keys(self.resource.allocationsByProject).forEach(projectId => {
-            var project = {
+        Object.keys(self._resource.allocationsByProject).forEach(projectId => {
+            let project = {
                 id: projectId,
                 allocations: []
             };
@@ -252,7 +246,7 @@ export default class GanttChartResource extends Element {
                 endDate: endUTC + ''
             });
         } else {
-            var self = this;
+            let self = this;
             getProjects()
                 .then(projects => {
                     projects = projects.map(project => {
@@ -274,12 +268,12 @@ export default class GanttChartResource extends Element {
                         disabled: true
                     };
 
-                    self.template.querySelector('#add-allocation-modal').show();
+                    self.template.querySelector('.add-allocation-modal').show();
                 }).catch(error => {
-                    showToast({
+                    this.dispatchEvent(new ShowToastEvent({
                         message: error.message,
                         variant: 'error'
-                    });
+                    }));
                 });
         }
     }
@@ -307,12 +301,12 @@ export default class GanttChartResource extends Element {
             endDate: this.addAllocationData.endDate
         }).then(() => {
             this.addAllocationData = {};
-            this.template.querySelector('#add-allocation-modal').hide();
+            this.template.querySelector('.add-allocation-modal').hide();
         }).catch(error => {
-            showToast({
+            this.dispatchEvent(new ShowToastEvent({
                 message: error.message,
                 variant: 'error'
-            });
+            }));
         });
     }
 
@@ -333,17 +327,17 @@ export default class GanttChartResource extends Element {
                     composed: true
                 }));
             }).catch(error => {
-                showToast({
+                this.dispatchEvent(new ShowToastEvent({
                     message: error.message,
                     variant: 'error'
-                });
+                }));
             });
     }
 
     /*** Drag/Drop ***/
     dragInfo = {};
     handleDragStart(event) {
-        var container = this.template.querySelector('#' + event.currentTarget.dataset.id + ' .lwc-allocation');
+        let container = this.template.querySelector('.' + event.currentTarget.dataset.id + ' .lwc-allocation');
         this.dragInfo.projectIndex = container.dataset.project;
         this.dragInfo.allocationIndex = container.dataset.allocation;
         this.dragInfo.newAllocation = this.projects[container.dataset.project].allocations[container.dataset.allocation];
@@ -375,8 +369,8 @@ export default class GanttChartResource extends Element {
         this.projects = JSON.parse(JSON.stringify(this.projects));
         this.projects[projectIndex].allocations[allocationIndex] = allocation;
 
-        var startDate = new Date(allocation.Start_Date__c + 'T00:00:00');
-        var endDate = new Date(allocation.End_Date__c + 'T00:00:00');
+        let startDate = new Date(allocation.Start_Date__c + 'T00:00:00');
+        let endDate = new Date(allocation.End_Date__c + 'T00:00:00');
 
         this._saveAllocation({
             allocationId: allocation.Id,
@@ -385,7 +379,7 @@ export default class GanttChartResource extends Element {
         });
 
         this.dragInfo = {};
-        this.template.querySelector('#' + allocation.Id + ' .lwc-allocation').style.pointerEvents = 'auto';
+        this.template.querySelector('.' + allocation.Id + ' .lwc-allocation').style.pointerEvents = 'auto';
     }
 
     handleDragEnter(event) {
@@ -400,7 +394,7 @@ export default class GanttChartResource extends Element {
             this.dragInfo.startIndex = index;
         }
 
-        var allocation = JSON.parse(JSON.stringify(this.projects[projectIndex].allocations[allocationIndex]));
+        let allocation = JSON.parse(JSON.stringify(this.projects[projectIndex].allocations[allocationIndex]));
 
         switch (direction) {
             case 'left':
@@ -420,10 +414,10 @@ export default class GanttChartResource extends Element {
                 }
                 break;
             default:
-                var deltaIndex = index - this.dragInfo.startIndex;
-                var firstSlot = this.times[0];
-                var startDate = new Date(firstSlot.start);
-                var endDate = new Date(firstSlot.end);
+                let deltaIndex = index - this.dragInfo.startIndex;
+                let firstSlot = this.times[0];
+                let startDate = new Date(firstSlot.start);
+                let endDate = new Date(firstSlot.end);
 
                 allocation.left = allocation.left + deltaIndex;
                 allocation.right = allocation.right + deltaIndex;
@@ -436,26 +430,26 @@ export default class GanttChartResource extends Element {
         }
 
         this.dragInfo.newAllocation = allocation;
-        this.template.querySelector('#' + allocation.Id + ' .lwc-allocation').style = this.calcStyle(allocation);
-        this.template.querySelector('#' + allocation.Id + ' .lwc-allocation-label').style = this.calcLabelStyle(allocation);
+        this.template.querySelector('.' + allocation.Id + ' .lwc-allocation').style = this.calcStyle(allocation);
+        this.template.querySelector('.' + allocation.Id + ' .lwc-allocation-label').style = this.calcLabelStyle(allocation);
     }
     /*** /Drag/Drop ***/
 
     openAllocationMenu(event) {
-        var container = this.template.querySelector('#' + event.currentTarget.dataset.id + ' .lwc-allocation');
-        var allocation = this.projects[container.dataset.project].allocations[container.dataset.allocation];
+        let container = this.template.querySelector('.' + event.currentTarget.dataset.id + ' .lwc-allocation');
+        let allocation = this.projects[container.dataset.project].allocations[container.dataset.allocation];
 
         if (this.menuData.allocation && this.menuData.allocation.Id === allocation.Id) {
             this.closeAllocationMenu();
         } else {
             this.menuData.open = true;
 
-            var projectHeight = this.template.querySelector('.project-container').getBoundingClientRect().height;
-            var allocationHeight = this.template.querySelector('.lwc-allocation').getBoundingClientRect().height;
-            var totalSlots = this.times.length;
-            var rightEdge = (totalSlots - (allocation.right + 1)) / totalSlots * 100 + '%';
+            let projectHeight = this.template.querySelector('.project-container').getBoundingClientRect().height;
+            let allocationHeight = this.template.querySelector('.lwc-allocation').getBoundingClientRect().height;
+            let totalSlots = this.times.length;
+            let rightEdge = (totalSlots - (allocation.right + 1)) / totalSlots * 100 + '%';
 
-            var topEdge = projectHeight * container.dataset.project + allocationHeight;
+            let topEdge = projectHeight * container.dataset.project + allocationHeight;
 
             this.menuData.allocation = Object.assign({}, allocation);
             this.menuData.style = 'top: ' + topEdge + 'px; right: ' + rightEdge + '; left: unset';
@@ -474,7 +468,7 @@ export default class GanttChartResource extends Element {
             isFullEdit: this.menuData.allocation.Status__c !== 'Unavailable',
             disabled: false
         };
-        this.template.querySelector('#edit-allocation-modal').show();
+        this.template.querySelector('.edit-allocation-modal').show();
 
         this.closeAllocationMenu();
     }
@@ -504,12 +498,12 @@ export default class GanttChartResource extends Element {
             status: this.editAllocationData.status
         }).then(() => {
             this.editAllocationData = {};
-            this.template.querySelector('#edit-allocation-modal').hide();
+            this.template.querySelector('.edit-allocation-modal').hide();
         }).catch(error => {
-            showToast({
+            this.dispatchEvent(new ShowToastEvent({
                 message: error.message,
                 variant: 'error'
-            });
+            }));
         });
     }
 
@@ -517,7 +511,7 @@ export default class GanttChartResource extends Element {
         this.editAllocationData = {
             id: this.menuData.allocation.Id,
         };
-        this.template.querySelector('#delete-modal').show();
+        this.template.querySelector('.delete-modal').show();
         this.closeAllocationMenu();
     }
 
@@ -525,16 +519,16 @@ export default class GanttChartResource extends Element {
         deleteAllocation({
             allocationId: this.editAllocationData.id
         }).then(() => {
-            this.template.querySelector('#delete-modal').hide();
+            this.template.querySelector('.delete-modal').hide();
             this.dispatchEvent(new CustomEvent('refresh', {
                 bubbles: true,
                 composed: true
             }));
         }).catch(error => {
-            showToast({
+            this.dispatchEvent(new ShowToastEvent({
                 message: error.message,
                 variant: 'error'
-            });
+            }));
         });
     }
 }

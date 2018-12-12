@@ -1,17 +1,11 @@
-import {
-    Element,
-    api,
-    track
-} from 'engine';
-import {
-    showToast
-} from 'lightning-notifications-library';
+import { LightningElement, api, track } from 'lwc';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 
 import getChartData from '@salesforce/apex/ganttChart.getChartData';
 import getProjects from '@salesforce/apex/ganttChart.getProjects';
 import getResources from '@salesforce/apex/ganttChart.getResources';
 
-export default class GanttChart extends Element {
+export default class GanttChart extends LightningElement {
     @api recordId;
 
     // design attributes
@@ -90,11 +84,9 @@ export default class GanttChart extends Element {
 
     // catch blur on allocation menus
     closeDropdowns() {
-        this.template.querySelectorAll('.lwc-resource-component').forEach(
-            function (row, rowIndex) {
-                row.closeAllocationMenu();
-            }
-        )
+        Array.from(this.template.querySelectorAll('.lwc-resource-component')).forEach(row => {
+            row.closeAllocationMenu();
+        });
     }
 
     
@@ -114,10 +106,10 @@ export default class GanttChart extends Element {
             this.setDateHeaders();
             this.handleRefresh();
         } else {
-            showToast({
-                error: 'Invalid Date',
+            this.dispatchEvent(new ShowToastEvent({
+                message: 'Invalid Date',
                 variant: 'error'
-            });
+            }));
         }
     }
 
@@ -129,14 +121,14 @@ export default class GanttChart extends Element {
 
         const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
         const dayNames = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
-        var today = new Date();
+        let today = new Date();
         today.setHours(0, 0, 0, 0);
         today = today.getTime();
 
-        var dates = {};
+        let dates = {};
 
-        for (var date = new Date(this.startDate); date <= this.endDate; date.setDate(date.getDate() + this.view.slotSize)) {
-            var index = date.getFullYear() * 100 + date.getMonth();
+        for (let date = new Date(this.startDate); date <= this.endDate; date.setDate(date.getDate() + this.view.slotSize)) {
+            let index = date.getFullYear() * 100 + date.getMonth();
             if (!dates[index]) {
                 dates[index] = {
                     name: monthNames[date.getMonth()],
@@ -144,7 +136,7 @@ export default class GanttChart extends Element {
                 };
             }
 
-            var day = {
+            let day = {
                 class: 'slds-col slds-p-vertical_x-small slds-m-top_x-small lwc-timeline_day',
                 label: (date.getMonth() + 1) + '/' + date.getDate(),
                 dayName: dayNames[date.getDay()],
@@ -152,7 +144,7 @@ export default class GanttChart extends Element {
             }
 
             if (this.view.slotSize > 1) {
-                var end = new Date(date);
+                let end = new Date(date);
                 end.setDate(end.getDate() + this.view.slotSize - 1);
                 day.label = day.label;
                 day.end = end;
@@ -175,7 +167,7 @@ export default class GanttChart extends Element {
         // reorder index
         this.dates = Object.values(dates);
 
-        this.template.querySelectorAll('c-gantt_chart_resource').forEach(resource => {
+        Array.from(this.template.querySelectorAll('c-gantt_chart_resource')).forEach(resource => {
             resource.refreshDates(this.startDate, this.endDate, this.view.slotSize);
         });
     }
@@ -185,14 +177,14 @@ export default class GanttChart extends Element {
     }
 
     navigateToPrevious() {
-        var _startDate = new Date(this.startDate);
+        let _startDate = new Date(this.startDate);
         _startDate.setDate(_startDate.getDate() - this.dateShift);
 
         this.setStartDate(_startDate);
     }
 
     navigateToNext() {
-        var _startDate = new Date(this.startDate);
+        let _startDate = new Date(this.startDate);
         _startDate.setDate(_startDate.getDate() + this.dateShift);
 
         this.setStartDate(_startDate);
@@ -203,7 +195,7 @@ export default class GanttChart extends Element {
     }
     
     setView(value) {
-        var values = value.split('/');
+        let values = value.split('/');
         this.view.value = value;
         this.view.slotSize = parseInt(value[0], 10);
         this.view.slots = parseInt(values[1], 10);
@@ -219,7 +211,7 @@ export default class GanttChart extends Element {
     /*** Resource Modal ***/
     openAddResourceModal() {
         getResources().then(resources => {
-            var excludeResources = this.resources;
+            let excludeResources = this.resources;
             this.resourceModalData = {
                 disabled: true,
                 resources: resources.filter(resource => {
@@ -235,17 +227,17 @@ export default class GanttChart extends Element {
                 })
             }
 
-            this.template.querySelector('#resource-modal').show();
+            this.template.querySelector('.resource-modal').show();
         }).catch(error => {
-            showToast({
+            this.dispatchEvent(new ShowToastEvent({
                 message: error.message,
                 variant: 'error'
-            });
+            }));
         });
     }
 
     handleResourceSelect(event) {
-        var self = this;
+        let self = this;
 
         self.resourceModalData.resources.forEach(resource => {
             if (resource.value === event.target.value) {
@@ -269,11 +261,11 @@ export default class GanttChart extends Element {
     }
 
     addResourceById() {
-        var newResource = Object.assign({}, this.resourceModalData.resource);
+        let newResource = Object.assign({}, this.resourceModalData.resource);
         newResource.allocationsByProject = [];
         this.resources = this.resources.concat([newResource]);
 
-        this.template.querySelector('#resource-modal').hide();
+        this.template.querySelector('.resource-modal').hide();
 
         this.resourceModalData = {
             disabled: true,
@@ -295,13 +287,13 @@ export default class GanttChart extends Element {
         this.filterModalData.projects = Object.assign([], this._filterData.projects);
         this.filterModalData.roles = Object.assign([], this._filterData.roles);
         this.filterModalData.status = this._filterData.status;
-        this.template.querySelector('#filter-modal').show();
+        this.template.querySelector('.filter-modal').show();
     }
 
     filterProjects(event) {
         this.hideDropdowns();
 
-        var text = event.target.value;
+        let text = event.target.value;
 
         getProjects().then(projects => {
             // only show projects not selected
@@ -329,7 +321,7 @@ export default class GanttChart extends Element {
     filterRoles(event) {
         this.hideDropdowns();
 
-        var text = event.target.value;
+        let text = event.target.value;
 
         getResources().then(resources => {
             // only show roles not selected
@@ -391,7 +383,7 @@ export default class GanttChart extends Element {
             status: this.filterModalData.status
         };
 
-        var filters = [];
+        let filters = [];
         if (this.filterModalData.projects.length) {
             filters.push('Projects');
         }
@@ -407,13 +399,13 @@ export default class GanttChart extends Element {
         }
 
         this.handleRefresh();
-        this.template.querySelector('#filter-modal').hide();
+        this.template.querySelector('.filter-modal').hide();
     }
     /*** /Filter Modal ***/
 
     handleRefresh() {
-        var self = this;
-        var filterProjectIds = self._filterData.projects.map(project => {
+        let self = this;
+        let filterProjectIds = self._filterData.projects.map(project => {
             return project.id;
         });
 
@@ -443,7 +435,7 @@ export default class GanttChart extends Element {
             });
 
             data.resources.forEach(function (newResource) {
-                for (var i = 0; i < self.resources.length; i++) {
+                for (let i = 0; i < self.resources.length; i++) {
                     if (self.resources[i].Id === newResource.Id) {
                         self.resources[i] = newResource;
                         return;
@@ -453,10 +445,10 @@ export default class GanttChart extends Element {
                 self.resources.push(newResource);
             });
         }).catch(error => {
-            showToast({
+            this.dispatchEvent(new ShowToastEvent({
                 message: error.message,
                 variant: 'error'
-            });
+            }));
         });
     }
 }

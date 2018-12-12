@@ -113,7 +113,7 @@
 
     <!-- Modals -->
     <!-- Add Resource Modal -->
-    <c-gantt_chart_modal id="resource-modal">
+    <c-gantt_chart_modal class="resource-modal">
         <span slot="title">Add Resource</span>
         <div slot="body" class="slds-form slds-form_stacked">
             <lightning-combobox label="Who is working on this?" options={resourceModalData.resources} placeholder="-- Select Resource --" onchange={handleResourceSelect}></lightning-combobox>
@@ -124,7 +124,7 @@
     <!-- /Add Resource Modal -->
 
     <!-- Filter Modal -->
-    <c-gantt_chart_modal id="filter-modal" onclick={hideDropdowns}>
+    <c-gantt_chart_modal class="filter-modal" onclick={hideDropdowns}>
         <span slot="title">Filter</span>
         <div slot="body" class="slds-form slds-form_stacked">
             <div class="slds-text-align_right">

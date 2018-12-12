@@ -1,9 +1,7 @@
 {
-    "orgName": "Gantt Chart",
+    "orgName": "spencerhsieh Company",
     "edition": "Developer",
-    "features": ["LightningWebComponents"],
     "orgPreferences" : {
-        "enabled": ["S1DesktopEnabled"],
-        "disabled": ["S1EncryptedStoragePref2"]
+        "enabled": ["S1DesktopEnabled"]
     }
 }

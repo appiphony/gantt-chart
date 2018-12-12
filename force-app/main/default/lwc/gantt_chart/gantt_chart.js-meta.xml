@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
-    <apiVersion>44.0</apiVersion>
+    <apiVersion>45.0</apiVersion>
     <isExposed>false</isExposed>
     <masterLabel>Gantt Chart</masterLabel>
-    <tags>
-        <tag>lightning__RecordHome</tag>
-        <tag>lightning__HasRecordId</tag>
-    </tags>
-    <tagConfigs>
-        <tagConfig tags="lightning__RecordHome">
+    <targets>
+        <target>lightning__RecordPage</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightning__RecordPage">
             <property name="defaultView" type="String" label="Default View Mode" datasource="View by Day, View by Week" default="View by Week"/>
-        </tagConfig>
-    </tagConfigs>
+        </targetConfig>
+    </targetConfigs>
 </LightningComponentBundle>

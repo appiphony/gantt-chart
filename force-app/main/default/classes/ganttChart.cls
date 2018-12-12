@@ -1,5 +1,5 @@
 public with sharing class ganttChart {
-    @AuraEnabled(Cacheable=true)
+    @AuraEnabled
     public static Map<String, Object> getChartData(String recordId, String startTime, String endTime, Integer slotSize, List<String> filterProjects, List<String> filterRoles, String filterStatus) {
         Map<String, Object> data = new Map<String, Object>();
         String query = 'SELECT Resource__c, Resource__r.Name, Resource__r.Active__c, Resource__r.Default_Role__c, Project__c, Project__r.Name, Project__r.Active__c, Project__r.Color__c, Start_Date__c, End_Date__c, Status__c, Effort__c FROM Allocation__c WHERE Start_Date__c <= :endDate AND End_Date__c >= :startDate AND (Project__c = NULL OR Project__r.Active__c = TRUE) AND Resource__r.Active__c = TRUE';
@@ -171,7 +171,7 @@ public with sharing class ganttChart {
         return allocation;
     }
 
-    @AuraEnabled(Cacheable=true)
+    @AuraEnabled
     public static void deleteAllocation(Id allocationId) {
         delete new Allocation__c(Id = allocationId);
     }

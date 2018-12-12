@@ -39,7 +39,7 @@
                         &nbsp;
                         <template for:each={project.allocations} for:item="allocation" for:index="allocationIndex">
                             <!-- Allocation -->
-                            <div key={allocation} id={allocation.Id}>
+                            <div key={allocation.Id} class={allocation.Id}>
                                 <div title={allocation.Name} class={allocation.class} style={allocation.style} data-id={allocation.Id}
                                     data-project={projectIndex} data-allocation={allocationIndex} draggable="true"
                                     ondragstart={handleDragStart} ondragend={handleDragEnd}>
@@ -108,7 +108,7 @@
     </div>
 
     <!-- Add Allocation Modal -->
-    <c-gantt_chart_modal id="add-allocation-modal">
+    <c-gantt_chart_modal class="add-allocation-modal">
         <span slot="title">Add Allocation</span>
         <div slot="body" class="slds-form slds-form_stacked">
             <!-- Select Project -->
@@ -123,7 +123,7 @@
     <!-- /Add Allocation Modal -->
 
     <!-- Edit Modal -->
-    <c-gantt_chart_modal id="edit-allocation-modal">
+    <c-gantt_chart_modal class="edit-allocation-modal">
         <span slot="title">
             {editAllocationData.resourceName}
             <span if:true={editAllocationData.isFullEdit}> on {editAllocationData.projectName}</span>
@@ -153,7 +153,7 @@
     </c-gantt_chart_modal>
     <!-- /Edit Modal -->
 
-    <c-gantt_chart_modal id="delete-modal">
+    <c-gantt_chart_modal class="delete-modal">
         <span slot="title">Confirm Delete</span>
         <p slot="body">
             Are you sure you want to remove this allocation?

@@ -10,7 +10,6 @@
     <isNavPersonalizationDisabled>false</isNavPersonalizationDisabled>
     <label>Gantt Chart</label>
     <navType>Standard</navType>
-    <tabs>Overview</tabs>
     <tabs>Project__c</tabs>
     <tabs>Resource__c</tabs>
     <uiType>Lightning</uiType>
