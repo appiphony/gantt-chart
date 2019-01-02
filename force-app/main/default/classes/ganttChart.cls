@@ -1,5 +1,5 @@
 public with sharing class ganttChart {
-    @AuraEnabled
+    @AuraEnabled(Cacheable=true)
     public static Map<String, Object> getChartData(String recordId, String startTime, String endTime, Integer slotSize, List<String> filterProjects, List<String> filterRoles, String filterStatus) {
         Map<String, Object> data = new Map<String, Object>();
         String query = 'SELECT Resource__c, Resource__r.Name, Resource__r.Active__c, Resource__r.Default_Role__c, Project__c, Project__r.Name, Project__r.Active__c, Project__r.Color__c, Start_Date__c, End_Date__c, Status__c, Effort__c FROM Allocation__c WHERE Start_Date__c <= :endDate AND End_Date__c >= :startDate AND (Project__c = NULL OR Project__r.Active__c = TRUE) AND Resource__r.Active__c = TRUE';
@@ -21,6 +21,7 @@ public with sharing class ganttChart {
 
         if (String.isNotEmpty(startTime) &&  String.isNotEmpty(endTime)) {
             Date startDate = DateTime.newInstance(Long.valueOf(startTime)).date();
+            
             Date endDate = DateTime.newInstance(Long.valueOf(endTime)).date();
             Integer days = startDate.daysBetween(endDate) + 1;
             slotSize = Integer.valueOf(slotSize);
@@ -33,26 +34,27 @@ public with sharing class ganttChart {
                 allocations = Database.query(query);
 
                 // display all active resources
-                for (Resource__c resource : ganttChart.getResources()) {
-                    resourceById.put(resource.Id, new Map<String, Object> {
-                        'Id' => resource.Id,
-                        'Name' => resource.Name,
-                        'Default_Role__c' => resource.Default_Role__c,
+                for (Object r : ganttChart.getResources()) {
+                    Map<String, Object> resource = (Map<String, Object>)r;
+                    resourceById.put((String)resource.get('Id'), new Map<String, Object> {
+                        'Id' => resource.get('Id'),
+                        'Name' => resource.get('Name'),
+                        'Default_Role__c' => resource.get('Default_Role__c'),
                         'allocationsByProject' => new Map<String, Object>()
                     });
                 }
             } else {
-                if ('Project__c' == Id.valueOf(recordId).getSobjectType().getDescribe().getName()) {
+                if (Id.valueOf(recordId).getSobjectType().getDescribe().getName().endsWith('Project__c')) {
                     data.put('projectId', recordId);
                 }
 
                 query += ' AND (Project__c = :recordId OR Resource__c = :recordId)';
                 query += ' ORDER BY Resource__r.Name, Project__r.Name NULLS FIRST, Start_Date__c';
-                System.debug(query);                
+
                 allocations = Database.query(query);
 
                 // empty state on resource page
-                if (allocations.isEmpty() && 'Resource__c' == Id.valueOf(recordId).getSobjectType().getDescribe().getName()) {
+                if (allocations.isEmpty() && Id.valueOf(recordId).getSobjectType().getDescribe().getName().endsWith('Resource__c')) {
                     Resource__c resource = [SELECT Id, Name, Active__c, Default_Role__c
                                             FROM Resource__c
                                             WHERE Id = :recordId];
@@ -96,7 +98,7 @@ public with sharing class ganttChart {
                 
                 Decimal right = Decimal.valueOf(startDate.daysBetween(allocation.End_Date__c)) / slotSize;
                 right = right.round(System.RoundingMode.FLOOR);
-                
+
                 projectAllocation.add(new Map<String, Object> {
                     'Id' => allocation.Id,
                     'Start_Date__c' => allocation.Start_Date__c,
@@ -120,24 +122,34 @@ public with sharing class ganttChart {
         return data;
     }
 
-    @AuraEnabled(Cacheable=true)
-    public static List<Resource__c> getResources() {
-        return [SELECT Id, Name, Default_Role__c
-                FROM Resource__c
-                WHERE Active__c = true
-                ORDER BY Name];
+    @AuraEnabled
+    public static List<Object> getResources() {
+        List<Object> resources = new List<Object>();
+
+        for (Resource__c r : [SELECT Id, Name, Default_Role__c
+                              FROM Resource__c
+                              WHERE Active__c = true
+                              ORDER BY Name]) {
+            resources.add(new Map<String, Object> {
+                'Id' => r.Id,
+                'Name' => r.Name,
+                'Default_Role__c' => r.Default_Role__c
+            });
+        }
+
+        return resources;
     }
 
-    @AuraEnabled(Cacheable=true)
+    @AuraEnabled
     public static List<Project__c> getProjects() {
-        return [SELECT Id, Name, Color__c
+        return [SELECT Id, Name
                 FROM Project__c
                 WHERE Active__c = true
                 ORDER BY Name];
     }
 
-    @AuraEnabled(Cacheable=true)
-    public static Object saveAllocation(Id allocationId, Id projectId, Id resourceId, String effort, String status, String startDate, String endDate) {
+    @AuraEnabled
+    public static void saveAllocation(Id allocationId, Id projectId, Id resourceId, String effort, String status, String startDate, String endDate) {
         Allocation__c allocation = new Allocation__c(
             Start_Date__c = DateTime.newInstance(Long.valueOf(startDate)).date(),
             End_Date__c = DateTime.newInstance(Long.valueOf(endDate)).date()
@@ -167,8 +179,6 @@ public with sharing class ganttChart {
         }
         
         upsert allocation;
-
-        return allocation;
     }
 
     @AuraEnabled

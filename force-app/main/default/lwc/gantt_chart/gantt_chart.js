@@ -1,454 +1,576 @@
-import { LightningElement, api, track } from 'lwc';
-import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import { LightningElement, api, track, wire } from "lwc";
+import { refreshApex } from "@salesforce/apex";
+import { ShowToastEvent } from "lightning/platformShowToastEvent";
 
-import getChartData from '@salesforce/apex/ganttChart.getChartData';
-import getProjects from '@salesforce/apex/ganttChart.getProjects';
-import getResources from '@salesforce/apex/ganttChart.getResources';
+import momentJS from "@salesforce/resourceUrl/momentJS";
+import { loadScript } from "lightning/platformResourceLoader";
+
+import getChartData from "@salesforce/apex/ganttChart.getChartData";
+import getProjects from "@salesforce/apex/ganttChart.getProjects";
+import getResources from "@salesforce/apex/ganttChart.getResources";
 
 export default class GanttChart extends LightningElement {
-    @api recordId;
+  @api recordId = "";
+  @api objectApiName;
 
-    // design attributes
-    @api defaultView;
+  @track isResourceView;
+  @track isProjectView;
 
-    // navigation
-    @track startDateUTC;        // sending to backend using time
-    @track endDateUTC;          // sending to backend using time
-    @track formattedStartDate;  // Title (Date Range)
-    @track formattedEndDate;    // Title (Date Range)
-    @track dates;               // Dates (Header)
-    dateShift = 7;              // determines how many days we shift by
+  // design attributes
+  @api defaultView;
 
-    // options
-    @track datePickerString;    // Date Navigation
-    @track view = {             // View Select
-        options: [{
-            label: 'View by Day',
-            value: '1/14'
-        }, {
-            label: 'View by Week',
-            value: '7/10'
-        }]
-    };
+  // navigation
+  @track startDateUTC; // sending to backend using time
+  @track endDateUTC; // sending to backend using time
+  @track formattedStartDate; // Title (Date Range)
+  @track formattedEndDate; // Title (Date Range)
+  @track dates = []; // Dates (Header)
+  dateShift = 7; // determines how many days we shift by
 
-    /*** Modals ***/
-    // TODO: move filter search to new component?
-    @track filterModalData = {
-        disabled: true,
-        message: '',
-        projects: [],
-        roles: [],
-        status: '',
-        projectOptions: [],
-        roleOptions: [],
-        statusOptions: [{ // TODO: pull from backend? unsure how to handle "All"
-            label: 'All',
-            value: ''
-        }, {
-            label: 'Hold',
-            value: 'Hold'
-        }, {
-            label: 'Unavailable',
-            value: 'Unavailable'
-        }]
-    };
-    _filterData = {
-        projects: [],
-        roles: [],
-        status: ''
-    };
-    @track resourceModalData = {};
-    /*** /Modals ***/
+  // options
+  @track datePickerString; // Date Navigation
+  @track view = {
+    // View Select
+    options: [
+      {
+        label: "View by Day",
+        value: "1/14"
+      },
+      {
+        label: "View by Week",
+        value: "7/10"
+      }
+    ],
+    slotSize: 7,
+    slots: 10
+  };
 
-    // gantt_chart_resource
-    @track startDate;
-    @track endDate;
-    @track projectId;
-    @track resources = [];
+  /*** Modals ***/
+  // TODO: move filter search to new component?
+  @track filterModalData = {
+    disabled: true,
+    message: "",
+    projects: [],
+    roles: [],
+    status: "",
+    projectOptions: [],
+    roleOptions: [],
+    statusOptions: [
+      {
+        // TODO: pull from backend? unsure how to handle "All"
+        label: "All",
+        value: ""
+      },
+      {
+        label: "Hold",
+        value: "Hold"
+      },
+      {
+        label: "Unavailable",
+        value: "Unavailable"
+      }
+    ]
+  };
+  _filterData = {
+    projects: [],
+    projectIds: [],
+    roles: [],
+    status: ""
+  };
+  @track resourceModalData = {};
+  /*** /Modals ***/
 
-    constructor() {
-        super();
-        this.template.addEventListener('click', this.closeDropdowns.bind(this));
+  // gantt_chart_resource
+  @track startDate;
+  @track endDate;
+  @track projectId;
+  @track resources = [];
+
+  constructor() {
+    super();
+    this.template.addEventListener("click", this.closeDropdowns.bind(this));
+  }
+
+  connectedCallback() {
+    Promise.all([loadScript(this, momentJS)]).then(() => {
+      switch (this.defaultView) {
+        case "View by Day":
+          this.setView("1/14");
+          break;
+        default:
+          this.setView("7/10");
+      }
+      this.setStartDate(new Date());
+    });
+  }
+
+  // catch blur on allocation menus
+  closeDropdowns() {
+    Array.from(
+      this.template.querySelectorAll(".lwc-resource-component")
+    ).forEach(row => {
+      row.closeAllocationMenu();
+    });
+  }
+
+  /*** Navigation ***/
+  setStartDate(_startDate) {
+    if (_startDate instanceof Date && !isNaN(_startDate)) {
+      _startDate.setHours(0, 0, 0, 0);
+
+      this.datePickerString = _startDate.toISOString();
+
+      this.startDate = moment(_startDate)
+        .day(1)
+        .toDate();
+      this.startDateUTC =
+        moment(this.startDate)
+          .utc()
+          .valueOf() -
+        moment(this.startDate).utcOffset() * 60 * 1000 +
+        "";
+      this.formattedStartDate = this.startDate.toLocaleDateString();
+
+      this.setDateHeaders();
+      this.handleRefresh();
+    } else {
+      this.dispatchEvent(
+        new ShowToastEvent({
+          message: "Invalid Date",
+          variant: "error"
+        })
+      );
     }
+  }
 
-    connectedCallback() {
-        switch (this.defaultView) {
-            case 'View By Day':
-                this.setView('1/14');
-                break;
-            default:
-                this.setView('7/10');
+  setDateHeaders() {
+    this.endDate = moment(this.startDate)
+      .add(this.view.slots * this.view.slotSize - 1, "days")
+      .toDate();
+    this.endDateUTC =
+      moment(this.endDate)
+        .utc()
+        .valueOf() -
+      moment(this.endDate).utcOffset() * 60 * 1000 +
+      "";
+    this.formattedEndDate = this.endDate.toLocaleDateString();
+
+    const dayNames = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+    let today = new Date();
+    today.setHours(0, 0, 0, 0);
+    today = today.getTime();
+
+    let dates = {};
+
+    for (
+      let date = moment(this.startDate);
+      date <= moment(this.endDate);
+      date.add(this.view.slotSize, "days")
+    ) {
+      let index = date.format("YYYYMM");
+      if (!dates[index]) {
+        dates[index] = {
+          name: date.format("MMMM"),
+          days: []
+        };
+      }
+
+      let day = {
+        class:
+          "slds-col slds-p-vertical_x-small slds-m-top_x-small lwc-timeline_day",
+        label: date.format("M/D"),
+        dayName: date.format("ddd"),
+        start: date.toDate()
+      };
+
+      if (this.view.slotSize > 1) {
+        let end = moment(date).add(this.view.slotSize - 1, "days");
+        day.end = end.toDate();
+      } else {
+        day.end = date.toDate();
+        if (date.day() === 0) {
+          day.class = day.class + " lwc-is-week-end";
         }
-        this.setStartDate(new Date());
+      }
+
+      if (today >= day.start && today <= day.end) {
+        day.class += " lwc-is-today";
+      }
+
+      dates[index].days.push(day);
+      dates[index].style =
+        "width: calc(" +
+        dates[index].days.length +
+        "/" +
+        this.view.slots +
+        "*100%)";
     }
 
-    // catch blur on allocation menus
-    closeDropdowns() {
-        Array.from(this.template.querySelectorAll('.lwc-resource-component')).forEach(row => {
-            row.closeAllocationMenu();
-        });
-    }
+    // reorder index
+    this.dates = Object.values(dates);
 
-    
-    /*** Navigation ***/
-    setStartDate(_startDate) {
-        if (_startDate instanceof Date && !isNaN(_startDate)) {
-            _startDate.setHours(0, 0, 0, 0);
+    Array.from(
+      this.template.querySelectorAll("c-gantt_chart_resource")
+    ).forEach(resource => {
+      resource.refreshDates(this.startDate, this.endDate, this.view.slotSize);
+    });
+  }
 
-            this.datePickerString = _startDate.toISOString();
+  navigateToToday() {
+    this.setStartDate(new Date());
+  }
 
-            _startDate.setDate(_startDate.getDate() - _startDate.getDay() + 1);
+  navigateToPrevious() {
+    let _startDate = new Date(this.startDate);
+    _startDate.setDate(_startDate.getDate() - this.dateShift);
 
-            this.startDate = _startDate;
-            this.startDateUTC = this.startDate.getTime() + this.startDate.getTimezoneOffset() * 60 * 1000 + '';
-            this.formattedStartDate = this.startDate.toLocaleDateString();
+    this.setStartDate(_startDate);
+  }
 
-            this.setDateHeaders();
-            this.handleRefresh();
-        } else {
-            this.dispatchEvent(new ShowToastEvent({
-                message: 'Invalid Date',
-                variant: 'error'
-            }));
-        }
-    }
+  navigateToNext() {
+    let _startDate = new Date(this.startDate);
+    _startDate.setDate(_startDate.getDate() + this.dateShift);
 
-    setDateHeaders() {
-        this.endDate = new Date(this.startDate);
-        this.endDate.setDate(this.endDate.getDate() + this.view.slots * this.view.slotSize - 1);
-        this.endDateUTC = this.endDate.getTime() + this.endDate.getTimezoneOffset() * 60 * 1000 + '';
-        this.formattedEndDate = this.endDate.toLocaleDateString();
+    this.setStartDate(_startDate);
+  }
 
-        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-        const dayNames = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
-        let today = new Date();
-        today.setHours(0, 0, 0, 0);
-        today = today.getTime();
+  navigateToDay(event) {
+    this.setStartDate(new Date(event.target.value + "T00:00:00"));
+  }
 
-        let dates = {};
+  setView(value) {
+    let values = value.split("/");
+    this.view.value = value;
+    this.view.slotSize = parseInt(value[0], 10);
+    this.view.slots = parseInt(values[1], 10);
+    this.setDateHeaders();
+    this.handleRefresh();
+  }
 
-        for (let date = new Date(this.startDate); date <= this.endDate; date.setDate(date.getDate() + this.view.slotSize)) {
-            let index = date.getFullYear() * 100 + date.getMonth();
-            if (!dates[index]) {
-                dates[index] = {
-                    name: monthNames[date.getMonth()],
-                    days: []
-                };
-            }
+  handleViewChange(event) {
+    this.setView(event.target.value);
+  }
+  /*** /Navigation ***/
 
-            let day = {
-                class: 'slds-col slds-p-vertical_x-small slds-m-top_x-small lwc-timeline_day',
-                label: (date.getMonth() + 1) + '/' + date.getDate(),
-                dayName: dayNames[date.getDay()],
-                start: date
-            }
-
-            if (this.view.slotSize > 1) {
-                let end = new Date(date);
-                end.setDate(end.getDate() + this.view.slotSize - 1);
-                day.label = day.label;
-                day.end = end;
-                day.dayName = '';
-            } else {
-                day.end = date;
-                if (date.getDay() === 0) {
-                    day.class = day.class + ' lwc-is-week-end';
-                }
-            }
-
-            if (today >= day.start && today <= day.end) {
-                day.class += ' lwc-is-today';
-            }
-
-            dates[index].days.push(day);
-            dates[index].style = 'width: calc(' + dates[index].days.length + '/' + this.view.slots + '*100%)';
-        }
-
-        // reorder index
-        this.dates = Object.values(dates);
-
-        Array.from(this.template.querySelectorAll('c-gantt_chart_resource')).forEach(resource => {
-            resource.refreshDates(this.startDate, this.endDate, this.view.slotSize);
-        });
-    }
-
-    navigateToToday() {
-        this.setStartDate(new Date());
-    }
-
-    navigateToPrevious() {
-        let _startDate = new Date(this.startDate);
-        _startDate.setDate(_startDate.getDate() - this.dateShift);
-
-        this.setStartDate(_startDate);
-    }
-
-    navigateToNext() {
-        let _startDate = new Date(this.startDate);
-        _startDate.setDate(_startDate.getDate() + this.dateShift);
-
-        this.setStartDate(_startDate);
-    }
-
-    navigateToDay(event) {
-        this.setStartDate(new Date(event.target.value + 'T00:00:00'));
-    }
-    
-    setView(value) {
-        let values = value.split('/');
-        this.view.value = value;
-        this.view.slotSize = parseInt(value[0], 10);
-        this.view.slots = parseInt(values[1], 10);
-        this.setDateHeaders();
-        this.handleRefresh();
-    }
-
-    handleViewChange(event) {
-        this.setView(event.target.value);
-    }
-    /*** /Navigation ***/
-
-    /*** Resource Modal ***/
-    openAddResourceModal() {
-        getResources().then(resources => {
-            let excludeResources = this.resources;
-            this.resourceModalData = {
-                disabled: true,
-                resources: resources.filter(resource => {
-                    return excludeResources.filter(excludeResource => {
-                        return excludeResource.Id === resource.Id
-                    }).length === 0;
-                }).map(resource => {
-                    return {
-                        label: resource.Name,
-                        value: resource.Id,
-                        role: resource.Default_Role__c
-                    }
-                })
-            }
-
-            this.template.querySelector('.resource-modal').show();
-        }).catch(error => {
-            this.dispatchEvent(new ShowToastEvent({
-                message: error.message,
-                variant: 'error'
-            }));
-        });
-    }
-
-    handleResourceSelect(event) {
-        let self = this;
-
-        self.resourceModalData.resources.forEach(resource => {
-            if (resource.value === event.target.value) {
-                self.resourceModalData.resource = {
-                    Id: resource.value,
-                    Name: resource.label,
-                    Default_Role__c: resource.role
-                };
-            }
-        });
-
-        this.validateResourceModalData();
-    }
-
-    validateResourceModalData() {
-        if (!this.resourceModalData.resource) {
-            this.resourceModalData.disabled = true;
-        } else {
-            this.resourceModalData.disabled = false;
-        }
-    }
-
-    addResourceById() {
-        let newResource = Object.assign({}, this.resourceModalData.resource);
-        newResource.allocationsByProject = [];
-        this.resources = this.resources.concat([newResource]);
-
-        this.template.querySelector('.resource-modal').hide();
-
+  /*** Resource Modal ***/
+  openAddResourceModal() {
+    getResources()
+      .then(resources => {
+        let excludeResources = this.resources;
         this.resourceModalData = {
-            disabled: true,
-            resources: []
+          disabled: true,
+          resources: resources
+            .filter(resource => {
+              return (
+                excludeResources.filter(excludeResource => {
+                  return excludeResource.Id === resource.Id;
+                }).length === 0
+              );
+            })
+            .map(resource => {
+              return {
+                label: resource.Name,
+                value: resource.Id,
+                role: resource.Default_Role__c
+              };
+            })
         };
+
+        this.template.querySelector(".resource-modal").show();
+      })
+      .catch(error => {
+        this.dispatchEvent(
+          new ShowToastEvent({
+            message: error.body.message,
+            variant: "error"
+          })
+        );
+      });
+  }
+
+  handleResourceSelect(event) {
+    let self = this;
+
+    self.resourceModalData.resources.forEach(resource => {
+      if (resource.value === event.target.value) {
+        self.resourceModalData.resource = {
+          Id: resource.value,
+          Name: resource.label,
+          Default_Role__c: resource.role
+        };
+      }
+    });
+
+    this.validateResourceModalData();
+  }
+
+  validateResourceModalData() {
+    if (!this.resourceModalData.resource) {
+      this.resourceModalData.disabled = true;
+    } else {
+      this.resourceModalData.disabled = false;
     }
-    /*** /Resource Modal ***/
+  }
 
-    /*** Filter Modal ***/
-    stopProp(event) {
-        event.stopPropagation();
+  addResourceById() {
+    let newResource = Object.assign({}, this.resourceModalData.resource);
+    newResource.allocationsByProject = [];
+    this.resources = this.resources.concat([newResource]);
+
+    this.template.querySelector(".resource-modal").hide();
+
+    this.resourceModalData = {
+      disabled: true,
+      resources: []
+    };
+  }
+  /*** /Resource Modal ***/
+
+  /*** Filter Modal ***/
+  stopProp(event) {
+    event.stopPropagation();
+  }
+
+  clearFocus() {
+    this.filterModalData.focus = null;
+  }
+
+  openFilterModal() {
+    this.filterModalData.projects = Object.assign(
+      [],
+      this._filterData.projects
+    );
+    this.filterModalData.roles = Object.assign([], this._filterData.roles);
+    this.filterModalData.status = this._filterData.status;
+    this.template.querySelector(".filter-modal").show();
+  }
+
+  filterProjects(event) {
+    this.hideDropdowns();
+
+    let text = event.target.value;
+
+    getProjects().then(projects => {
+      // only show projects not selected
+      this.filterModalData.projectOptions = projects.filter(project => {
+        return (
+          project.Name &&
+          project.Name.toLowerCase().includes(text.toLowerCase()) &&
+          !this.filterModalData.projects.filter(p => {
+            return p.id === project.Id;
+          }).length
+        );
+      });
+      this.filterModalData.focus = "projects";
+    });
+  }
+
+  addProjectFilter(event) {
+    this.filterModalData.projects.push(
+      Object.assign({}, event.currentTarget.dataset)
+    );
+    this.filterModalData.focus = null;
+
+    this.setFilterModalDataDisable();
+  }
+
+  removeProjectFilter(event) {
+    this.filterModalData.projects.splice(event.currentTarget.dataset.index, 1);
+    this.setFilterModalDataDisable();
+  }
+
+  filterRoles(event) {
+    this.hideDropdowns();
+
+    let text = event.target.value;
+
+    // only show roles not selected
+    this.filterModalData.roleOptions = this.roles
+      .filter(role => {
+        return (
+          role.toLowerCase().includes(text.toLowerCase()) &&
+          !this.filterModalData.roles.filter(r => {
+            return r === role;
+          }).length
+        );
+      })
+      .map(role => {
+        return role;
+      });
+    this.filterModalData.focus = "roles";
+  }
+
+  addRoleFilter(event) {
+    this.filterModalData.roles.push(event.currentTarget.dataset.role);
+    this.filterModalData.focus = null;
+    this.setFilterModalDataDisable();
+  }
+
+  removeRoleFilter(event) {
+    this.filterModalData.roles.splice(event.currentTarget.dataset.index, 1);
+    this.setFilterModalDataDisable();
+  }
+
+  setStatusFilter(event) {
+    this.filterModalData.status = event.currentTarget.value;
+    this.setFilterModalDataDisable();
+  }
+
+  clearFilters() {
+    this.filterModalData.projects = [];
+    this.filterModalData.roles = [];
+    this.filterModalData.status = "";
+    this.filterModalData.disabled = true;
+  }
+
+  setFilterModalDataDisable() {
+    this.filterModalData.disabled = true;
+
+    if (
+      this.filterModalData.projects.length > 0 ||
+      this.filterModalData.roles.length > 0 ||
+      this.filterModalData.status !== ""
+    ) {
+      this.filterModalData.disabled = false;
+    }
+  }
+
+  hideDropdowns() {
+    // prevent menu from closing if focused
+    if (this.filterModalData.focus) {
+      return;
+    }
+    this.filterModalData.projectOptions = [];
+    this.filterModalData.roleOptions = [];
+  }
+
+  applyFilters() {
+    this._filterData = {
+      projects: Object.assign([], this.filterModalData.projects),
+      roles: Object.assign([], this.filterModalData.roles),
+      status: this.filterModalData.status
+    };
+
+    let filters = [];
+    if (this.filterModalData.projects.length) {
+      filters.push("Projects");
+    }
+    if (this.filterModalData.roles.length) {
+      filters.push("Roles");
+    }
+    if (this.filterModalData.status) {
+      filters.push("Status");
     }
 
-    clearFocus() {
-        this.filterModalData.focus = null;
+    if (filters.length) {
+      this._filterData.message = "Filtered By " + filters.join(", ");
     }
 
-    openFilterModal() {
-        this.filterModalData.projects = Object.assign([], this._filterData.projects);
-        this.filterModalData.roles = Object.assign([], this._filterData.roles);
-        this.filterModalData.status = this._filterData.status;
-        this.template.querySelector('.filter-modal').show();
-    }
+    this.handleRefresh();
+    this.template.querySelector(".filter-modal").hide();
+  }
+  /*** /Filter Modal ***/
 
-    filterProjects(event) {
-        this.hideDropdowns();
+  @wire(getChartData, {
+    recordId: "$recordId",
+    startTime: "$startDateUTC",
+    endTime: "$endDateUTC",
+    slotSize: "$view.slotSize",
+    filterProjects: "$_filterData.projectIds",
+    filterRoles: "$_filterData.roles",
+    filterStatus: "$_filterData.status"
+  })
+  wiredData({ error, data }) {
+    if (data) {
+      this.isResourceView =
+        typeof this.objectApiName !== "undefined" &&
+        this.objectApiName.endsWith("Resource__c");
+      this.isProjectView =
+        typeof this.objectApiName !== "undefined" &&
+        this.objectApiName.endsWith("Project__c");
+      this.projectId = data.projectId;
+      this.projects = data.projects;
+      this.roles = data.roles;
 
-        let text = event.target.value;
+      // empty old data
+      // we want to keep resources we've already seen
+      this.resources.forEach((resource, i) => {
+        this.resources[i] = {
+          Id: resource.Id,
+          Name: resource.Name,
+          Default_Role__c: resource.Default_Role__c,
+          allocationsByProject: {}
+        };
+      });
 
-        getProjects().then(projects => {
-            // only show projects not selected
-            this.filterModalData.projectOptions = projects.filter(project => {
-                return project.Name && project.Name.toLowerCase().includes(text.toLowerCase()) && !this.filterModalData.projects.filter(p => {
-                    return p.id === project.Id;
-                }).length;
-            });
-            this.filterModalData.focus = 'projects';
-        });
-    }
-
-    addProjectFilter(event) {
-        this.filterModalData.projects.push(Object.assign({}, event.currentTarget.dataset));
-        this.filterModalData.focus = null;
-
-        this.setFilterModalDataDisable();
-    }
-
-    removeProjectFilter(event) {
-        this.filterModalData.projects.splice(event.currentTarget.dataset.index, 1);
-        this.setFilterModalDataDisable();
-    }
-
-    filterRoles(event) {
-        this.hideDropdowns();
-
-        let text = event.target.value;
-
-        getResources().then(resources => {
-            // only show roles not selected
-            this.filterModalData.roleOptions = resources.filter(resource => {
-                return resource.Default_Role__c.toLowerCase().includes(text.toLowerCase()) && !this.filterModalData.roles.filter(r => {
-                    return r === resource.Default_Role__c;
-                }).length;
-            }).map(resource => {
-                return resource.Default_Role__c
-            });
-            this.filterModalData.focus = 'roles';
-        });
-    }
-
-    addRoleFilter(event) {
-        this.filterModalData.roles.push(event.currentTarget.dataset.role);
-        this.filterModalData.focus = null;
-        this.setFilterModalDataDisable();
-    }
-
-    removeRoleFilter(event) {
-        this.filterModalData.roles.splice(event.currentTarget.dataset.index, 1);
-        this.setFilterModalDataDisable();
-    }
-
-    setStatusFilter(event) {
-        this.filterModalData.status = event.currentTarget.value;
-        this.setFilterModalDataDisable();
-    }
-
-    clearFilters() {
-        this.filterModalData.projects = [];
-        this.filterModalData.roles = [];
-        this.filterModalData.status = '';
-        this.filterModalData.disabled = true;
-    }
-
-    setFilterModalDataDisable() {
-        this.filterModalData.disabled = true;
-        
-        if (this.filterModalData.projects.length > 0 || this.filterModalData.roles.length > 0 || this.filterModalData.status !== '') {
-            this.filterModalData.disabled = false;
-        }
-    }
-
-    hideDropdowns() {
-        // prevent menu from closing if focused
-        if (this.filterModalData.focus) {
+      data.resources.forEach(newResource => {
+        for (let i = 0; i < this.resources.length; i++) {
+          if (this.resources[i].Id === newResource.Id) {
+            this.resources[i] = newResource;
             return;
+          }
         }
-        this.filterModalData.projectOptions = [];
-        this.filterModalData.roleOptions = [];
+
+        this.resources.push(newResource);
+      });
+    } else if (error) {
+      this.dispatchEvent(
+        new ShowToastEvent({
+          message: error.message,
+          variant: "error"
+        })
+      );
     }
+  }
 
-    applyFilters() {
-        this._filterData = {
-            projects: Object.assign([], this.filterModalData.projects),
-            roles: Object.assign([], this.filterModalData.roles),
-            status: this.filterModalData.status
-        };
+  handleRefresh() {
+    this._filterData.projectIds = this._filterData.projects.map(project => {
+      return project.id;
+    });
 
-        let filters = [];
-        if (this.filterModalData.projects.length) {
-            filters.push('Projects');
-        }
-        if (this.filterModalData.roles.length) {
-            filters.push('Roles');
-        }
-        if (this.filterModalData.status) {
-            filters.push('Status');
-        }
+    refreshApex(this.wiredData);
 
-        if (filters.length) {
-            this._filterData.message = 'Filtered By ' + filters.join(', ');
-        }
+    // getChartData({
+    //     recordId: self.recordId ? self.recordId : '',
+    //     startTime: self.startDateUTC,
+    //     endTime: self.endDateUTC,
+    //     slotSize: self.view.slotSize,
+    //     filterProjects: filterProjectIds,
+    //     filterRoles: self._filterData.roles,
+    //     filterStatus: self._filterData.status
+    // }).then(data => {
+    //     self.isResourceView = typeof self.objectApiName !== 'undefined' && self.objectApiName.endsWith('Resource__c');
+    //     self.isProjectView = typeof self.objectApiName !== 'undefined' && self.objectApiName.endsWith('Project__c');
+    //     self.projectId = data.projectId;
+    //     self.projects = data.projects;
+    //     self.roles = data.roles;
 
-        this.handleRefresh();
-        this.template.querySelector('.filter-modal').hide();
-    }
-    /*** /Filter Modal ***/
+    //     // empty old data
+    //     // we want to keep resources we've already seen
+    //     self.resources.forEach(function (resource, i) {
+    //         self.resources[i] = {
+    //             Id: resource.Id,
+    //             Name: resource.Name,
+    //             Default_Role__c: resource.Default_Role__c,
+    //             allocationsByProject: {}
+    //         };
+    //     });
 
-    handleRefresh() {
-        let self = this;
-        let filterProjectIds = self._filterData.projects.map(project => {
-            return project.id;
-        });
+    //     data.resources.forEach(function (newResource) {
+    //         for (let i = 0; i < self.resources.length; i++) {
+    //             if (self.resources[i].Id === newResource.Id) {
+    //                 self.resources[i] = newResource;
+    //                 return;
+    //             }
+    //         }
 
-        getChartData({
-            recordId: self.recordId ? self.recordId : '',
-            startTime: self.startDateUTC,
-            endTime: self.endDateUTC,
-            slotSize: self.view.slotSize,
-            filterProjects: filterProjectIds,
-            filterRoles: self._filterData.roles,
-            filterStatus: self._filterData.status
-        }).then(data => {
-            self.isResourceView = self.recordId && !data.projectId;
-            self.projectId = data.projectId;
-            self.projects = data.projects;
-            self.roles = data.roles;
-
-            // empty old data
-            // we want to keep resources we've already seen
-            self.resources.forEach(function (resource, i) {
-                self.resources[i] = {
-                    Id: resource.Id,
-                    Name: resource.Name,
-                    Default_Role__c: resource.Default_Role__c,
-                    allocationsByProject: {}
-                };
-            });
-
-            data.resources.forEach(function (newResource) {
-                for (let i = 0; i < self.resources.length; i++) {
-                    if (self.resources[i].Id === newResource.Id) {
-                        self.resources[i] = newResource;
-                        return;
-                    }
-                }
-
-                self.resources.push(newResource);
-            });
-        }).catch(error => {
-            this.dispatchEvent(new ShowToastEvent({
-                message: error.message,
-                variant: 'error'
-            }));
-        });
-    }
+    //         self.resources.push(newResource);
+    //     });
+    // }).catch(error => {
+    //     this.dispatchEvent(new ShowToastEvent({
+    //         message: error.body.message,
+    //         variant: 'error'
+    //     }));
+    // });
+  }
 }
