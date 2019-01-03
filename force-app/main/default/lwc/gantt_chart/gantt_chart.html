@@ -8,7 +8,7 @@
           <div class="slds-col slds-grow-none slds-col_bump-right">
             <lightning-button-icon
               icon-name="utility:filterList"
-              onclick="{openFilterModal}"
+              onclick={openFilterModal}
             ></lightning-button-icon>
           </div>
           <!-- /Filter Button -->
@@ -27,16 +27,16 @@
               <lightning-button-icon
                 icon-name="utility:left"
                 variant="border-filled"
-                onclick="{navigateToPrevious}"
+                onclick={navigateToPrevious}
               ></lightning-button-icon>
               <lightning-button
                 label="Today"
-                onclick="{navigateToToday}"
+                onclick={navigateToToday}
               ></lightning-button>
               <lightning-button-icon
                 icon-name="utility:right"
                 variant="border-filled"
-                onclick="{navigateToNext}"
+                onclick={navigateToNext}
               ></lightning-button-icon>
             </div>
             <div class="slds-show_inline-block">
@@ -46,16 +46,16 @@
                 name="select-date"
                 variant="label-hidden"
                 class="lwc-datepicker slds-m-left_small"
-                value="{datePickerString}"
-                onchange="{navigateToDay}"
+                value={datePickerString}
+                onchange={navigateToDay}
               ></lightning-input>
             </div>
             <!-- View Select -->
             <div class="slds-show_inline-block">
               <lightning-combobox
-                value="{view.value}"
-                options="{view.options}"
-                onchange="{handleViewChange}"
+                value={view.value}
+                options={view.options}
+                onchange={handleViewChange}
                 variant="label-hidden"
                 class="slds-m-left_small"
               ></lightning-combobox>
@@ -65,7 +65,7 @@
           <!-- /Date Navigation -->
         </div>
         <!-- Filter Status -->
-        <div if:true="{_filterData.message}" class="slds-m-top_x-small">
+        <div if:true={_filterData.message} class="slds-m-top_x-small">
           <p class="slds-text-body_small slds-text-color_weak">
             {_filterData.message}
           </p>
@@ -79,7 +79,7 @@
         <!-- Timeline -->
         <div class="slds-grid lwc-timeline">
           <div
-            if:false="{isResourceView}"
+            if:false={isResourceView}
             class="slds-col slds-size_1-of-6 slds-align-bottom "
           >
             <div class="slds-text-heading_medium slds-p-around_small">
@@ -88,11 +88,11 @@
           </div>
           <div class="slds-col">
             <div class="slds-grid">
-              <template for:each="{dates}" for:item="date">
+              <template for:each={dates} for:item="date">
                 <div
-                  key="{date}"
+                  key={date}
                   class="slds-col lwc-timeline_month-container"
-                  style="{date.style}"
+                  style={date.style}
                 >
                   <div class="slds-grid">
                     <div class="slds-col slds-has-flexi-truncate">
@@ -104,9 +104,9 @@
                     </div>
                   </div>
                   <div class="slds-grid">
-                    <template for:each="{date.days}" for:item="day">
-                      <div key="{day}" class="{day.class}">
-                        <div if:true="{day.dayName}">{day.dayName}</div>
+                    <template for:each={date.days} for:item="day">
+                      <div key={day} class={day.class}>
+                        <div if:true={day.dayName}>{day.dayName}</div>
                         <div>{day.label}</div>
                       </div>
                     </template>
@@ -120,18 +120,18 @@
 
         <!-- Allocation Table -->
         <!-- Resource Rows -->
-        <template if:true="{resources.length}">
-          <template for:each="{resources}" for:item="resource">
+        <template if:true={resources.length}>
+          <template for:each={resources} for:item="resource">
             <c-gantt_chart_resource
-              key="{resource.Id}"
+              key={resource.Id}
               class="lwc-resource-component"
-              is-resource-view="{isResourceView}"
-              resource="{resource}"
-              project-id="{projectId}"
-              date-increment="{view.slotSize}"
-              start-date="{startDate}"
-              end-date="{endDate}"
-              onrefresh="{handleRefresh}"
+              is-resource-view={isResourceView}
+              resource={resource}
+              project-id={projectId}
+              date-increment={view.slotSize}
+              start-date={startDate}
+              end-date={endDate}
+              onrefresh={handleRefresh}
             ></c-gantt_chart_resource>
           </template>
         </template>
@@ -139,7 +139,7 @@
 
         <!-- Empty State -->
         <div
-          if:false="{resources.length}"
+          if:false={resources.length}
           class="slds-text-align_center slds-p-around_medium"
         >
           <span class="slds-text-color_weak">No Resources to Show</span>
@@ -148,12 +148,12 @@
         <!-- /Allocation Table -->
 
         <!-- Add Resource Button -->
-        <div if:true="{isProjectView}" class="slds-m-top_medium">
+        <div if:true={isProjectView} class="slds-m-top_medium">
           <lightning-button
             variant="neutral"
             label="Add Resource"
             icon-name="utility:add"
-            onclick="{openAddResourceModal}"
+            onclick={openAddResourceModal}
           ></lightning-button>
         </div>
         <!-- /Add Resource Button -->
@@ -169,63 +169,63 @@
     <div slot="body" class="slds-form slds-form_stacked">
       <lightning-combobox
         label="Who is working on this?"
-        options="{resourceModalData.resources}"
+        options={resourceModalData.resources}
         placeholder="-- Select Resource --"
-        onchange="{handleResourceSelect}"
+        onchange={handleResourceSelect}
       ></lightning-combobox>
     </div>
     <lightning-button
       slot="footer"
       variant="brand"
       label="Add Resource"
-      onclick="{addResourceById}"
+      onclick={addResourceById}
       class="slds-m-left_xx-small"
-      disabled="{resourceModalData.disabled}"
+      disabled={resourceModalData.disabled}
     ></lightning-button>
   </c-gantt_chart_modal>
   <!-- /Add Resource Modal -->
 
   <!-- Filter Modal -->
-  <c-gantt_chart_modal class="filter-modal" onclick="{hideDropdowns}">
+  <c-gantt_chart_modal class="filter-modal" onclick={hideDropdowns}>
     <span slot="title">Filter</span>
     <div slot="body" class="slds-form slds-form_stacked">
       <div class="slds-text-align_right">
         <lightning-button
           label="Remove All"
           variant="base"
-          onclick="{clearFilters}"
-          disabled="{filterModalData.disabled}"
+          onclick={clearFilters}
+          disabled={filterModalData.disabled}
         ></lightning-button>
       </div>
-      <div if:false="{isProjectView}" class="slds-form-element">
+      <div if:false={isProjectView} class="slds-form-element">
         <lightning-input
           type="search"
           label="Project"
           name="project-search"
-          value="{filterModalData.projectSearch}"
-          onchange="{filterProjects}"
-          onfocus="{filterProjects}"
-          onblur="{clearFocus}"
+          value={filterModalData.projectSearch}
+          onchange={filterProjects}
+          onfocus={filterProjects}
+          onblur={clearFocus}
         ></lightning-input>
         <div
-          if:true="{filterModalData.projectOptions.length}"
+          if:true={filterModalData.projectOptions.length}
           class="slds-dropdown slds-dropdown_fluid slds-scrollable_y"
           role="listbox"
         >
           <ul class="slds-listbox slds-listbox_vertical" role="presentation">
             <template
-              for:each="{filterModalData.projectOptions}"
+              for:each={filterModalData.projectOptions}
               for:item="project"
             >
               <li
-                key="{project}"
+                key={project}
                 role="presentation"
                 class="slds-listbox__item"
               >
                 <div
-                  onclick="{addProjectFilter}"
-                  data-id="{project.Id}"
-                  data-name="{project.Name}"
+                  onclick={addProjectFilter}
+                  data-id={project.Id}
+                  data-name={project.Name}
                   class="slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta"
                   role="option"
                 >
@@ -236,41 +236,41 @@
           </ul>
         </div>
         <template
-          for:each="{filterModalData.projects}"
+          for:each={filterModalData.projects}
           for:item="project"
           for:index="index"
         >
           <lightning-pill
-            key="{project.name}"
-            value="{project.name}"
-            label="{project.name}"
-            onremove="{removeProjectFilter}"
-            data-index="{index}"
+            key={project.name}
+            value={project.name}
+            label={project.name}
+            onremove={removeProjectFilter}
+            data-index={index}
           ></lightning-pill>
         </template>
       </div>
 
-      <div if:false="{isResourceView}" class="slds-form-element">
+      <div if:false={isResourceView} class="slds-form-element">
         <lightning-input
           type="search"
           label="Role"
           name="role-search"
-          value="{filterModalData.roleSearch}"
-          onchange="{filterRoles}"
-          onfocus="{filterRoles}"
-          onblur="{clearFocus}"
+          value={filterModalData.roleSearch}
+          onchange={filterRoles}
+          onfocus={filterRoles}
+          onblur={clearFocus}
         ></lightning-input>
         <div
-          if:true="{filterModalData.roleOptions.length}"
+          if:true={filterModalData.roleOptions.length}
           class="slds-dropdown slds-dropdown_fluid slds-scrollable_y"
           role="listbox"
         >
           <ul class="slds-listbox slds-listbox_vertical" role="presentation">
-            <template for:each="{filterModalData.roleOptions}" for:item="role">
-              <li key="{role}" role="presentation" class="slds-listbox__item">
+            <template for:each={filterModalData.roleOptions} for:item="role">
+              <li key={role} role="presentation" class="slds-listbox__item">
                 <div
-                  onclick="{addRoleFilter}"
-                  data-role="{role}"
+                  onclick={addRoleFilter}
+                  data-role={role}
                   class="slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta"
                   role="option"
                 >
@@ -281,32 +281,32 @@
           </ul>
         </div>
         <template
-          for:each="{filterModalData.roles}"
+          for:each={filterModalData.roles}
           for:item="role"
           for:index="index"
         >
           <lightning-pill
-            key="{role}"
-            value="{role}"
-            label="{role}"
-            onremove="{removeRoleFilter}"
-            data-index="{index}"
+            key={role}
+            value={role}
+            label={role}
+            onremove={removeRoleFilter}
+            data-index={index}
           ></lightning-pill>
         </template>
       </div>
 
       <lightning-combobox
-        value="{filterModalData.status}"
+        value={filterModalData.status}
         label="Status"
-        options="{filterModalData.statusOptions}"
-        onchange="{setStatusFilter}"
+        options={filterModalData.statusOptions}
+        onchange={setStatusFilter}
       ></lightning-combobox>
     </div>
     <lightning-button
       slot="footer"
       variant="brand"
       label="Apply"
-      onclick="{applyFilters}"
+      onclick={applyFilters}
       class="slds-m-left_xx-small"
     ></lightning-button>
   </c-gantt_chart_modal>

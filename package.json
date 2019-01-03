@@ -47,6 +47,7 @@
     ]
   },
   "dependencies": {
+    "acorn": "^6.0.5",
     "moment": "^2.23.0"
   }
 }
