@@ -1,13 +1,13 @@
-.slds-scope {
-    min-width: 925px;
-}
-
 .lwc-datepicker {
     display: inline-block;
 }
 
 .lwc-datepicker .slds-has-error .slds-form-element__help {
     display: none;
+}
+
+.lwc-chart_container {
+    min-width: 725px;
 }
 
 .lwc-timeline > .slds-col:first-child {

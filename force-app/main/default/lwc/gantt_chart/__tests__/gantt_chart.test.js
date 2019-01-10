@@ -9,13 +9,34 @@ jest.mock('@salesforce/apex', () => {
 
 jest.mock('lightning/platformResourceLoader', () => {
     return {
-        loadScript: jest.fn()
-    }
-}, { virtual: true });
+        loadScript: function () {
+            return new Promise((resolve) => {
+                global.moment = function() {
+                    return {
+                        "day": function() {
+                            return this;
+                        },
+                        "toDate": function() {
+                            return this;
+                        },
+                        "utc": function() {
+                            return this;
+                        },
+                        "valueOf": function() {
+                            return 0;
+                        },
+                        "utfOffset": function() {
+                            return 0;
+                        },
+                        "toLocaleDateString": function() {
+                            return '1';
+                        }
+                    };
+                };
 
-jest.mock('@salesforce/resourceUrl/momentJS', () => {
-    return {
-        moment: jest.fn()
+                resolve();
+            });
+        }
     }
 }, { virtual: true });
 
@@ -42,7 +63,7 @@ describe('ganttChart init', () => {
         document.body.appendChild(element);
 
         return Promise.resolve().then(() => {
-            const header = element.querySelector('h1');
+            const header = element.shadowRoot.querySelector('h1');
             expect(header.textContent).toBe(expectedHeader);
         });
     });
