@@ -477,108 +477,108 @@ export default class GanttChart extends LightningElement {
   }
   /*** /Filter Modal ***/
 
-  // @wire(getChartData, {
-  //   recordId: "$recordId",
-  //   startTime: "$startDateUTC",
-  //   endTime: "$endDateUTC",
-  //   slotSize: "$view.slotSize",
-  //   filterProjects: "$_filterData.projectIds",
-  //   filterRoles: "$_filterData.roles",
-  //   filterStatus: "$_filterData.status"
-  // })
-  // wiredChartData(value) {
-  //   const {error, data} = value;
-  //   this.wiredData = value;
+  @wire(getChartData, {
+    recordId: "$recordId",
+    startTime: "$startDateUTC",
+    endTime: "$endDateUTC",
+    slotSize: "$view.slotSize",
+    filterProjects: "$_filterData.projectIds",
+    filterRoles: "$_filterData.roles",
+    filterStatus: "$_filterData.status"
+  })
+  wiredChartData(value) {
+    const {error, data} = value;
+    this.wiredData = value;
     
-  //   if (data) {
-  //     this.isResourceView =
-  //       typeof this.objectApiName !== "undefined" &&
-  //       this.objectApiName.endsWith("Resource__c");
-  //     this.isProjectView =
-  //       typeof this.objectApiName !== "undefined" &&
-  //       this.objectApiName.endsWith("Project__c");
-  //     this.projectId = data.projectId;
-  //     this.projects = data.projects;
-  //     this.roles = data.roles;
+    if (data) {
+      this.isResourceView =
+        typeof this.objectApiName !== "undefined" &&
+        this.objectApiName.endsWith("Resource__c");
+      this.isProjectView =
+        typeof this.objectApiName !== "undefined" &&
+        this.objectApiName.endsWith("Project__c");
+      this.projectId = data.projectId;
+      this.projects = data.projects;
+      this.roles = data.roles;
 
-  //     // empty old data
-  //     // we want to keep resources we've already seen
-  //     this.resources.forEach((resource, i) => {
-  //       this.resources[i] = {
-  //         Id: resource.Id,
-  //         Name: resource.Name,
-  //         Default_Role__c: resource.Default_Role__c,
-  //         allocationsByProject: {}
-  //       };
-  //     });
+      // empty old data
+      // we want to keep resources we've already seen
+      this.resources.forEach((resource, i) => {
+        this.resources[i] = {
+          Id: resource.Id,
+          Name: resource.Name,
+          Default_Role__c: resource.Default_Role__c,
+          allocationsByProject: {}
+        };
+      });
 
-  //     data.resources.forEach(newResource => {
-  //       for (let i = 0; i < this.resources.length; i++) {
-  //         if (this.resources[i].Id === newResource.Id) {
-  //           this.resources[i] = newResource;
-  //           return;
-  //         }
-  //       }
+      data.resources.forEach(newResource => {
+        for (let i = 0; i < this.resources.length; i++) {
+          if (this.resources[i].Id === newResource.Id) {
+            this.resources[i] = newResource;
+            return;
+          }
+        }
 
-  //       this.resources.push(newResource);
-  //     });
-  //   } else if (error) {
-  //     this.dispatchEvent(
-  //       new ShowToastEvent({
-  //         message: error.message,
-  //         variant: "error"
-  //       })
-  //     );
-  //   }
-  // }
+        this.resources.push(newResource);
+      });
+    } else if (error) {
+      this.dispatchEvent(
+        new ShowToastEvent({
+          message: error.message,
+          variant: "error"
+        })
+      );
+    }
+  }
 
   handleRefresh() {
-    // refreshApex(this.wiredData);
-    let self = this;
+    refreshApex(this.wiredData);
+    // let self = this;
 
-    getChartData({
-        recordId: self.recordId ? self.recordId : '',
-        startTime: self.startDateUTC,
-        endTime: self.endDateUTC,
-        slotSize: self.view.slotSize,
-        filterProjects: self._filterData.projectIds,
-        filterRoles: self._filterData.roles,
-        filterStatus: self._filterData.status
-    }).then(data => {
-        self.isResourceView = typeof self.objectApiName !== 'undefined' && self.objectApiName.endsWith('Resource__c');
-        self.isProjectView = typeof self.objectApiName !== 'undefined' && self.objectApiName.endsWith('Project__c');
-        self.projectId = data.projectId;
-        self.projects = data.projects;
-        self.roles = data.roles;
+    // getChartData({
+    //     recordId: self.recordId ? self.recordId : '',
+    //     startTime: self.startDateUTC,
+    //     endTime: self.endDateUTC,
+    //     slotSize: self.view.slotSize,
+    //     filterProjects: self._filterData.projectIds,
+    //     filterRoles: self._filterData.roles,
+    //     filterStatus: self._filterData.status
+    // }).then(data => {
+    //     self.isResourceView = typeof self.objectApiName !== 'undefined' && self.objectApiName.endsWith('Resource__c');
+    //     self.isProjectView = typeof self.objectApiName !== 'undefined' && self.objectApiName.endsWith('Project__c');
+    //     self.projectId = data.projectId;
+    //     self.projects = data.projects;
+    //     self.roles = data.roles;
 
-        // empty old data
-        // we want to keep resources we've already seen
-        self.resources.forEach(function (resource, i) {
-            self.resources[i] = {
-                Id: resource.Id,
-                Name: resource.Name,
-                Default_Role__c: resource.Default_Role__c,
-                allocationsByProject: {}
-            };
-        });
+    //     // empty old data
+    //     // we want to keep resources we've already seen
+    //     self.resources.forEach(function (resource, i) {
+    //         self.resources[i] = {
+    //             Id: resource.Id,
+    //             Name: resource.Name,
+    //             Default_Role__c: resource.Default_Role__c,
+    //             allocationsByProject: {}
+    //         };
+    //     });
 
-        data.resources.forEach(function (newResource) {
-            for (let i = 0; i < self.resources.length; i++) {
-                if (self.resources[i].Id === newResource.Id) {
-                    self.resources[i] = newResource;
-                    return;
-                }
-            }
+    //     data.resources.forEach(function (newResource) {
+    //         for (let i = 0; i < self.resources.length; i++) {
+    //             if (self.resources[i].Id === newResource.Id) {
+    //                 self.resources[i] = newResource;
+    //                 return;
+    //             }
+    //         }
 
-            self.resources.push(newResource);
-        });
+    //         self.resources.push(newResource);
+    //     });
 
-        debugger;
-    }).catch(error => {
-        this.dispatchEvent(new ShowToastEvent({
-            message: error.body.message,
-            variant: 'error'
-        }));
-    });
+    //     debugger;
+    // }).catch(error => {
+    //     this.dispatchEvent(new ShowToastEvent({
+    //         message: error.body.message,
+    //         variant: 'error'
+    //     }));
+    // });
   }
 }
