@@ -1,0 +1,1022 @@
+[
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app",
+            "isDirectory": true,
+            "isMetadataFile": false,
+            "size": 96,
+            "modifiedTime": 1554501151490,
+            "changeTime": 1554501151490,
+            "contentHash": "b28b7af69320201d1cf206ebf28373980add1451",
+            "isWorkspace": false,
+            "isArtifactRoot": true
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main",
+            "isDirectory": true,
+            "isMetadataFile": false,
+            "size": 96,
+            "modifiedTime": 1554501151491,
+            "changeTime": 1554501151491,
+            "contentHash": "7505d64a54e061b7acd54ccd58b49dc43500b635",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default",
+            "isDirectory": true,
+            "isMetadataFile": false,
+            "size": 384,
+            "modifiedTime": 1554501151535,
+            "changeTime": 1554501151535,
+            "contentHash": "83010250a8199e3cbec7ca6920c3a8f13231e548",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/applications",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/applications",
+            "isDirectory": true,
+            "isMetadataFile": false,
+            "size": 96,
+            "modifiedTime": 1554501151491,
+            "changeTime": 1554501151491,
+            "contentHash": "1952eb9146482013acf1aa9a9e00414fbdd7cf16",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/applications/gantt_chart.app-meta.xml",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/applications/gantt_chart.app-meta.xml",
+            "isDirectory": false,
+            "isMetadataFile": true,
+            "size": 1066,
+            "modifiedTime": 1554501151491,
+            "changeTime": 1554501151491,
+            "contentHash": "235ab6d2f9bfc716c8994d3ae7a3b853403365de",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/aura",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/aura",
+            "isDirectory": true,
+            "isMetadataFile": false,
+            "size": 96,
+            "modifiedTime": 1554501151492,
+            "changeTime": 1554501151492,
+            "contentHash": "2cdc3ef6b7e056c2fa0ee3f343904ccfe2c08cf0",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/aura/ganttChartWrapper",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/aura/ganttChartWrapper",
+            "isDirectory": true,
+            "isMetadataFile": false,
+            "size": 128,
+            "modifiedTime": 1554501151493,
+            "changeTime": 1554501151493,
+            "contentHash": "6d4e346633472d247103b228f556b4be16e165ef",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/aura/ganttChartWrapper/ganttChartWrapper.cmp",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/aura/ganttChartWrapper/ganttChartWrapper.cmp",
+            "isDirectory": false,
+            "isMetadataFile": false,
+            "size": 86,
+            "modifiedTime": 1554501151492,
+            "changeTime": 1554501151492,
+            "contentHash": "4572b786d1920f4f726dbc545229d1faf5422cbf",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/aura/ganttChartWrapper/ganttChartWrapper.cmp-meta.xml",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/aura/ganttChartWrapper/ganttChartWrapper.cmp-meta.xml",
+            "isDirectory": false,
+            "isMetadataFile": true,
+            "size": 228,
+            "modifiedTime": 1554501151493,
+            "changeTime": 1554501151493,
+            "contentHash": "44552d5f0ead99a404fe423187718fc248819736",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/classes",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/classes",
+            "isDirectory": true,
+            "isMetadataFile": false,
+            "size": 192,
+            "modifiedTime": 1554501151499,
+            "changeTime": 1554501151499,
+            "contentHash": "c7e2d49701e39a086747f8bdf808683996afbe9d",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/classes/ganttChart.cls",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/classes/ganttChart.cls",
+            "isDirectory": false,
+            "isMetadataFile": false,
+            "size": 8434,
+            "modifiedTime": 1554501151494,
+            "changeTime": 1554501151494,
+            "contentHash": "b10c0e4a1cf2d860cf3dfac068022034537ded98",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/classes/ganttChart.cls-meta.xml",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/classes/ganttChart.cls-meta.xml",
+            "isDirectory": false,
+            "isMetadataFile": true,
+            "size": 174,
+            "modifiedTime": 1554501151497,
+            "changeTime": 1554501151497,
+            "contentHash": "acdd80366dfee192a19331bfa686b269d836d68a",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/classes/tst_ganttChart.cls",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/classes/tst_ganttChart.cls",
+            "isDirectory": false,
+            "isMetadataFile": false,
+            "size": 8093,
+            "modifiedTime": 1554501151497,
+            "changeTime": 1554501151497,
+            "contentHash": "c7279712a2c9981b2a30fb30b1cd441e0939003b",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/classes/tst_ganttChart.cls-meta.xml",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/classes/tst_ganttChart.cls-meta.xml",
+            "isDirectory": false,
+            "isMetadataFile": true,
+            "size": 174,
+            "modifiedTime": 1554501151500,
+            "changeTime": 1554501151500,
+            "contentHash": "acdd80366dfee192a19331bfa686b269d836d68a",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/flexipages",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/flexipages",
+            "isDirectory": true,
+            "isMetadataFile": false,
+            "size": 128,
+            "modifiedTime": 1554501151503,
+            "changeTime": 1554501151503,
+            "contentHash": "65c59e06ede57c160eeb5f1c02dd1b0827c42034",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/flexipages/Project_Record_Page.flexipage-meta.xml",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/flexipages/Project_Record_Page.flexipage-meta.xml",
+            "isDirectory": false,
+            "isMetadataFile": true,
+            "size": 3708,
+            "modifiedTime": 1554501151502,
+            "changeTime": 1554501151502,
+            "contentHash": "c070bc25acc27fa4534f8f9f8e301e6ae533785f",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/flexipages/Resource_Record_Page.flexipage-meta.xml",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/flexipages/Resource_Record_Page.flexipage-meta.xml",
+            "isDirectory": false,
+            "isMetadataFile": true,
+            "size": 3710,
+            "modifiedTime": 1554501151504,
+            "changeTime": 1554501151504,
+            "contentHash": "710f6cfe3ea1e1a56d650e86e507083d482c088f",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/layouts",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/layouts",
+            "isDirectory": true,
+            "isMetadataFile": false,
+            "size": 128,
+            "modifiedTime": 1554501151505,
+            "changeTime": 1554501151505,
+            "contentHash": "e5c1e20e76addf1f61d9701020b7aa82476a06c5",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/layouts/Allocation__c-Allocation Layout.layout-meta.xml",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/layouts/Allocation__c-Allocation Layout.layout-meta.xml",
+            "isDirectory": false,
+            "isMetadataFile": true,
+            "size": 2912,
+            "modifiedTime": 1554501151504,
+            "changeTime": 1554501151504,
+            "contentHash": "4e7b6d99f3850bd423f6010d0dca86018f9f8b41",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/layouts/Resource__c-Resource Layout.layout-meta.xml",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/layouts/Resource__c-Resource Layout.layout-meta.xml",
+            "isDirectory": false,
+            "isMetadataFile": true,
+            "size": 2501,
+            "modifiedTime": 1554501151505,
+            "changeTime": 1554501151505,
+            "contentHash": "6c80005d6db49ccf649f4034ddb682fc4d6ee5e1",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/lwc",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/lwc",
+            "isDirectory": true,
+            "isMetadataFile": false,
+            "size": 224,
+            "modifiedTime": 1554501151519,
+            "changeTime": 1554501151519,
+            "contentHash": "f984947b8bc353b2ca7662e40cb951804956847f",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/lwc/gantt_chart",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/lwc/gantt_chart",
+            "isDirectory": true,
+            "isMetadataFile": false,
+            "size": 224,
+            "modifiedTime": 1554501151512,
+            "changeTime": 1554501151512,
+            "contentHash": "1f0d0cbd6e2583e1fc9eae119e40015c986837d6",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/lwc/gantt_chart/__tests__",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/lwc/gantt_chart/__tests__",
+            "isDirectory": true,
+            "isMetadataFile": false,
+            "size": 96,
+            "modifiedTime": 1554501151508,
+            "changeTime": 1554501151508,
+            "contentHash": "6aeb6d9612277c0da6fb2dc45b2e18cfaa70a0f1",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/lwc/gantt_chart/gantt_chart.css",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/lwc/gantt_chart/gantt_chart.css",
+            "isDirectory": false,
+            "isMetadataFile": false,
+            "size": 1175,
+            "modifiedTime": 1554501151509,
+            "changeTime": 1554501151509,
+            "contentHash": "ce647b5f10d88f22f1a218da04178c3c077ac110",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/lwc/gantt_chart/gantt_chart.html",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/lwc/gantt_chart/gantt_chart.html",
+            "isDirectory": false,
+            "isMetadataFile": false,
+            "size": 10782,
+            "modifiedTime": 1554501151510,
+            "changeTime": 1554501151510,
+            "contentHash": "fd14b9d448147a048e289d6c0a476801d7184c25",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/lwc/gantt_chart/gantt_chart.js",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/lwc/gantt_chart/gantt_chart.js",
+            "isDirectory": false,
+            "isMetadataFile": false,
+            "size": 15418,
+            "modifiedTime": 1554501151511,
+            "changeTime": 1554501151511,
+            "contentHash": "eae666a81829f90660de93be76b25206bc8dbfaa",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/lwc/gantt_chart/gantt_chart.js-meta.xml",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/lwc/gantt_chart/gantt_chart.js-meta.xml",
+            "isDirectory": false,
+            "isMetadataFile": true,
+            "size": 724,
+            "modifiedTime": 1554501151512,
+            "changeTime": 1554501151512,
+            "contentHash": "a8e458ebd04da1baec831a541d96ff23391453fd",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/lwc/gantt_chart_modal",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/lwc/gantt_chart_modal",
+            "isDirectory": true,
+            "isMetadataFile": false,
+            "size": 192,
+            "modifiedTime": 1554501151516,
+            "changeTime": 1554501151516,
+            "contentHash": "fbf8b840b433d9941a781e3079cce256952ff5f9",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/lwc/gantt_chart_modal/gantt_chart_modal.css",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/lwc/gantt_chart_modal/gantt_chart_modal.css",
+            "isDirectory": false,
+            "isMetadataFile": false,
+            "size": 68,
+            "modifiedTime": 1554501151513,
+            "changeTime": 1554501151513,
+            "contentHash": "8a2412aef6ad1497b2da99b25990e26b52f102e6",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/lwc/gantt_chart_modal/gantt_chart_modal.html",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/lwc/gantt_chart_modal/gantt_chart_modal.html",
+            "isDirectory": false,
+            "isMetadataFile": false,
+            "size": 1511,
+            "modifiedTime": 1554501151515,
+            "changeTime": 1554501151515,
+            "contentHash": "3d295739c30c7fd46944536f12dbf9354e2ab629",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/lwc/gantt_chart_modal/gantt_chart_modal.js",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/lwc/gantt_chart_modal/gantt_chart_modal.js",
+            "isDirectory": false,
+            "isMetadataFile": false,
+            "size": 424,
+            "modifiedTime": 1554501151516,
+            "changeTime": 1554501151516,
+            "contentHash": "7f49876b0490221f5ce86a3e488964d3ca1f5673",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/lwc/gantt_chart_modal/gantt_chart_modal.js-meta.xml",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/lwc/gantt_chart_modal/gantt_chart_modal.js-meta.xml",
+            "isDirectory": false,
+            "isMetadataFile": true,
+            "size": 209,
+            "modifiedTime": 1554501151516,
+            "changeTime": 1554501151516,
+            "contentHash": "cd5aed137b091f8314d531bfe8a980b54ab2278f",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/lwc/gantt_chart_resource",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/lwc/gantt_chart_resource",
+            "isDirectory": true,
+            "isMetadataFile": false,
+            "size": 192,
+            "modifiedTime": 1554501151518,
+            "changeTime": 1554501151518,
+            "contentHash": "66fa48b6cbf6bbebf4e798e1926b171bb028f7a9",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/lwc/gantt_chart_resource/gantt_chart_resource.css",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/lwc/gantt_chart_resource/gantt_chart_resource.css",
+            "isDirectory": false,
+            "isMetadataFile": false,
+            "size": 3117,
+            "modifiedTime": 1554501151517,
+            "changeTime": 1554501151517,
+            "contentHash": "e12aad1072b558818f5985e7db486f8e29566daa",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/lwc/gantt_chart_resource/gantt_chart_resource.html",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/lwc/gantt_chart_resource/gantt_chart_resource.html",
+            "isDirectory": false,
+            "isMetadataFile": false,
+            "size": 9367,
+            "modifiedTime": 1554501151517,
+            "changeTime": 1554501151517,
+            "contentHash": "d1bb2c91fe8674600faa11924b1f87764843996d",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/lwc/gantt_chart_resource/gantt_chart_resource.js",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/lwc/gantt_chart_resource/gantt_chart_resource.js",
+            "isDirectory": false,
+            "isMetadataFile": false,
+            "size": 16654,
+            "modifiedTime": 1554501151518,
+            "changeTime": 1554501151518,
+            "contentHash": "b7a95060d52026bea6b62f92912e3ad7f8210751",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/lwc/gantt_chart_resource/gantt_chart_resource.js-meta.xml",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/lwc/gantt_chart_resource/gantt_chart_resource.js-meta.xml",
+            "isDirectory": false,
+            "isMetadataFile": true,
+            "size": 239,
+            "modifiedTime": 1554501151519,
+            "changeTime": 1554501151519,
+            "contentHash": "b660c477d8623df07d5da1eceaa19b87b797c020",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/objects",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/objects",
+            "isDirectory": true,
+            "isMetadataFile": false,
+            "size": 160,
+            "modifiedTime": 1554501151526,
+            "changeTime": 1554501151526,
+            "contentHash": "82f0125ae3a021f227b95649c81421c949b81c46",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/objects/Allocation__c",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/objects/Allocation__c",
+            "isDirectory": true,
+            "isMetadataFile": false,
+            "size": 128,
+            "modifiedTime": 1554501151520,
+            "changeTime": 1554501151520,
+            "contentHash": "5fbf099be652e9c4a1bc2219c1c51bed9daca0e8",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/objects/Allocation__c/Allocation__c.object-meta.xml",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/objects/Allocation__c/Allocation__c.object-meta.xml",
+            "isDirectory": false,
+            "isMetadataFile": true,
+            "size": 2119,
+            "modifiedTime": 1554501151520,
+            "changeTime": 1554501151520,
+            "contentHash": "7425912b05be5aca618dce0d23b6c0501af09e02",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/objects/Allocation__c/fields",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/objects/Allocation__c/fields",
+            "isDirectory": true,
+            "isMetadataFile": false,
+            "size": 256,
+            "modifiedTime": 1554501151523,
+            "changeTime": 1554501151523,
+            "contentHash": "f07dc685160cf9633f8df790f6151ca27dde49de",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/objects/Allocation__c/fields/Effort__c.field-meta.xml",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/objects/Allocation__c/fields/Effort__c.field-meta.xml",
+            "isDirectory": false,
+            "isMetadataFile": true,
+            "size": 953,
+            "modifiedTime": 1554501151520,
+            "changeTime": 1554501151520,
+            "contentHash": "fc3ffb3c6627722a10ea8ca9f3fc361201c31af8",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/objects/Allocation__c/fields/End_Date__c.field-meta.xml",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/objects/Allocation__c/fields/End_Date__c.field-meta.xml",
+            "isDirectory": false,
+            "isMetadataFile": true,
+            "size": 309,
+            "modifiedTime": 1554501151521,
+            "changeTime": 1554501151521,
+            "contentHash": "7a62dcf8ae8e40527d249a79d9bd7dac29608b1c",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/objects/Allocation__c/fields/Project__c.field-meta.xml",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/objects/Allocation__c/fields/Project__c.field-meta.xml",
+            "isDirectory": false,
+            "isMetadataFile": true,
+            "size": 509,
+            "modifiedTime": 1554501151522,
+            "changeTime": 1554501151522,
+            "contentHash": "9dd7c028eb29a57825b6e2f44f6baf389c2128da",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/objects/Allocation__c/fields/Resource__c.field-meta.xml",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/objects/Allocation__c/fields/Resource__c.field-meta.xml",
+            "isDirectory": false,
+            "isMetadataFile": true,
+            "size": 607,
+            "modifiedTime": 1554501151522,
+            "changeTime": 1554501151522,
+            "contentHash": "aed0ac2dcdfcc19742511f234e16e76773276f01",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/objects/Allocation__c/fields/Start_Date__c.field-meta.xml",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/objects/Allocation__c/fields/Start_Date__c.field-meta.xml",
+            "isDirectory": false,
+            "isMetadataFile": true,
+            "size": 313,
+            "modifiedTime": 1554501151523,
+            "changeTime": 1554501151523,
+            "contentHash": "8382d7e0a09c142e9d68a4185280f730de8c5fd8",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/objects/Allocation__c/fields/Status__c.field-meta.xml",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/objects/Allocation__c/fields/Status__c.field-meta.xml",
+            "isDirectory": false,
+            "isMetadataFile": true,
+            "size": 969,
+            "modifiedTime": 1554501151523,
+            "changeTime": 1554501151523,
+            "contentHash": "21554eda8340c423d3b277a76e74f2b2e65121fe",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/objects/Project__c",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/objects/Project__c",
+            "isDirectory": true,
+            "isMetadataFile": false,
+            "size": 128,
+            "modifiedTime": 1554501151525,
+            "changeTime": 1554501151525,
+            "contentHash": "cf7ce583dd98d4d05db7812ac9eb0948a42289e9",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/objects/Project__c/Project__c.object-meta.xml",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/objects/Project__c/Project__c.object-meta.xml",
+            "isDirectory": false,
+            "isMetadataFile": true,
+            "size": 2060,
+            "modifiedTime": 1554501151524,
+            "changeTime": 1554501151524,
+            "contentHash": "8027ef486d151a5ca28dc2d17faaf6ac18987167",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/objects/Project__c/fields",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/objects/Project__c/fields",
+            "isDirectory": true,
+            "isMetadataFile": false,
+            "size": 128,
+            "modifiedTime": 1554501151526,
+            "changeTime": 1554501151526,
+            "contentHash": "f1c3e768abaff2cb26fde6f0cdb22059bd4faf57",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/objects/Project__c/fields/Active__c.field-meta.xml",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/objects/Project__c/fields/Active__c.field-meta.xml",
+            "isDirectory": false,
+            "isMetadataFile": true,
+            "size": 317,
+            "modifiedTime": 1554501151526,
+            "changeTime": 1554501151526,
+            "contentHash": "0af6aa9085baddcfb7e2547f42e264125da18f63",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/objects/Project__c/fields/Color__c.field-meta.xml",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/objects/Project__c/fields/Color__c.field-meta.xml",
+            "isDirectory": false,
+            "isMetadataFile": true,
+            "size": 2248,
+            "modifiedTime": 1554501151526,
+            "changeTime": 1554501151526,
+            "contentHash": "f61133c4cde6c8ed711e7c8cd6991b35d711ae34",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/objects/Resource__c",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/objects/Resource__c",
+            "isDirectory": true,
+            "isMetadataFile": false,
+            "size": 128,
+            "modifiedTime": 1554501151529,
+            "changeTime": 1554501151529,
+            "contentHash": "1e91b693d455741c0fc595f507ac7a565e348297",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/objects/Resource__c/Resource__c.object-meta.xml",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/objects/Resource__c/Resource__c.object-meta.xml",
+            "isDirectory": false,
+            "isMetadataFile": true,
+            "size": 2306,
+            "modifiedTime": 1554501151527,
+            "changeTime": 1554501151527,
+            "contentHash": "eeb48a4630096d807af47d7f664e64e200742b44",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/objects/Resource__c/fields",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/objects/Resource__c/fields",
+            "isDirectory": true,
+            "isMetadataFile": false,
+            "size": 128,
+            "modifiedTime": 1554501151531,
+            "changeTime": 1554501151531,
+            "contentHash": "cab64440366092baddc49a1965fdb3007a778f0e",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/objects/Resource__c/fields/Active__c.field-meta.xml",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/objects/Resource__c/fields/Active__c.field-meta.xml",
+            "isDirectory": false,
+            "isMetadataFile": true,
+            "size": 317,
+            "modifiedTime": 1554501151530,
+            "changeTime": 1554501151530,
+            "contentHash": "0af6aa9085baddcfb7e2547f42e264125da18f63",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/objects/Resource__c/fields/Default_Role__c.field-meta.xml",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/objects/Resource__c/fields/Default_Role__c.field-meta.xml",
+            "isDirectory": false,
+            "isMetadataFile": true,
+            "size": 369,
+            "modifiedTime": 1554501151531,
+            "changeTime": 1554501151531,
+            "contentHash": "454bf4faf0cb1a1ae29e9a9642fdd91888e75aff",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/profiles",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/profiles",
+            "isDirectory": true,
+            "isMetadataFile": false,
+            "size": 96,
+            "modifiedTime": 1554501151531,
+            "changeTime": 1554501151531,
+            "contentHash": "dd4bc5d00d5b87ac9dcfa94ec543d354d095c25c",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/profiles/Admin.profile-meta.xml",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/profiles/Admin.profile-meta.xml",
+            "isDirectory": false,
+            "isMetadataFile": true,
+            "size": 21273,
+            "modifiedTime": 1554501151532,
+            "changeTime": 1554501151532,
+            "contentHash": "515814dcd87837ff635251193ef20dcbe4f06dfe",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/staticresources",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/staticresources",
+            "isDirectory": true,
+            "isMetadataFile": false,
+            "size": 128,
+            "modifiedTime": 1554501151534,
+            "changeTime": 1554501151534,
+            "contentHash": "90bfbf32a5832b96fa425f5117c4c73424a23139",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/staticresources/momentJS.js",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/staticresources/momentJS.js",
+            "isDirectory": false,
+            "isMetadataFile": false,
+            "size": 147083,
+            "modifiedTime": 1554501151534,
+            "changeTime": 1554501151534,
+            "contentHash": "53c7a5dcf22df9ba8e700d680679eb7d6420c004",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/staticresources/momentJS.resource-meta.xml",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/staticresources/momentJS.resource-meta.xml",
+            "isDirectory": false,
+            "isMetadataFile": true,
+            "size": 210,
+            "modifiedTime": 1554501151534,
+            "changeTime": 1554501151534,
+            "contentHash": "4486a1b0b1ebebd2232bda16dbb5cd729d92d089",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/tabs",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/tabs",
+            "isDirectory": true,
+            "isMetadataFile": false,
+            "size": 192,
+            "modifiedTime": 1554501151538,
+            "changeTime": 1554501151538,
+            "contentHash": "07d5f2424ad9721e6134d2020083f9ef69bd8524",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/tabs/Allocation__c.tab-meta.xml",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/tabs/Allocation__c.tab-meta.xml",
+            "isDirectory": false,
+            "isMetadataFile": true,
+            "size": 221,
+            "modifiedTime": 1554501151535,
+            "changeTime": 1554501151535,
+            "contentHash": "75215d73ba88fdbc03728d0e663651a057b2b7a1",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/tabs/Overview.tab-meta.xml",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/tabs/Overview.tab-meta.xml",
+            "isDirectory": false,
+            "isMetadataFile": true,
+            "size": 265,
+            "modifiedTime": 1554501151536,
+            "changeTime": 1554501151536,
+            "contentHash": "7e5dff56a5320db8d31c05342e99a4d5ad3003ab",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/tabs/Project__c.tab-meta.xml",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/tabs/Project__c.tab-meta.xml",
+            "isDirectory": false,
+            "isMetadataFile": true,
+            "size": 230,
+            "modifiedTime": 1554501151537,
+            "changeTime": 1554501151537,
+            "contentHash": "0a4cb7e6dbba7d8b05b1d4e9b778f9f80a9065d8",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/tabs/Resource__c.tab-meta.xml",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart/force-app/main/default/tabs/Resource__c.tab-meta.xml",
+            "isDirectory": false,
+            "isMetadataFile": true,
+            "size": 223,
+            "modifiedTime": 1554501151539,
+            "changeTime": 1554501151539,
+            "contentHash": "6e6ce36238c68c3363a64744a7072e1a6ec83ae1",
+            "isWorkspace": false,
+            "isArtifactRoot": false
+        }
+    ],
+    [
+        "/Users/mbhasin/Desktop/gantt-chart",
+        {
+            "state": "u",
+            "sourcePath": "/Users/mbhasin/Desktop/gantt-chart",
+            "isDirectory": true,
+            "isMetadataFile": false,
+            "size": 352,
+            "modifiedTime": 1554501450497,
+            "changeTime": 1554501450497,
+            "contentHash": "719eabee2a668d403e2ff9f4cd14b9ff3f7ca0ea",
+            "isWorkspace": true,
+            "isArtifactRoot": false
+        }
+    ]
+]
