@@ -1,4 +1,4 @@
-import { createElement } from 'lwc';
+// import { createElement } from 'lwc';
 import LwcGanttChart from 'c/gantt_chart';
 
 jest.mock('@salesforce/apex', () => {

@@ -15,6 +15,7 @@ export default class GanttChart extends LightningElement {
 
   @track isResourceView;
   @track isProjectView;
+  @track isRecordTypeView; 
 
   // design attributes
   @api defaultView;
@@ -51,9 +52,11 @@ export default class GanttChart extends LightningElement {
     disabled: true,
     message: "",
     projects: [],
+    projectRecordTypes: [], // Record Type Id for each option
     roles: [],
     status: "",
     projectOptions: [],
+    projectRecordTypeOptions: [], // To filter based on the record types 
     roleOptions: [],
     statusOptions: [
       {
@@ -74,6 +77,7 @@ export default class GanttChart extends LightningElement {
   _filterData = {
     projects: [],
     projectIds: [],
+    projectRecordType: [], // to track record type Ids 
     roles: [],
     status: ""
   };
@@ -256,6 +260,8 @@ export default class GanttChart extends LightningElement {
 
   /*** Resource Modal ***/
   openAddResourceModal() {
+
+    window.console.log('Resources = ' + JSON.stringify(getResources()));
     getResources()
       .then(resources => {
         let excludeResources = this.resources;
@@ -277,7 +283,7 @@ export default class GanttChart extends LightningElement {
               };
             })
         };
-
+        window.console.log('Post Resources = ' + JSON.stringify(this.resourceModalData));
         this.template.querySelector(".resource-modal").show();
       })
       .catch(error => {
@@ -366,9 +372,38 @@ export default class GanttChart extends LightningElement {
       this.filterModalData.focus = "projects";
     });
   }
-
+  // Mohit's filter by record type
+  filterProjectRecords(event) {
+    this.hideDropdowns();
+  
+    let text = event.target.value;
+  
+    getProjects().then(projects => {
+      // only show projects not selected
+      this.filterModalData.projerojectRecordTypeOptions = projects.filter(project => {
+        return (
+          project.RecordTypeId &&
+          !this.filterModalData.projects.filter(p => {
+            return p.id === project.RecordTypeId;
+          }).length
+        );
+      });
+      this.filterModalData.focus = "rojectRecordTypeOptions";
+    });
+  }
+  
   addProjectFilter(event) {
     this.filterModalData.projects.push(
+      Object.assign({}, event.currentTarget.dataset)
+    );
+    this.filterModalData.focus = null;
+
+    this.setFilterModalDataDisable();
+  }
+
+  // Mohit's addProjectRecordTypeFilter 
+  addProjectRecordTypeFilter(event) {
+    this.filterModalData.projectRecordTypes.push(
       Object.assign({}, event.currentTarget.dataset)
     );
     this.filterModalData.focus = null;
@@ -456,13 +491,25 @@ export default class GanttChart extends LightningElement {
     this._filterData.projectIds = this._filterData.projects.map(project => {
       return project.id;
     });
-
+    /*
+    this._filterData.projectRecordType = this._filterData.projects.map(project => {
+      return project.recordTypeId;
+    });
+*/
     let filters = [];
     if (this.filterModalData.projects.length) {
       filters.push("Projects");
     }
+    /*
+    if (this.filterModalData.projectRecordType.length) {
+      filters.push("projectRecordTypes");
+    }
+    */
     if (this.filterModalData.roles.length) {
       filters.push("Roles");
+    }
+    if (this.filterModalData.status) {
+      filters.push("Status");
     }
     if (this.filterModalData.status) {
       filters.push("Status");
@@ -542,11 +589,13 @@ export default class GanttChart extends LightningElement {
         endTime: self.endDateUTC,
         slotSize: self.view.slotSize,
         filterProjects: self._filterData.projectIds,
+        filterProjectRecords: self._filterData.projectRecordTypes, // filter for record types
         filterRoles: self._filterData.roles,
         filterStatus: self._filterData.status
     }).then(data => {
         self.isResourceView = typeof self.objectApiName !== 'undefined' && self.objectApiName.endsWith('Resource__c');
         self.isProjectView = typeof self.objectApiName !== 'undefined' && self.objectApiName.endsWith('Project__c');
+        self.isRecordTypeView = typeof self.objectApiName !== 'undefined' && self.objectApiName.endsWith('Project__c');
         self.projectId = data.projectId;
         self.projects = data.projects;
         self.roles = data.roles;

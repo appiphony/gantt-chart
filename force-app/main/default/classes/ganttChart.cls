@@ -12,6 +12,11 @@ public with sharing class ganttChart {
         if (!filterProjects.isEmpty()) {
             query += ' AND Project__c IN :filterProjects';
         }
+        /*
+        if (!filterProjectRecords.isEmpty()) {
+            query += ' AND Project__c IN :filterProjectRecords';
+        }
+        */
         if (!filterRoles.isEmpty()) {
             query += ' AND Resource__r.Default_Role__c IN :filterRoles';
         }
