@@ -1,0 +1,5 @@
+.vscode/*
+*.db
+*.ts
+force-app/main/default/lwc/.eslintrc.json
+force-app/main/default/lwc/jsconfig.json
