@@ -23,7 +23,7 @@
             <!-- Time Slots-->
             <div class="slds-grid slds-is-absolute lwc-timeslots-container">
                 <template for:each={times} for:item="time" for:index="index">
-                    <div key={time} class={time.class} data-index={index} data-start={time.start} data-end={time.end}
+                    <div key={time.start} class={time.class} data-index={index} data-start={time.start} data-end={time.end}
                         onclick={handleTimeslotClick} ondragenter={handleDragEnter}>
                         <!-- nothing -->
                     </div>

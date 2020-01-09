@@ -235,7 +235,7 @@ export default class GanttChartResource extends LightningElement {
         id: projectId,
         allocations: []
       };
-
+      /*
       self.resource.allocationsByProject[projectId].forEach(allocation => {
         allocation.class = self.calcClass(allocation);
         allocation.style = self.calcStyle(allocation);
@@ -243,6 +243,17 @@ export default class GanttChartResource extends LightningElement {
 
         project.allocations.push(allocation);
       });
+      */
+     //fix for Uncaught (in promise) TypeError: 'set' on proxy: trap returned falsish for property 'class'
+     self.resource.allocationsByProject[projectId].forEach(allocation2 => {
+        
+      let allocation = JSON.parse(JSON.stringify(allocation2))
+      allocation.class = self.calcClass(allocation);
+      allocation.style = self.calcStyle(allocation);
+      allocation.labelStyle = self.calcLabelStyle(allocation);
+
+      project.allocations.push(allocation);
+    });
 
       self.projects.push(project);
     });
