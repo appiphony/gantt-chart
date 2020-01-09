@@ -91,7 +91,7 @@
               <div class="slds-grid">
                 <template for:each={dates} for:item="date">
                   <div
-                    key={date}
+                    key={date.name}
                     class="slds-col lwc-timeline_month-container"
                     style={date.style}
                   >
@@ -106,7 +106,7 @@
                     </div>
                     <div class="slds-grid">
                       <template for:each={date.days} for:item="day">
-                        <div key={day} class={day.class}>
+                        <div key={day.label} class={day.class}>
                           <div if:true={day.dayName}>{day.dayName}</div>
                           <div>{day.label}</div>
                         </div>
