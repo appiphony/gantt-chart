@@ -237,11 +237,14 @@ export default class GanttChartResource extends LightningElement {
       };
 
       self.resource.allocationsByProject[projectId].forEach(allocation => {
-        allocation.class = self.calcClass(allocation);
-        allocation.style = self.calcStyle(allocation);
-        allocation.labelStyle = self.calcLabelStyle(allocation);
+        // We cannot Edit the allocation property insted we need to clone it
+        var tempAllocation = Object.assign({}, allocation);
 
-        project.allocations.push(allocation);
+        tempAllocation.class = self.calcClass(allocation);
+        tempAllocation.style = self.calcStyle(allocation);
+        tempAllocation.labelStyle = self.calcLabelStyle(allocation);
+
+        project.allocations.push(tempAllocation);
       });
 
       self.projects.push(project);
