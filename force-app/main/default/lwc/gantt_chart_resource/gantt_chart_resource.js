@@ -21,6 +21,9 @@ export default class GanttChartResource extends LightningElement {
   @api startDate;
   @api endDate;
   @api dateIncrement;
+  // resouce type
+  @api isCar
+  @api isPerson
 
   @api
   refreshDates(startDate, endDate, dateIncrement) {
@@ -63,6 +66,9 @@ export default class GanttChartResource extends LightningElement {
       this.startDate = startDate;
       this.endDate = endDate;
       this.dateIncrement = dateIncrement;
+      //set resouce type
+      this.isPerson = this._resource.Default_Role__c == 'エンジニア' ? true : false;
+      this.isCar = this._resource.Default_Role__c == '車' ? true : false;
       this.setProjects();
     }
   }
