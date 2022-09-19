@@ -111,6 +111,8 @@
     <c-gantt_chart_modal class="add-allocation-modal">
         <span slot="title">Add Allocation</span>
         <div slot="body" class="slds-form slds-form_stacked">
+            <lightning-formatted-url value="/lightning/o/Project__c/new?count=1" 
+                                     label="案件の作成" target="_self"></lightning-formatted-url>
             <!-- Select Project -->
             <lightning-combobox value={addAllocationData.projectId} label="What Project?" placeholder="-- Select Project --"
                 options={addAllocationData.projects} onchange={handleAddAllocationDataChange} data-field="projectId"></lightning-combobox>

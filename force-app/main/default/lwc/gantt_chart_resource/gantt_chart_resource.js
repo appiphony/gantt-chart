@@ -1,11 +1,12 @@
 import { LightningElement, api, track } from "lwc";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
+import {NavigationMixin} from 'lightning/navigation';
 
 import getProjects from "@salesforce/apex/ganttChart.getProjects";
 import saveAllocation from "@salesforce/apex/ganttChart.saveAllocation";
 import deleteAllocation from "@salesforce/apex/ganttChart.deleteAllocation";
 
-export default class GanttChartResource extends LightningElement {
+export default class GanttChartResource extends NavigationMixin(LightningElement) {
   @api isResourceView; // resource page has different layout
   @api projectId; // used on project page for quick adding of allocations
   @api
@@ -286,6 +287,11 @@ export default class GanttChartResource extends LightningElement {
             label: "Unavailable"
           });
 
+          projects.push( {
+            value: "Create",
+            label: "+新規作成"    
+          })
+          
           self.addAllocationData = {
             projects: projects,
             startDate: startUTC + "",
@@ -312,6 +318,16 @@ export default class GanttChartResource extends LightningElement {
     if (!this.addAllocationData.projectId) {
       this.addAllocationData.disabled = true;
     } else {
+      if( event.target.value === 'Create'){
+        
+        this[NavigationMixin.Navigate]({
+          type: 'standard__objectPage',
+          attributes: {
+              objectApiName: 'Project__c',
+              actionName: 'new'
+          }
+        })
+      }
       this.addAllocationData.disabled = false;
     }
   }
