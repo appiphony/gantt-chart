@@ -2,7 +2,7 @@ public with sharing class ganttChart {
     @AuraEnabled
     public static Map<String, Object> getChartData(String recordId, String startTime, String endTime, Integer slotSize, List<String> filterProjects, List<String> filterRoles, String filterStatus) {
         Map<String, Object> data = new Map<String, Object>();
-        String query = 'SELECT Resource__c, Resource__r.Name, Resource__r.Active__c, Resource__r.Default_Role__c, Project__c, Project__r.Name, Project__r.Active__c, Project__r.Color__c, Start_Date__c, End_Date__c, Status__c, Effort__c FROM Allocation__c WHERE Start_Date__c <= :endDate AND End_Date__c >= :startDate AND (Project__c = NULL OR Project__r.Active__c = TRUE) AND Resource__r.Active__c = TRUE';
+        String query = 'SELECT Resource__c, Resource__r.Name, Resource__r.Active__c, Resource__r.Default_Role__c, Resource__r.Status__c, Project__c, Project__r.Name, Project__r.Active__c, Project__r.Color__c, Start_Date__c, End_Date__c, Status__c, Effort__c FROM Allocation__c WHERE Start_Date__c <= :endDate AND End_Date__c >= :startDate AND (Project__c = NULL OR Project__r.Active__c = TRUE) AND Resource__r.Active__c = TRUE';
         
         List<Allocation__c> allocations = new List<Allocation__c>();
         Map<String, Object> projectById = new Map<String, Object>();
@@ -48,6 +48,7 @@ public with sharing class ganttChart {
                         'Id' => resource.get('Id'),
                         'Name' => resource.get('Name'),
                         'Default_Role__c' => resource.get('Default_Role__c'),
+                        'Status__c' => resource.get('Status__c'),
                         'allocationsByProject' => new Map<String, Object>()
                     });
                 }
@@ -63,7 +64,7 @@ public with sharing class ganttChart {
 
                 // empty state on resource page
                 if (allocations.isEmpty() && Id.valueOf(recordId).getSobjectType().getDescribe().getName().endsWith('Resource__c')) {
-                    Resource__c resource = [SELECT Id, Name, Active__c, Default_Role__c
+                    Resource__c resource = [SELECT Id, Name, Active__c, Default_Role__c, Status__c
                                             FROM Resource__c
                                             WHERE Id = :recordId];
 
@@ -71,6 +72,7 @@ public with sharing class ganttChart {
                         'Id' => resource.Id,
                         'Name' => resource.Name,
                         'Default_Role__c' => resource.Default_Role__c,
+                        'Status__c' => resource.Status__c,
                         'allocationsByProject' => new Map<String, Object>()
                     });
                 }
@@ -83,6 +85,7 @@ public with sharing class ganttChart {
                         'Id' => allocation.Resource__c,
                         'Name' => allocation.Resource__r.Name,
                         'Default_Role__c' => allocation.Resource__r.Default_Role__c,
+                        'Status__c' => allocation.Resource__r.Status__c,
                         'allocationsByProject' => new Map<String, Object>()
                     });
                 }
@@ -134,14 +137,15 @@ public with sharing class ganttChart {
     public static List<Object> getResources() {
         List<Object> resources = new List<Object>();
 
-        for (Resource__c r : [SELECT Id, Name, Default_Role__c
+        for (Resource__c r : [SELECT Id, Name, Default_Role__c, Status__c
                               FROM Resource__c
                               WHERE Active__c = true
                               ORDER BY Name]) {
             resources.add(new Map<String, Object> {
                 'Id' => r.Id,
                 'Name' => r.Name,
-                'Default_Role__c' => r.Default_Role__c
+                'Default_Role__c' => r.Default_Role__c,
+                'Status__c' => r.Status__c
             });
         }
 
