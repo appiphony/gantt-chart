@@ -140,7 +140,7 @@ public with sharing class ganttChart {
         for (Resource__c r : [SELECT Id, Name, Default_Role__c, Status__c
                               FROM Resource__c
                               WHERE Active__c = true
-                              ORDER BY Name]) {
+                              ORDER BY Default_Role__c, Name]) {
             resources.add(new Map<String, Object> {
                 'Id' => r.Id,
                 'Name' => r.Name,
