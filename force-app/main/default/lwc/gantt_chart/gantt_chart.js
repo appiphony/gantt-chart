@@ -40,6 +40,10 @@ export default class GanttChart extends LightningElement {
       {
         label: "View by Week",
         value: "7/10"
+      },
+      {
+        label: "View by 30days",
+        value: "30/12"
       }
     ],
     slotSize: 1,
@@ -247,7 +251,7 @@ export default class GanttChart extends LightningElement {
   setView(value) {
     let values = value.split("/");
     this.view.value = value;
-    this.view.slotSize = parseInt(value[0], 10);
+    this.view.slotSize = parseInt(values[0], 10);
     this.view.slots = parseInt(values[1], 10);
   }
 
