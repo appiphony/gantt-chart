@@ -8,7 +8,7 @@
         <outerJoin>true</outerJoin>
         <relationship>Allocations__r</relationship>
     </join>
-    <label>Resrouce（Allocationの有無を問わない）</label>
+    <label>Resource（Allocationの有無を問わない）</label>
     <sections>
         <columns>
             <checkedByDefault>false</checkedByDefault>
