@@ -33,6 +33,7 @@ export default class GanttChart extends LightningElement {
   @track view = {
     // View Select
     options: [
+     
       {
         label: "View by Day",
         value: "1/14"
@@ -76,14 +77,21 @@ export default class GanttChart extends LightningElement {
         label: "Unavailable",
         value: "Unavailable"
       }
-    ]
+    ],
+    //キムリナ追記：色フィルター
+    colors: [],
+    colorOptions: [],
+    //キムリナ追記終了
   };
   _filterData = {
     projects: [],
     projectIds: [],
     projectRecordType: [], // to track record type Ids 
     roles: [],
-    status: ""
+    status: "",
+     //キムリナ追記
+    colors: [],
+     
   };
   @track resourceModalData = {};
   /*** /Modals ***/
@@ -194,7 +202,7 @@ export default class GanttChart extends LightningElement {
       } else {
         day.end = date.toDate();
         day.dayName = date.format("ddd");
-        if (date.day() === 0) {
+        if (date.day() === 0 || date.day() === 6) {
           day.class = day.class + " lwc-is-week-end";
         }
       }
@@ -373,9 +381,13 @@ export default class GanttChart extends LightningElement {
           }).length
         );
       });
+
+    
       this.filterModalData.focus = "projects";
     });
+    console.log("projects"+JSON.stringify(this.projects) );
   }
+
   // Mohit's filter by record type
   filterProjectRecords(event) {
     this.hideDropdowns();
@@ -403,6 +415,7 @@ export default class GanttChart extends LightningElement {
     this.filterModalData.focus = null;
 
     this.setFilterModalDataDisable();
+    console.log("filterModalData"+JSON.stringify(this.filterModalData.projects) );
   }
 
   // Mohit's addProjectRecordTypeFilter 
@@ -438,8 +451,12 @@ export default class GanttChart extends LightningElement {
       .map(role => {
         return role;
       });
+     
     this.filterModalData.focus = "roles";
+    console.log("roles"+JSON.stringify(this.roles) );
+    
   }
+
 
   addRoleFilter(event) {
     this.filterModalData.roles.push(event.currentTarget.dataset.role);
@@ -522,7 +539,7 @@ export default class GanttChart extends LightningElement {
     if (filters.length) {
       this._filterData.message = "Filtered By " + filters.join(", ");
     }
-
+   
     this.handleRefresh();
     this.template.querySelector(".filter-modal").hide();
   }
@@ -595,26 +612,47 @@ export default class GanttChart extends LightningElement {
         filterProjects: self._filterData.projectIds,
         filterProjectRecords: self._filterData.projectRecordTypes, // filter for record types
         filterRoles: self._filterData.roles,
-        filterStatus: self._filterData.status
+        filterStatus: self._filterData.status,
     }).then(data => {
         self.isResourceView = typeof self.objectApiName !== 'undefined' && self.objectApiName.endsWith('Resource__c');
+       
         self.isProjectView = typeof self.objectApiName !== 'undefined' && self.objectApiName.endsWith('Project__c');
         self.isRecordTypeView = typeof self.objectApiName !== 'undefined' && self.objectApiName.endsWith('Project__c');
         self.projectId = data.projectId;
         self.projects = data.projects;
-        self.roles = data.roles;
-
+        self.roles = data.roles;       
         // empty old data
-        // we want to keep resources we've already seen
+        // we want to keep resources we've already seen 
         self.resources.forEach(function (resource, i) {
             self.resources[i] = {
                 Id: resource.Id,
                 Name: resource.Name,
                 Default_Role__c: resource.Default_Role__c,
                 allocationsByProject: {}
+
             };
         });
+        
+        console.log("resources"+JSON.stringify(this.resources) );
+        
+ 
+        // if(self._filterData.length==0){
 
+        //   data.resources.forEach(function (newResource) {
+        //     for (let i = 0; i < self.resources.length; i++) {
+        //         if (self.resources[i].Id === newResource.Id) {
+        //           self.resources[i] = newResource;
+        //             return;
+        //         }
+        //     }
+
+        //     self.resources.push(newResource);
+        // });
+
+        // }
+        // else if(self._filterData.projectIds.length!=0)
+        // {
+        // data.resources = data.resources.filter( function(res) { return(self._filterData.projectIds in  res.allocationsByProject) } )
         data.resources.forEach(function (newResource) {
             for (let i = 0; i < self.resources.length; i++) {
                 if (self.resources[i].Id === newResource.Id) {
@@ -625,7 +663,10 @@ export default class GanttChart extends LightningElement {
 
             self.resources.push(newResource);
         });
-
+      
+        console.log("data.resources"+JSON.stringify(data.resources) );
+        
+       // }
         debugger;
     }).catch(error => {
         this.dispatchEvent(new ShowToastEvent({
