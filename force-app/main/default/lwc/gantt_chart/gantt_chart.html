@@ -66,7 +66,7 @@
         </div>
         <!-- Filter Status -->
         <div if:true={_filterData.message} class="slds-m-top_x-small">
-          <p class="slds-text-body_small slds-text-color_weak">
+          <p class="slds-text-body_small slds-text-color_weak">-----
             {_filterData.message}
           </p>
         </div>
@@ -81,7 +81,7 @@
           <div class="slds-grid lwc-timeline">
             <div
               if:false={isResourceView}
-              class="slds-col slds-size_1-of-6 slds-align-bottom "
+                class="slds-col slds-size_1-of-6 slds-align-bottom "
             >
               <div class="slds-text-heading_medium slds-p-around_small">
                 Resources
@@ -199,61 +199,61 @@
           disabled={filterModalData.disabled}
         ></lightning-button>
       </div>
-      <!-- Start Mohit's Record Type Search 
-      <div if:false={isProjectView} class="slds-form-element">
-        <lightning-input
-          type="search"
-          label="Projec Type"
-          name="project-search"
-          value={filterModalData.projectSearch}
-          onchange={filterProjectRecords}
-          onfocus={filterProjectRecords}
-          onblur={clearFocus}
-        ></lightning-input>
-        <div
-          if:true={filterModalData.projectOptions.length}
-          class="slds-dropdown slds-dropdown_fluid slds-scrollable_y"
-          role="listbox"
+     
+      <!-- Start 色フィルター  -->
+  <div if:false={isProjectView} class="slds-form-element">
+    <lightning-input
+      type="search"
+      label="Color"
+      name="color-search"
+      value={filterModalData.colorSearch}
+      onchange={filterColors}
+      onfocus={filterColors}
+      onblur={clearFocus}
+    ></lightning-input>
+  <div
+    if:true={filterModalData.colorOptions.length}
+    class="slds-dropdown slds-dropdown_fluid slds-scrollable_y"
+    role="listbox"
+  >
+    <ul class="slds-listbox slds-listbox_vertical" role="presentation">
+      <template
+        for:each={filterModalData.colorOptions}
+        for:item="color"
+      >
+        <li
+          key={color}
+          role="presentation"
+          class="slds-listbox__item"
         >
-          <ul class="slds-listbox slds-listbox_vertical" role="presentation">
-            <template
-              for:each={filterModalData.projectRecordTypeOptions}
-              for:item="projectRecordType"
-            >
-              <li
-                key={projectRecordType}
-                role="presentation"
-                class="slds-listbox__item"
-              >
-                <div
-                  onclick={addProjectRecordTypeFilter}
-                  data-id={project.recordTypeId}
-                  data-name={project.recordTypeId}
-                  class="slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta"
-                  role="option"
-                >
-                  {project.Name}
-                </div>
-              </li>
-            </template>
-          </ul>
-        </div>
-        <template
-          for:each={filterModalData.projectRecordTypes}
-          for:item="recordTypes"
-          for:index="index"
-        >
-          <lightning-pill
-            key={project.recordTypeId}
-            value={project.recordTypeId}
-            label={project.recordTypeId}
-            onremove={removeProjectFilter}
-            data-index={index}
-          ></lightning-pill>
-        </template>
-      </div>
-      End Mohit's Record Type Search -->
-
+          <div
+            onclick={addColorFilter}
+          
+            data-color={color}
+            class="slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta"
+            role="option"
+          >
+            {color}
+          </div>
+        </li>
+      </template>
+    </ul>
+  </div>
+  <template
+    for:each={filterModalData.colors}
+    for:item="color"
+    for:index="index"
+  >
+    <lightning-pill
+      key={color}
+      value={color}
+      label={color}
+      onremove={removeColorFilter}
+      data-index={index}
+    ></lightning-pill>
+  </template>
+</div>
+<!--End 色フィルター -->
       <div if:false={isProjectView} class="slds-form-element">
         <lightning-input
           type="search"
@@ -359,6 +359,7 @@
         onchange={setStatusFilter}
       ></lightning-combobox>
     </div>
+    
     <lightning-button
       slot="footer"
       variant="brand"
