@@ -50,7 +50,7 @@ export default class GanttChartResource extends NavigationMixin(LightningElement
         } else {
           time.end = date.getTime();
 
-          if (times.length % 7 === 6) {
+          if (times.length % 7 === 6 || times.length %7 === 5 ) {
             time.class += " lwc-is-week-end";
           }
         }
