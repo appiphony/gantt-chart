@@ -1,4 +1,5 @@
 <template>
+  
   <div class="slds-scope">
     <div class="slds-card slds-theme_default">
       <!-- Header Bar -->
@@ -17,6 +18,7 @@
           <div class="slds-col slds-text-align_center">
             <h1 class="slds-text-heading_medium slds-truncate">
               {formattedStartDate} - {formattedEndDate}
+
             </h1>
           </div>
           <!-- /Title (Date Range) -->
@@ -66,7 +68,7 @@
         </div>
         <!-- Filter Status -->
         <div if:true={_filterData.message} class="slds-m-top_x-small">
-          <p class="slds-text-body_small slds-text-color_weak">
+          <p class="slds-text-body_small slds-text-color_weak">-----
             {_filterData.message}
           </p>
         </div>
@@ -81,7 +83,7 @@
           <div class="slds-grid lwc-timeline">
             <div
               if:false={isResourceView}
-              class="slds-col slds-size_1-of-6 slds-align-bottom "
+                class="slds-col slds-size_1-of-6 slds-align-bottom "
             >
               <div class="slds-text-heading_medium slds-p-around_small">
                 Resources
@@ -99,16 +101,17 @@
                       <div class="slds-col slds-has-flexi-truncate">
                         <div
                           class="lwc-timeline_month slds-p-around_xx-small slds-theme_shade slds-text-align_center slds-text-color_weak slds-text-body_small slds-m-horizontal_x-small slds-truncate"
-                        >
+                        > 
                           {date.name}
                         </div>
                       </div>
                     </div>
                     <div class="slds-grid">
+                      
                       <template for:each={date.days} for:item="day">
-                        <div key={day} class={day.class}>
+                        <div key={day} class={day.class} data-id={day.id}>
                           <div if:true={day.dayName}>{day.dayName}</div>
-                          <div>{day.label}</div>
+                          <div >{day.label}</div>
                         </div>
                       </template>
                     </div>
@@ -121,9 +124,12 @@
 
           <!-- Allocation Table -->
           <!-- Resource Rows -->
+         
           <template if:true={resources.length}>
             <template for:each={resources} for:item="resource">
+           
               <c-gantt_chart_resource
+                ref={gantt_chart_resource}
                 key={resource.Id}
                 class="lwc-resource-component"
                 is-resource-view={isResourceView}
@@ -133,9 +139,31 @@
                 start-date={startDate}
                 end-date={endDate}
                 onrefresh={handleRefresh}
+            
               ></c-gantt_chart_resource>
             </template>
           </template>
+           <!-- /Color -->
+          <template if:true={resources.length}>
+           
+            <template for:each={resources} for:item="resource">
+           
+              <c-gantt_chart_resource
+                ref={gantt_chart_resource}
+                key={resource.Id}
+                class="lwc-resource-component"
+                is-resource-view={isResourceView}
+                resource={resource}
+                project-id={projectId}
+                date-increment={view.slotSize}
+                start-date={startDate}
+                end-date={endDate}
+                onrefresh={handleRefresh}
+            
+              ></c-gantt_chart_resource>
+            </template>
+            </template>
+          
           <!-- /Resource Rows -->
 
           <!-- Empty State -->
@@ -253,7 +281,60 @@
         </template>
       </div>
       End Mohit's Record Type Search -->
-
+      <!-- Start 色フィルター  -->
+      <div if:false={isProjectView} class="slds-form-element">
+        <lightning-input
+          type="search"
+          label="Color"
+          name="color-search"
+          value={filterModalData.colorSearch}
+          onchange={filterColors}
+          onfocus={filterColors}
+          onblur={clearFocus}
+        ></lightning-input>
+      <div
+        if:true={filterModalData.colorOptions.length}
+        class="slds-dropdown slds-dropdown_fluid slds-scrollable_y"
+        role="listbox"
+      >
+        <ul class="slds-listbox slds-listbox_vertical" role="presentation">
+          <template
+            for:each={filterModalData.colorOptions}
+            for:item="color"
+          >
+            <li
+              key={color}
+              role="presentation"
+              class="slds-listbox__item"
+            >
+              <div
+                onclick={addColorFilter}
+              
+                data-color={color}
+                class="slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta"
+                role="option"
+              >
+                {color}
+              </div>
+            </li>
+          </template>
+        </ul>
+      </div>
+      <template
+        for:each={filterModalData.colors}
+        for:item="color"
+        for:index="index"
+      >
+        <lightning-pill
+          key={color}
+          value={color}
+          label={color}
+          onremove={removeColorFilter}
+          data-index={index}
+        ></lightning-pill>
+      </template>
+      </div>
+      <!--End 色フィルター -->
       <div if:false={isProjectView} class="slds-form-element">
         <lightning-input
           type="search"
@@ -359,6 +440,7 @@
         onchange={setStatusFilter}
       ></lightning-combobox>
     </div>
+    
     <lightning-button
       slot="footer"
       variant="brand"

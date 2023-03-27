@@ -4,7 +4,7 @@
         <div if:false={isResourceView} class="slds-col slds-size_1-of-6 slds-p-around_small slds-truncate lwc-resource">
             <div class="slds-media slds-media_center">
                 <div class="slds-media__figure">
-                    <lightning-icon icon-name="action:user" size="x-small"></lightning-icon>
+                    <lightning-icon icon-name={iconType} size="medium"></lightning-icon>
                 </div>
                 <div class="slds-media__body slds-truncate">
                     <h3 class="slds-text-body_default">
@@ -12,6 +12,9 @@
                     </h3>
                     <h3 class="slds-text-body_small slds-text-color_weak">
                         {resource.Default_Role__c}
+                    </h3>
+                    <h3 class="slds-text-body_small slds-text-color_weak">
+                        {resource.Status__c}
                     </h3>
                 </div>
             </div>
@@ -111,6 +114,8 @@
     <c-gantt_chart_modal class="add-allocation-modal">
         <span slot="title">Add Allocation</span>
         <div slot="body" class="slds-form slds-form_stacked">
+            <lightning-formatted-url value="/lightning/o/Project__c/new?count=1" 
+                                     label="案件の作成" target="_self"></lightning-formatted-url>
             <!-- Select Project -->
             <lightning-combobox value={addAllocationData.projectId} label="What Project?" placeholder="-- Select Project --"
                 options={addAllocationData.projects} onchange={handleAddAllocationDataChange} data-field="projectId"></lightning-combobox>

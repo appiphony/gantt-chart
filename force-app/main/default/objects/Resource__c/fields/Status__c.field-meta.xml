@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Status__c</fullName>
+    <defaultValue>&quot;普通&quot;</defaultValue>
+    <externalId>false</externalId>
+    <label>ステータス</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>良</fullName>
+                <default>false</default>
+                <label>良</label>
+            </value>
+            <value>
+                <fullName>普通</fullName>
+                <default>false</default>
+                <label>普通</label>
+            </value>
+            <value>
+                <fullName>悪い</fullName>
+                <default>false</default>
+                <label>悪い</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

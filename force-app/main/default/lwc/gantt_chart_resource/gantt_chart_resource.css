@@ -121,15 +121,24 @@
     cursor: pointer;
     min-width: 50px;
     transition: background-color 200ms ease 0s;
+ 
 }
 
 .lwc-timeslot:first-child {
     border-left: 3px solid #dddbda;
+  
 }
 
-.lwc-timeslot.lwc-is-week-end, 
 .lwc-timeslot:last-child {
     border-right: 3px solid #dddbda;
+   
+}
+.lwc-timeslot.lwc-is-week-end{
+    background: rgba(221, 63, 14, 0.1);
+}
+
+.lwc-timeslot.lwc-is-holiday{
+    background: rgba(221, 63, 14, 0.1);
 }
 
 .lwc-timeslot:hover {

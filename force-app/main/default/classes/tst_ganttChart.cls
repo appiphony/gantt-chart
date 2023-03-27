@@ -25,8 +25,8 @@ public with sharing class tst_ganttChart {
         Test.startTest();
         Map<String, Object> chartData = ganttChart.getChartData(
             null,
-            String.valueOf(dt.getTime()),
-            String.valueOf(dt.getTime()),
+            null,
+            null,
             1,
             new List<String>(),
             new List<String>(),
@@ -78,8 +78,8 @@ public with sharing class tst_ganttChart {
         Test.startTest();
         Map<String, Object> chartData = ganttChart.getChartData(
             r.Id,
-            String.valueOf(dt.getTime()),
-            String.valueOf(dt.getTime()),
+            null,
+            null,
             1,
             new List<String> { p.Id },
             new List<String> { r.Default_Role__c },
@@ -150,11 +150,14 @@ public with sharing class tst_ganttChart {
             Default_Role__c='Test Role');
         insert r;
 
+        Date startDate = Date.newInstance(2023, 3, 1);
+        Date endDate = Date.newInstance(2023, 3, 10);
+
         String effort = 'High';
         String status = 'Active';
 
         Test.startTest();
-        ganttChart.saveAllocation(null, p.Id, r.Id, effort, status, String.valueOf(dt.getTime()), String.valueOf(dt.getTime()));
+        ganttChart.saveAllocation(null, p.Id, r.Id, effort, status, startDate, endDate);
         Test.stopTest();
 
         List<Allocation__c> allocations = [SELECT Id, Project__c, Resource__c, Effort__c, Status__c, Start_Date__c, End_Date__c
@@ -184,6 +187,9 @@ public with sharing class tst_ganttChart {
         String effort = 'High';
         String status = 'Unavailable';
 
+        Date startDate = Date.newInstance(2023, 3, 1);
+        Date endDate = Date.newInstance(2023, 3, 10);
+
         Allocation__c a = new Allocation__c(
             Project__c = p.Id,
             Resource__c = r.Id,
@@ -194,7 +200,7 @@ public with sharing class tst_ganttChart {
         insert a;
 
         Test.startTest();
-        ganttChart.saveAllocation(a.Id, null, r.Id, effort, status, String.valueOf(dt.getTime()), String.valueOf(dt.getTime()));
+        ganttChart.saveAllocation(a.Id, null, r.Id, effort, status, startDate, endDate);
         Test.stopTest();
 
         List<Allocation__c> allocations = [SELECT Id, Project__c, Resource__c, Effort__c, Status__c, Start_Date__c, End_Date__c
@@ -236,4 +242,19 @@ public with sharing class tst_ganttChart {
 
         System.assertEquals(0, allocations.size());
     }
+
+    @isTest
+    static void ganttChart_getHolidays() {
+        Date d = Date.today();
+        Holidays__c h = new Holidays__c(
+            Name='Test H',
+            HolidayDate__c = d);
+        insert h;
+
+        Test.startTest();
+        List<Holidays__c> holidays = ganttChart.getHolidays();
+        Test.stopTest();
+
+    }
+
 }
