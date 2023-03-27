@@ -32,7 +32,6 @@ public with sharing class ganttChart {
 
         if (String.isNotEmpty(startTime) &&  String.isNotEmpty(endTime)) {
             Date startDate = DateTime.newInstance(Long.valueOf(startTime)).date();
-            
             Date endDate = DateTime.newInstance(Long.valueOf(endTime)).date();
             Integer days = startDate.daysBetween(endDate) + 1;
             slotSize = Integer.valueOf(slotSize);
@@ -213,4 +212,19 @@ public with sharing class ganttChart {
     public static void deleteAllocation(Id allocationId) {
         delete new Allocation__c(Id = allocationId);
     }
+
+ 
+ 
+    @AuraEnabled(cacheable=true)
+    public static List<Holidays__c> getHolidays() {
+        List<Holidays__c> holidays =[SELECT Id, Name,HolidayDate__c
+                                     FROM Holidays__c
+                                    ];
+               return holidays;
+    }
+
+ 
+
 }
+   
+    

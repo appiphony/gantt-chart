@@ -1,10 +1,12 @@
-import { LightningElement, api, track } from "lwc";
+import { LightningElement, api, track, wire} from "lwc";
 import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import {NavigationMixin} from 'lightning/navigation';
+
 
 import getProjects from "@salesforce/apex/ganttChart.getProjects";
 import saveAllocation from "@salesforce/apex/ganttChart.saveAllocation";
 import deleteAllocation from "@salesforce/apex/ganttChart.deleteAllocation";
+import getHolidays from "@salesforce/apex/ganttChart.getHolidays";
 
 export default class GanttChartResource extends NavigationMixin(LightningElement) {
   @api isResourceView; // resource page has different layout
@@ -17,14 +19,35 @@ export default class GanttChartResource extends NavigationMixin(LightningElement
     this._resource = _resource;
     this.setProjects();
   }
-
+　
   // dates
   @api startDate;
   @api endDate;
   @api dateIncrement;
   // IconType
   @api iconType;
+  @api backgroundColor;
 
+  @api formatDate(dt) {
+    var y = dt.getFullYear();
+    var m = ('00' + (dt.getMonth()+1)).slice(-2);
+    var d = ('00' + dt.getDate()).slice(-2);
+    return (y + '-' + m + '-' + d);
+  }
+  //休日
+  @api holidays =[];
+  @wire(getHolidays)
+  wiredGetHolidays({ data, error }) {
+    console.log('data:', data);
+    console.log('error:', error);
+      if (data) {
+          this.holidays = data.map(holiday => holiday.HolidayDate__c);
+          console.log("holidays" + JSON.stringify(this.holidays));
+          this.refreshDates(this.startDate, this.endDate, this.dateIncrement);
+      } else if (error) {
+          console.error(error);
+      }
+  }
   @api
   refreshDates(startDate, endDate, dateIncrement) {
     if (startDate && endDate && dateIncrement) {
@@ -39,6 +62,7 @@ export default class GanttChartResource extends NavigationMixin(LightningElement
         date.setDate(date.getDate() + dateIncrement)
       ) {
         let time = {
+          id: ""+ this.formatDate(date),//キムリナ追記
           class: "slds-col lwc-timeslot",
           start: date.getTime()
         };
@@ -50,7 +74,7 @@ export default class GanttChartResource extends NavigationMixin(LightningElement
         } else {
           time.end = date.getTime();
 
-          if (times.length % 7 === 6 || times.length %7 === 5 ) {
+          if (times.length % 7 === 6 || times.length %7 === 5) {
             time.class += " lwc-is-week-end";
           }
         }
@@ -58,6 +82,11 @@ export default class GanttChartResource extends NavigationMixin(LightningElement
         if (today >= time.start && today <= time.end) {
           time.class += " lwc-is-today";
         }
+      
+        if (this.holidays.includes(time.id)) {
+        time.class += " lwc-is-holiday";
+      }
+      //キムりな追記終了
 
         times.push(time);
       }
@@ -66,6 +95,7 @@ export default class GanttChartResource extends NavigationMixin(LightningElement
       this.startDate = startDate;
       this.endDate = endDate;
       this.dateIncrement = dateIncrement;
+      
       //set IconType
       switch( this._resource.Default_Role__c){
         case 'エンジニア':  this.iconType = 'standard:user';  break;
@@ -130,7 +160,10 @@ export default class GanttChartResource extends NavigationMixin(LightningElement
   ];
 
   connectedCallback() {
-    this.refreshDates(this.startDate, this.endDate, this.dateIncrement);
+  
+     
+      this.refreshDates(this.startDate, this.endDate, this.dateIncrement);
+  
   }
 
   // calculate allocation classes
@@ -263,9 +296,12 @@ export default class GanttChartResource extends NavigationMixin(LightningElement
   handleTimeslotClick(event) {
     const start = new Date(parseInt(event.currentTarget.dataset.start, 10));
     const end = new Date(parseInt(event.currentTarget.dataset.end, 10));
-    const startUTC = start.getTime() + start.getTimezoneOffset() * 60 * 1000;
-    const endUTC = end.getTime() + end.getTimezoneOffset() * 60 * 1000;
-
+    //    const startUTC = start.getTime() + start.getTimezoneOffset() * 60 * 1000;
+    //    const endUTC = end.getTime() + end.getTimezoneOffset() * 60 * 1000;
+const startUTC = start.getTime();
+const endUTC = end.getTime();
+    console.log(start);
+    console.log(end);
     if (this.projectId) {
       this._saveAllocation({
         startDate: startUTC + "",
@@ -391,6 +427,7 @@ export default class GanttChartResource extends NavigationMixin(LightningElement
       });
   }
 
+ 
   /*** Drag/Drop ***/
   dragInfo = {};
   handleDragStart(event) {
@@ -402,7 +439,9 @@ export default class GanttChartResource extends NavigationMixin(LightningElement
     this.dragInfo.newAllocation = this.projects[
       container.dataset.project
     ].allocations[container.dataset.allocation];
-
+    console.log(" this.dragInfo.projectIndex"+ JSON.stringify( this.dragInfo.projectIndex) );
+    console.log("this.dragInfo.allocationIndex"+ JSON.stringify(this.dragInfo.allocationIndex) );
+    console.log("  this.dragInfo.newAllocation"+ JSON.stringify(  this.dragInfo.newAllocation) );
     // hide drag image
     container.style.opacity = 0;
     setTimeout(function() {
@@ -435,10 +474,11 @@ export default class GanttChartResource extends NavigationMixin(LightningElement
 
     this._saveAllocation({
       allocationId: allocation.Id,
-      startDate:
-        startDate.getTime() + startDate.getTimezoneOffset() * 60 * 1000 + "",
-      endDate: endDate.getTime() + endDate.getTimezoneOffset() * 60 * 1000 + ""
+      startDate:startDate.getTime() + "",
+      endDate: endDate.getTime() + ""
     });
+    console.log("startDate"+ JSON.stringify(startDate) );
+    console.log("endDate"+ JSON.stringify(endDate) );
 
     this.dragInfo = {};
     this.template.querySelector(
@@ -465,7 +505,8 @@ export default class GanttChartResource extends NavigationMixin(LightningElement
     switch (direction) {
       case "left":
         if (index <= allocation.right) {
-          allocation.Start_Date__c = start.toJSON().substr(0, 10);
+          // allocation.Start_Date__c = start.toJSON().substr(0, 10);
+          allocation.Start_Date__c = moment(start).format('YYYY-MM-DD');
           allocation.left = index;
         } else {
           allocation = this.dragInfo.newAllocation;
@@ -473,7 +514,8 @@ export default class GanttChartResource extends NavigationMixin(LightningElement
         break;
       case "right":
         if (index >= allocation.left) {
-          allocation.End_Date__c = end.toJSON().substr(0, 10);
+          // allocation.End_Date__c = end.toJSON().substr(0, 10);
+          allocation.End_Date__c = moment(end).format('YYYY-MM-DD');
           allocation.right = index;
         } else {
           allocation = this.dragInfo.newAllocation;
@@ -495,8 +537,10 @@ export default class GanttChartResource extends NavigationMixin(LightningElement
           endDate.getDate() + allocation.right * this.dateIncrement
         );
 
-        allocation.Start_Date__c = startDate.toJSON().substr(0, 10);
-        allocation.End_Date__c = endDate.toJSON().substr(0, 10);
+        // allocation.Start_Date__c = startDate.toJSON().substr(0, 10);
+        // allocation.End_Date__c = endDate.toJSON().substr(0, 10);
+        allocation.Start_Date__c = moment(startDate).format('YYYY-MM-DD');
+        allocation.End_Date__c = moment(endDate).format('YYYY-MM-DD');
     }
 
     this.dragInfo.newAllocation = allocation;
@@ -580,14 +624,12 @@ export default class GanttChartResource extends NavigationMixin(LightningElement
   editAllocationModalSuccess() {
     const startDate = new Date(this.editAllocationData.startDate + "T00:00:00");
     const endDate = new Date(this.editAllocationData.endDate + "T00:00:00");
-
+    
     this._saveAllocation({
       allocationId: this.editAllocationData.id,
       projectId: this.editAllocationData.projectId,
-      startDate:
-        startDate.getTime() + startDate.getTimezoneOffset() * 60 * 1000 + "",
-      endDate:
-        endDate.getTime() + startDate.getTimezoneOffset() * 60 * 1000 + "",
+      startDate:startDate.getTime() + "",
+      endDate: endDate.getTime() + "",
       effort: this.editAllocationData.effort,
       status: this.editAllocationData.status
     })
@@ -635,4 +677,6 @@ export default class GanttChartResource extends NavigationMixin(LightningElement
         );
       });
   }
+
+
 }

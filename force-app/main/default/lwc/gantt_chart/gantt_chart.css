@@ -15,9 +15,12 @@
 }
 
 .lwc-timeline_day {
-    min-width: 50px;
+    border-bottom: 1px solid #dddbda;
+    border-right: 1px solid #dddbda;
+    border-top: 1px solid #dddbda;
+    width: 50px;
     text-align: center;
-    padding-right: 1px;
+    /* padding-right: 1px; */
 }
 
 .lwc-timeline_month-container>div{
@@ -48,7 +51,7 @@
 .lwc-timeline_day.lwc-is-week-end {
     background: rgba(221, 63, 14, 0.1);
     border-top: 3px solid #dd2929;
-    border-right: 3px solid #dddbda;
+    margin-top: 3px;
     padding-right: 0;
 
 }
@@ -59,6 +62,11 @@
     margin-top: 3px;
 }
 
+.lwc-timeline_day.lwc-is-holiday {
+    background: rgba(221, 63, 14, 0.1);
+    border-top: 3px solid #dd2929;
+    margin-top: 3px;
+}
 .lwc-timeline_month {
     border-radius: .25rem;
 }

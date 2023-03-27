@@ -8,10 +8,13 @@ import { loadScript } from "lightning/platformResourceLoader";
 import getChartData from "@salesforce/apex/ganttChart.getChartData";
 import getProjects from "@salesforce/apex/ganttChart.getProjects";
 import getResources from "@salesforce/apex/ganttChart.getResources";
+import getHolidays from "@salesforce/apex/ganttChart.getHolidays";
+
 
 export default class GanttChart extends LightningElement {
   @api recordId = "";
   @api objectApiName;
+  @api getFlg;
 
   @track isResourceView;
   @track isProjectView;
@@ -99,12 +102,15 @@ export default class GanttChart extends LightningElement {
   @track projectId;
   @track resources = [];
 
+
+
   constructor() {
     super();
     this.template.addEventListener("click", this.closeDropdowns.bind(this));
   }
 
   connectedCallback() {
+   
     Promise.all([
       loadScript(this, momentJS)
     ]).then(() => {
@@ -117,6 +123,7 @@ export default class GanttChart extends LightningElement {
       }
       this.setStartDate(new Date());
       this.handleRefresh();
+      
     });
   }
 
@@ -128,7 +135,7 @@ export default class GanttChart extends LightningElement {
       row.closeAllocationMenu();
     });
   }
-
+  
   /*** Navigation ***/
   setStartDate(_startDate) {
     if (_startDate instanceof Date && !isNaN(_startDate)) {
@@ -136,18 +143,15 @@ export default class GanttChart extends LightningElement {
 
       this.datePickerString = _startDate.toISOString();
 
-      this.startDate = moment(_startDate)
-        .day(1)
+      this.startDate = moment(_startDate) 
         .toDate();
-      this.startDateUTC =
-        moment(this.startDate)
-          .utc()
-          .valueOf() -
-        moment(this.startDate).utcOffset() * 60 * 1000 +
-        "";
+      //this.startDateUTC =  moment(this.startDate).utc().valueOf() - moment(this.startDate).utcOffset() * 60 * 1000 +"";
+      //console.log(this.startDateUTC);
+      this.startDateUTC = this.startDate.getTime();
       this.formattedStartDate = this.startDate.toLocaleDateString();
-
+      
       this.setDateHeaders();
+    
     } else {
       this.dispatchEvent(
         new ShowToastEvent({
@@ -158,16 +162,28 @@ export default class GanttChart extends LightningElement {
     }
   }
 
+  //休日
+  @track holidays =[];
+  @wire(getHolidays)
+  wiredGetHolidays({ data, error }) {
+      if (data) {
+          //this.holidays = data;
+          this.holidays = data.map(holiday => holiday.HolidayDate__c);
+          console.log("holidays" + JSON.stringify(this.holidays));
+          this.setDateHeaders();
+      } else if (error) {
+          console.error(error);
+      }
+  }
+
+ 
   setDateHeaders() {
+    
     this.endDate = moment(this.startDate)
       .add(this.view.slots * this.view.slotSize - 1, "days")
       .toDate();
-    this.endDateUTC =
-      moment(this.endDate)
-        .utc()
-        .valueOf() -
-      moment(this.endDate).utcOffset() * 60 * 1000 +
-      "";
+    //    this.endDateUTC = moment(this.endDate).utc().valueOf() - moment(this.endDate).utcOffset() * 60 * 1000 +"";
+    this.endDateUTC = this.endDate.getTime();
     this.formattedEndDate = this.endDate.toLocaleDateString();
 
     const dayNames = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
@@ -188,9 +204,10 @@ export default class GanttChart extends LightningElement {
       }
 
       let day = {
+        id: "" + date.format("YYYY-MM-DD"),　//キムリナ追記
         class: "slds-col slds-p-vertical_x-small slds-m-top_x-small lwc-timeline_day",
         label: date.format("M/D"),
-        start: date.toDate()
+        start: date.toDate(),
       };
 
       if (this.view.slotSize > 1) {
@@ -201,6 +218,7 @@ export default class GanttChart extends LightningElement {
         day.dayName = date.format("ddd");
         if (date.day() === 0 || date.day() === 6) {
           day.class = day.class + " lwc-is-week-end";
+
         }
       }
 
@@ -208,6 +226,11 @@ export default class GanttChart extends LightningElement {
         day.class += " lwc-is-today";
       }
 
+      //休日のクラス追加
+      if (this.holidays.includes(day.id)) {
+        day.class += " lwc-is-holiday";
+      }
+      //キムリナ追記終了
       dates[index].days.push(day);
       dates[index].style =
         "width: calc(" +
@@ -225,8 +248,10 @@ export default class GanttChart extends LightningElement {
     ).forEach(resource => {
       resource.refreshDates(this.startDate, this.endDate, this.view.slotSize);
     });
+   
   }
 
+   
   navigateToToday() {
     this.setStartDate(new Date());
     this.handleRefresh();
@@ -249,7 +274,7 @@ export default class GanttChart extends LightningElement {
   }
 
   navigateToDay(event) {
-    this.setStartDate(new Date(event.target.value + "T00:00:00"));
+    this.setStartDate(new Date(event.target.value));
     this.handleRefresh();
   }
 
@@ -586,6 +611,7 @@ export default class GanttChart extends LightningElement {
   handleRefresh() {
     // refreshApex(this.wiredData);
     let self = this;
+
     getChartData({
       recordId: self.recordId ? self.recordId : '',
       startTime: self.startDateUTC,
@@ -625,25 +651,24 @@ export default class GanttChart extends LightningElement {
               }
           }
 
-          self.resources.push(newResource);
-          
-      });
-     
-      //市川さん追記
-      for(let i=0; i < self.resources.length; i++ ){
-          if(JSON.stringify(self.resources[i].allocationsByProject) == '{}'){
-              self.resources.splice(i, 1);
-              i--;
-          }   
-      }
-     //市川さん追記終了
-      
+            self.resources.push(newResource);
+        });
+
+        if (applyFilter && (self._filterData.colors != "" || self._filterData.projectIds != "" || self._filterData.roles != ""  || self._filterData.status != "")) {
+          self.resources = self.resources.filter(resource => JSON.stringify(resource.allocationsByProject) !== '{}');
+        }
+        
         debugger;
+        
     }).catch(error => {
         this.dispatchEvent(new ShowToastEvent({
             message: error.body.message,
             variant: 'error'
         }));
     });
+  
   }
+  
+
+
 }
